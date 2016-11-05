@@ -40,6 +40,18 @@ public class MediaLibrary  {
 		 * The album where this track belongs to
 		 */
 		public static final String ALBUM_ID = "album_id";
+		/**
+		 * How often the track was played
+		 */
+		public static final String PLAYCOUNT = "playcount";
+		/**
+		 * How often the track was skipped
+		 */
+		public static final String SKIPCOUNT = "skipcount";
+		/**
+		 * The path to the music file
+		 */
+		public static final String PATH = "path";
 	}
 
 	// Columns of Album entries

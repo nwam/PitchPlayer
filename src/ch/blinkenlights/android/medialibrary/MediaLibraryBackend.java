@@ -41,7 +41,10 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	  + MediaLibrary.TrackColumns.TRACK_ID   +" INT(10) UNSIGNED NOT NULL AUTO_INCREMENT, "
 	  + MediaLibrary.TrackColumns.LABEL      +" TEXT NOT NULL, "
 	  + MediaLibrary.TrackColumns.LABEL_SORT +" VARCHAR(64) NOT NULL, "
-	  + MediaLibrary.TrackColumns.ALBUM_ID   +" INT(10) UNSIGNED NOT NULL"
+	  + MediaLibrary.TrackColumns.ALBUM_ID   +" INT(10) UNSIGNED NOT NULL, "
+	  + MediaLibrary.TrackColumns.PLAYCOUNT  + "INT(10) UNSIGNED NOT NULL, "
+	  + MediaLibrary.TrackColumns.SKIPCOUNT  + "INT(10) UNSIGNED NOT NULL, "
+	  + MediaLibrary.TrackColumns.PATH       + "VARCHAR(4096) NOT NULL "
 	  + ";";
 
 	/**
