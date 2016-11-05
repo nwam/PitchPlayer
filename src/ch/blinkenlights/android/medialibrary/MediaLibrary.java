@@ -91,6 +91,10 @@ public class MediaLibrary  {
 		 */
 		public static final String ALBUM_ID = "album_id";
 		/**
+		 * The artist of this track
+		 */
+		public static final String ARTIST_ID = "artist_id";
+		/**
 		 * How often the track was played
 		 */
 		public static final String PLAYCOUNT = "playcount";
