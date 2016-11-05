@@ -89,19 +89,19 @@ public final class SongTimeline {
 	/**
 	 * Clear the timeline and use only the provided songs.
 	 *
-	 * @see SongTimeline#addSongs(Context, QueryTask)
+	 * @see SongTimeline#addSongs(Context, OBSOLETED_QueryTask)
 	 */
 	public static final int MODE_PLAY = 0;
 	/**
 	 * Clear the queue and add the songs after the current song.
 	 *
-	 * @see SongTimeline#addSongs(Context, QueryTask)
+	 * @see SongTimeline#addSongs(Context, OBSOLETED_QueryTask)
 	 */
 	public static final int MODE_FLUSH_AND_PLAY_NEXT = 1;
 	/**
 	 * Add the songs at the end of the timeline, clearing random songs.
 	 *
-	 * @see SongTimeline#addSongs(Context, QueryTask)
+	 * @see SongTimeline#addSongs(Context, OBSOLETED_QueryTask)
 	 */
 	public static final int MODE_ENQUEUE = 2;
 	/**
@@ -109,9 +109,9 @@ public final class SongTimeline {
 	 * removing the songs before the given position in the query and appending
 	 * them to the end of the queue.
 	 *
-	 * Pass the position in QueryTask.data.
+	 * Pass the position in OBSOLETED_QueryTask.data.
 	 *
-	 * @see SongTimeline#addSongs(Context, QueryTask)
+	 * @see SongTimeline#addSongs(Context, OBSOLETED_QueryTask)
 	 */
 	public static final int MODE_PLAY_POS_FIRST = 3;
 	/**
@@ -120,9 +120,9 @@ public final class SongTimeline {
 	 * them to the end of the queue. If there are multiple songs with
 	 * the given id, picks the first song with that id.
 	 *
-	 * Pass the id in QueryTask.data.
+	 * Pass the id in OBSOLETED_QueryTask.data.
 	 *
-	 * @see SongTimeline#addSongs(Context, QueryTask)
+	 * @see SongTimeline#addSongs(Context, OBSOLETED_QueryTask)
 	 */
 	public static final int MODE_PLAY_ID_FIRST = 4;
 	/**
@@ -131,9 +131,9 @@ public final class SongTimeline {
 	 * them to the end of the queue. If there are multiple songs with
 	 * the given id, picks the first song with that id.
 	 *
-	 * Pass the id in QueryTask.data.
+	 * Pass the id in OBSOLETED_QueryTask.data.
 	 *
-	 * @see SongTimeline#addSongs(Context, QueryTask)
+	 * @see SongTimeline#addSongs(Context, OBSOLETED_QueryTask)
 	 */
 	public static final int MODE_ENQUEUE_ID_FIRST = 5;
 	/**
@@ -141,17 +141,17 @@ public final class SongTimeline {
 	 * removing the songs before the given position in the query and appending
 	 * them to the end of the queue.
 	 *
-	 * Pass the position in QueryTask.data.
+	 * Pass the position in OBSOLETED_QueryTask.data.
 	 *
-	 * @see SongTimeline#addSongs(Context, QueryTask)
+	 * @see SongTimeline#addSongs(Context, OBSOLETED_QueryTask)
 	 */
 	public static final int MODE_ENQUEUE_POS_FIRST = 6;
 	/**
 	 * Enqueues the result as next item(s)
 	 *
-	 * Pass the position in QueryTask.data.
+	 * Pass the position in OBSOLETED_QueryTask.data.
 	 *
-	 * @see SongTimeline#addSongs(Context, QueryTask)
+	 * @see SongTimeline#addSongs(Context, OBSOLETED_QueryTask)
 	 */
 	public static final int MODE_ENQUEUE_AS_NEXT = 7;
 
@@ -698,7 +698,7 @@ public final class SongTimeline {
 	 * to be initialized depending on the given mode.
 	 * @return The number of songs that were added.
 	 */
-	public int addSongs(Context context, QueryTask query)
+	public int addSongs(Context context, OBSOLETED_QueryTask query)
 	{
 		Cursor cursor = query.runQuery(context.getContentResolver());
 		if (cursor == null) {

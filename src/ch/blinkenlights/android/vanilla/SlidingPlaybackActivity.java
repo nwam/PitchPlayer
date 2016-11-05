@@ -231,7 +231,7 @@ public class SlidingPlaybackActivity extends PlaybackActivity
 	 * @param empty If true, use the empty projection (only query id).
 	 * @param allSource use this mediaAdapter to queue all hold items
 	 */
-	protected QueryTask buildQueryFromIntent(Intent intent, boolean empty, MediaAdapter allSource)
+	protected OBSOLETED_QueryTask buildQueryFromIntent(Intent intent, boolean empty, MediaAdapter allSource)
 	{
 		int type = intent.getIntExtra("type", MediaUtils.TYPE_INVALID);
 
@@ -242,7 +242,7 @@ public class SlidingPlaybackActivity extends PlaybackActivity
 			projection = empty ? Song.EMPTY_PROJECTION : Song.FILLED_PROJECTION;
 
 		long id = intent.getLongExtra("id", LibraryAdapter.INVALID_ID);
-		QueryTask query;
+		OBSOLETED_QueryTask query;
 		if (type == MediaUtils.TYPE_FILE) {
 			query = MediaUtils.buildFileQuery(intent.getStringExtra("file"), projection);
 		} else if (allSource != null) {

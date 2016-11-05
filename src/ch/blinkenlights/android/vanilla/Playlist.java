@@ -119,7 +119,7 @@ public class Playlist {
 	 * @param query The query to run. The audio id should be the first column.
 	 * @return The number of songs that were added to the playlist.
 	 */
-	public static int addToPlaylist(ContentResolver resolver, long playlistId, QueryTask query) {
+	public static int addToPlaylist(ContentResolver resolver, long playlistId, OBSOLETED_QueryTask query) {
 		ArrayList<Long> result = new ArrayList<Long>();
 		Cursor cursor = query.runQuery(resolver);
 		if (cursor != null) {
@@ -211,7 +211,7 @@ public class Playlist {
 	 * @param destinationId The Media.Audio.Playlists id of the destination playlist
 	 */
 	private static void _copyToPlaylist(ContentResolver resolver, long sourceId, long destinationId) {
-		QueryTask query = MediaUtils.buildPlaylistQuery(sourceId, Song.FILLED_PLAYLIST_PROJECTION, null);
+		OBSOLETED_QueryTask query = MediaUtils.buildPlaylistQuery(sourceId, Song.FILLED_PLAYLIST_PROJECTION, null);
 		addToPlaylist(resolver, destinationId, query);
 	}
 
@@ -262,7 +262,7 @@ public class Playlist {
 
 		boolean found = false;
 		String where = MediaStore.Audio.Playlists.Members.AUDIO_ID + "=" + song.id;
-		QueryTask query = MediaUtils.buildPlaylistQuery(playlistId, Song.EMPTY_PLAYLIST_PROJECTION, where);
+		OBSOLETED_QueryTask query = MediaUtils.buildPlaylistQuery(playlistId, Song.EMPTY_PLAYLIST_PROJECTION, where);
 		Cursor cursor = query.runQuery(resolver);
 		if (cursor != null) {
 			found = cursor.getCount() != 0;

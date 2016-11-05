@@ -296,7 +296,7 @@ public class MediaAdapter
 	 * @param forceMusicCheck Force the is_music check to be added to the
 	 * selection.
 	 */
-	private QueryTask buildQuery(String[] projection, boolean returnSongs)
+	private OBSOLETED_QueryTask buildQuery(String[] projection, boolean returnSongs)
 	{
 		String constraint = mConstraint;
 		Limiter limiter = mLimiter;
@@ -383,7 +383,7 @@ public class MediaAdapter
 			}
 		}
 
-		QueryTask query;
+		OBSOLETED_QueryTask query;
 		if(mType == MediaUtils.TYPE_GENRE && !returnSongs) {
 			query = MediaUtils.buildGenreExcludeEmptyQuery(enrichedProjection, selection.toString(),
 					selectionArgs, sort);
@@ -397,7 +397,7 @@ public class MediaAdapter
 					selection.append(" AND ");
 				selection.append(limiter.data);
 			}
-			query = new QueryTask(mStore, enrichedProjection, selection.toString(), selectionArgs, sort);
+			query = new OBSOLETED_QueryTask(mStore, enrichedProjection, selection.toString(), selectionArgs, sort);
 			if (returnSongs) // force query on song provider as we are requested to return songs
 				query.uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 		}
@@ -422,9 +422,9 @@ public class MediaAdapter
 	 *
 	 * @param projection The columns to query.
 	 */
-	public QueryTask buildSongQuery(String[] projection)
+	public OBSOLETED_QueryTask buildSongQuery(String[] projection)
 	{
-		QueryTask query = buildQuery(projection, true);
+		OBSOLETED_QueryTask query = buildQuery(projection, true);
 		query.type = mType;
 		return query;
 	}

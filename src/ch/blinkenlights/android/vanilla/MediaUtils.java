@@ -141,7 +141,7 @@ public class MediaUtils {
 	 * @param select An extra selection to pass to the query, or null.
 	 * @return The initialized query.
 	 */
-	private static QueryTask buildMediaQuery(int type, long id, String[] projection, String select)
+	private static OBSOLETED_QueryTask buildMediaQuery(int type, long id, String[] projection, String select)
 	{
 		Uri media = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 		StringBuilder selection = new StringBuilder();
@@ -171,7 +171,7 @@ public class MediaUtils {
 			selection.append(select);
 		}
 
-		QueryTask result = new QueryTask(media, projection, selection.toString(), null, sort);
+		OBSOLETED_QueryTask result = new OBSOLETED_QueryTask(media, projection, selection.toString(), null, sort);
 		result.type = type;
 		return result;
 	}
@@ -185,11 +185,11 @@ public class MediaUtils {
 	 * @param selection The selection to pass to the query, or null.
 	 * @return The initialized query.
 	 */
-	public static QueryTask buildPlaylistQuery(long id, String[] projection, String selection)
+	public static OBSOLETED_QueryTask buildPlaylistQuery(long id, String[] projection, String selection)
 	{
 		Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external", id);
 		String sort = MediaStore.Audio.Playlists.Members.PLAY_ORDER;
-		QueryTask result = new QueryTask(uri, projection, selection, null, sort);
+		OBSOLETED_QueryTask result = new OBSOLETED_QueryTask(uri, projection, selection, null, sort);
 		result.type = TYPE_PLAYLIST;
 		return result;
 	}
@@ -206,7 +206,7 @@ public class MediaUtils {
 	 * @param type The media type to query and return
 	 * @param returnSongs returns matching songs instead of `type' if true
 	 */
-	public static QueryTask buildGenreQuery(long id, String[] projection, String selection, String[] selectionArgs, String sort, int type, boolean returnSongs)
+	public static OBSOLETED_QueryTask buildGenreQuery(long id, String[] projection, String selection, String[] selectionArgs, String sort, int type, boolean returnSongs)
 	{
 		// Note: This function works on a raw sql query with way too much internal
 		// knowledge about the mediaProvider SQL table layout. Yes: it's ugly.
@@ -254,13 +254,13 @@ public class MediaUtils {
 		// We are now turning this into an sql injection. Fun times.
 		clonedProjection[0] = sql +" --";
 
-		QueryTask result = new QueryTask(uri, clonedProjection, selection, selectionArgs, sort);
+		OBSOLETED_QueryTask result = new OBSOLETED_QueryTask(uri, clonedProjection, selection, selectionArgs, sort);
 		result.type = TYPE_GENRE;
 		return result;
 	}
 
 	/**
-	 * Creates a {@link QueryTask} for genres. The query will select only genres that have at least
+	 * Creates a {@link OBSOLETED_QueryTask} for genres. The query will select only genres that have at least
 	 * one song associated with them.
 	 *
 	 * @param projection The fields of the genre table that should be returned.
@@ -269,9 +269,9 @@ public class MediaUtils {
 	 * @param selectionArgs Arguments for {@code selection}. Can be null. See
 	 * {@link android.content.ContentProvider#query(Uri, String[], String, String[], String)}
 	 * @param sort How the returned genres should be sorted (added to the ORDER BY section)
-	 * @return The QueryTask for the genres
+	 * @return The OBSOLETED_QueryTask for the genres
 	 */
-	public static QueryTask buildGenreExcludeEmptyQuery(String[] projection, String selection, String[] selectionArgs, String sort) {
+	public static OBSOLETED_QueryTask buildGenreExcludeEmptyQuery(String[] projection, String selection, String[] selectionArgs, String sort) {
 		/*
 		 * An example SQLite query that we're building in this function
 			SELECT DISTINCT _id, name
@@ -312,7 +312,7 @@ public class MediaUtils {
 		injectedProjection[0] = sql.toString();
 
 		// Don't pass the selection/sort as we've already added it to the query
-		return new QueryTask(uri, injectedProjection, null, selectionArgs, null);
+		return new OBSOLETED_QueryTask(uri, injectedProjection, null, selectionArgs, null);
 	}
 
 	/**
@@ -325,7 +325,7 @@ public class MediaUtils {
 	 * @param selection An extra selection to be passed to the query. May be
 	 * null. Must not be used with type == TYPE_SONG or type == TYPE_PLAYLIST
 	 */
-	public static QueryTask buildQuery(int type, long id, String[] projection, String selection)
+	public static OBSOLETED_QueryTask buildQuery(int type, long id, String[] projection, String selection)
 	{
 		switch (type) {
 		case TYPE_ARTIST:
@@ -563,7 +563,7 @@ public class MediaUtils {
 	 */
 	public static Song getSongByTypeId(ContentResolver resolver, int type, long id) {
 		Song song = new Song(-1);
-		QueryTask query = buildQuery(type, id, Song.FILLED_PROJECTION, null);
+		OBSOLETED_QueryTask query = buildQuery(type, id, Song.FILLED_PROJECTION, null);
 		Cursor cursor = query.runQuery(resolver);
 		if (cursor != null) {
 			if (cursor.getCount() > 0) {
@@ -668,7 +668,7 @@ public class MediaUtils {
 	 * @param projection The columns to query
 	 * @return The initialized query.
 	 */
-	public static QueryTask buildFileQuery(String path, String[] projection)
+	public static OBSOLETED_QueryTask buildFileQuery(String path, String[] projection)
 	{
 		/* make sure that the path is:
 		   -> fixed-up to point to the real mountpoint if user browsed to the mediadir symlink
@@ -680,7 +680,7 @@ public class MediaUtils {
 		String[] qargs = { path };
 
 		Uri media = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-		QueryTask result = new QueryTask(media, projection, query, qargs, FILE_SORT);
+		OBSOLETED_QueryTask result = new OBSOLETED_QueryTask(media, projection, query, qargs, FILE_SORT);
 		result.type = TYPE_FILE;
 		return result;
 	}

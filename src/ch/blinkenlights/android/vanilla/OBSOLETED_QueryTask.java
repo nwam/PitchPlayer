@@ -29,7 +29,7 @@ import android.net.Uri;
 /**
  * Represents a pending query.
  */
-public class QueryTask {
+public class OBSOLETED_QueryTask {
 	public Uri uri;
 	public final String[] projection;
 	public final String selection;
@@ -37,7 +37,7 @@ public class QueryTask {
 	public String sortOrder;
 
 	/**
-	 * Used for {@link SongTimeline#addSongs(android.content.Context, QueryTask)}.
+	 * Used for {@link SongTimeline#addSongs(android.content.Context, OBSOLETED_QueryTask)}.
 	 * One of SongTimeline.MODE_*.
 	 */
 	public int mode;
@@ -57,7 +57,7 @@ public class QueryTask {
 	 * Create the tasks. All arguments are passed directly to
 	 * ContentResolver.query().
 	 */
-	public QueryTask(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
+	public OBSOLETED_QueryTask(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
 	{
 		this.uri = uri;
 		this.projection = projection;

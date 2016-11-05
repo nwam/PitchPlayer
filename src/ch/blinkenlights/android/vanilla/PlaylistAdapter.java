@@ -164,7 +164,7 @@ public class PlaylistAdapter extends CursorAdapter implements Handler.Callback {
 	 */
 	private Cursor runQuery(ContentResolver resolver)
 	{
-		QueryTask query = MediaUtils.buildPlaylistQuery(mPlaylistId, PROJECTION, null);
+		OBSOLETED_QueryTask query = MediaUtils.buildPlaylistQuery(mPlaylistId, PROJECTION, null);
 		return query.runQuery(resolver);
 	}
 

@@ -382,7 +382,7 @@ public class LibraryActivity
 		if (id == LibraryAdapter.HEADER_ID)
 			all = true; // page header was clicked -> force all mode
 
-		QueryTask query = buildQueryFromIntent(intent, false, (all ? (MediaAdapter)mCurrentAdapter : null));
+		OBSOLETED_QueryTask query = buildQueryFromIntent(intent, false, (all ? (MediaAdapter)mCurrentAdapter : null));
 		query.mode = modeForAction[mode];
 		PlaybackService.get(this).addSongs(query);
 

@@ -1474,7 +1474,7 @@ public final class PlaybackService extends Service
 	/**
 	 * Run the given query and add the results to the timeline.
 	 *
-	 * obj is the QueryTask. arg1 is the add mode (one of SongTimeline.MODE_*)
+	 * obj is the OBSOLETED_QueryTask. arg1 is the add mode (one of SongTimeline.MODE_*)
 	 */
 	private static final int MSG_QUERY = 2;
 	/**
@@ -1522,7 +1522,7 @@ public final class PlaybackService extends Service
 			processSong((Song)message.obj);
 			break;
 		case MSG_QUERY:
-			runQuery((QueryTask)message.obj);
+			runQuery((OBSOLETED_QueryTask)message.obj);
 			break;
 		case MSG_IDLE_TIMEOUT:
 			if ((mState & FLAG_PLAYING) != 0) {
@@ -1751,7 +1751,7 @@ public final class PlaybackService extends Service
 	 *
 	 * @param query The query to run.
 	 */
-	public void runQuery(QueryTask query)
+	public void runQuery(OBSOLETED_QueryTask query)
 	{
 		int count = mTimeline.addSongs(this, query);
 
@@ -1783,7 +1783,7 @@ public final class PlaybackService extends Service
 	 *
 	 * @param query The query.
 	 */
-	public void addSongs(QueryTask query)
+	public void addSongs(OBSOLETED_QueryTask query)
 	{
 		mHandler.sendMessage(mHandler.obtainMessage(MSG_QUERY, query));
 	}
@@ -1820,7 +1820,7 @@ public final class PlaybackService extends Service
 		}
 
 		String selection = "_id!=" + song.id;
-		QueryTask query = MediaUtils.buildQuery(type, id, Song.FILLED_PROJECTION, selection);
+		OBSOLETED_QueryTask query = MediaUtils.buildQuery(type, id, Song.FILLED_PROJECTION, selection);
 		query.mode = SongTimeline.MODE_FLUSH_AND_PLAY_NEXT;
 		addSongs(query);
 	}

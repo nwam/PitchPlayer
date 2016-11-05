@@ -109,7 +109,7 @@ public class PlayCountsHelper extends SQLiteOpenHelper {
 	private int performGC(int type) {
 		SQLiteDatabase dbh      = getWritableDatabase();
 		ArrayList<Long> toCheck = new ArrayList<Long>(); // List of songs we are going to check
-		QueryTask query;                                 // Reused query object
+		OBSOLETED_QueryTask query;                                 // Reused query object
 		Cursor cursor;                                   // recycled cursor
 		int removed = 0;                                 // Amount of removed items
 

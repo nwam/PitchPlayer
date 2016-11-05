@@ -85,7 +85,7 @@ public class AudioPickerActivity extends PlaybackActivity {
 	public void onClick(View view)
 	{
 		int mode;
-		QueryTask query;
+		OBSOLETED_QueryTask query;
 
 		switch(view.getId()) {
 			case R.id.play:
