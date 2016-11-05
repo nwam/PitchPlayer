@@ -24,6 +24,7 @@ public class MediaLibrary  {
 
 	public static final String TRACKS_TABLE = "tracks";
 	public static final String ALBUMS_TABLE = "albums";
+	public static final String CONTRIBUTORS_TABLE = "contributors";
 
 	private static MediaLibraryBackend sBackend;
 
@@ -130,6 +131,22 @@ public class MediaLibrary  {
 		 * The contributor / artist reference for this album
 		 */
 		public static final String CONTRIBUTOR = "contributor";
+	}
+
+	// Columns of Contributors entries
+	public interface ContributorColumns {
+		/**
+		 * The id of this contributor
+		 */
+		public static final String _ID = TrackColumns._ID;
+		/**
+		 * The name of this contributor
+		 */
+		public static final String LABEL = TrackColumns.LABEL;
+		/**
+		 * The sortable title of this contributor
+		 */
+		public static final String LABEL_SORT = TrackColumns.LABEL_SORT;
 	}
 
 }

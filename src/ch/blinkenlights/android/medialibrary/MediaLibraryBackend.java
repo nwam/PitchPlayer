@@ -62,6 +62,14 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	  + MediaLibrary.AlbumColumns.DISC_COUNT  +" INTEGER, "
 	  + MediaLibrary.AlbumColumns.CONTRIBUTOR +" INTEGER NOT NULL DEFAULT 0"
 	  + ");";
+	/**
+	 * SQL Schema of `contributors' table
+	 */
+	private static final String DATABASE_CREATE_CONTRIBUTORS = "CREATE TABLE "+ MediaLibrary.CONTRIBUTORS_TABLE + " ("
+	  + MediaLibrary.ContributorColumns._ID   +" INTEGER PRIMARY KEY, "
+	  + MediaLibrary.ContributorColumns.LABEL +" TEXT NOT NULL, "
+	  + MediaLibrary.ContributorColumns.LABEL_SORT +" TEXT NOT NULL "
+	  + ");";
 
 	/**
 	* @desc Constructor for the MediaLibraryBackend helper
@@ -77,6 +85,7 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase dbh) {
 		dbh.execSQL(DATABASE_CREATE_TRACKS);
 		dbh.execSQL(DATABASE_CREATE_ALBUMS);
+		dbh.execSQL(DATABASE_CREATE_CONTRIBUTORS);
 		//dbh.execSQL(INDEX_UNIQUE_CREATE);
 		//dbh.execSQL(INDEX_TYPE_CREATE);
 	}
