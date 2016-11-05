@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>. 
  */
 
-package ch.blinkenlights.android.vanilla;
+package ch.blinkenlights.android.medialibrary;
 
 import android.content.Context;
 import android.content.ContentResolver;
@@ -25,7 +25,7 @@ import android.database.Cursor;
 import android.util.Log;
 import java.util.ArrayList;
 
-public class MediaLibrary extends SQLiteOpenHelper {
+public class MediaLibraryBackend extends SQLiteOpenHelper {
 
 	/**
 	 * SQL constants and CREATE TABLE statements used by
@@ -33,17 +33,21 @@ public class MediaLibrary extends SQLiteOpenHelper {
 	 */
 	private static final int DATABASE_VERSION = 1;
 	private static final String DATABASE_NAME = "media-library.db";
-	private static final String TABLE_TRACKS = "tracks";
-	private static final String DATABASE_CREATE = "CREATE TABLE "+TABLE_TRACKS + " ("
-	  + "`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT, "
-	  + "`label` TEXT, "
-	  + "`label_sort` VARCHAR(64) "
+
+	/**
+	 * SQL Schema of `tracks' table
+	 */
+	private static final String DATABASE_CREATE = "CREATE TABLE "+ MediaLibrary.TRACKS_TABLE + " ("
+	  + MediaLibrary.TrackColumns.TRACK_ID   +" INT(10) UNSIGNED NOT NULL AUTO_INCREMENT, "
+	  + MediaLibrary.TrackColumns.LABEL      +" TEXT NOT NULL, "
+	  + MediaLibrary.TrackColumns.LABEL_SORT +" VARCHAR(64) NOT NULL, "
+	  + MediaLibrary.TrackColumns.ALBUM_ID   +" INT(10) UNSIGNED NOT NULL"
 	  + ";";
 
 	/**
-	* @desc Constructor for the playcounts helper
+	* @desc Constructor for the MediaLibraryBackend helper
 	*/
-	public MediaLibrary(Context context) {
+	public MediaLibraryBackend(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
 
