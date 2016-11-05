@@ -22,9 +22,9 @@ import android.database.Cursor;
 
 public class MediaLibrary  {
 
-	public static final String TRACKS_TABLE = "tracks";
-	public static final String ALBUMS_TABLE = "albums";
-	public static final String CONTRIBUTORS_TABLE = "contributors";
+	public static final String TABLE_TRACKS = "tracks";
+	public static final String TABLE_ALBUMS = "albums";
+	public static final String TABLE_CONTRIBUTORS = "contributors";
 
 	private static MediaLibraryBackend sBackend;
 
@@ -45,7 +45,7 @@ public class MediaLibrary  {
 	 * Perform a media query on the database, returns a cursor
 	 *
 	 * @param context the context to use
-	 * @param table the table to query, one of MediaLibrary.*_TABLE
+	 * @param table the table to query, one of MediaLibrary.TABLE_*
 	 * @param projection the columns to returns in this query
 	 * @param selection the selection (WHERE) to use
 	 * @param selectionArgs arguments for the selection
