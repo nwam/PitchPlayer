@@ -18,6 +18,7 @@
 package ch.blinkenlights.android.medialibrary;
 
 import android.content.Context;
+import android.database.Cursor;
 
 public class MediaLibrary  {
 
@@ -39,8 +40,35 @@ public class MediaLibrary  {
 	}
 
 
-	public static void query(Context context) {
+	/**
+	 * Perform a media query on the database, returns a cursor
+	 *
+	 * @param context the context to use
+	 * @param table the table to query, one of MediaLibrary.*_TABLE
+	 * @param projection the columns to returns in this query
+	 * @param selection the selection (WHERE) to use
+	 * @param selectionArgs arguments for the selection
+	 * @param sortOrder how the result should be sorted
+	 */
+	public static Cursor queryLibrary(Context context, String table, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		MediaLibraryBackend be = getBackend(context);
+		return null;
+	}
+
+	/**
+	 * Returns true if there are no songs in the database
+	 */
+	public static boolean isLibraryEmpty(Context context) {
+		// FIXME: IMPLEMENT THIS
+		return true;
+	}
+
+	/**
+	 * Returns true if we are currently scanning for media
+	 */
+	public static boolean isScannerRunning(Context context) {
+		// FIXME: IMPLEMENT THIS
+		return false;
 	}
 
 
