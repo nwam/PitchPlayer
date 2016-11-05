@@ -47,7 +47,6 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	  + MediaLibrary.TrackColumns.LABEL      +" TEXT NOT NULL, "
 	  + MediaLibrary.TrackColumns.LABEL_SORT +" VARCHAR(64) NOT NULL, "
 	  + MediaLibrary.TrackColumns.ALBUM_ID   +" INTEGER NOT NULL, "
-	  + MediaLibrary.TrackColumns.ARTIST_ID  +" INTEGER NOT NULL, "
 	  + MediaLibrary.TrackColumns.PLAYCOUNT  +" INTEGER NOT NULL DEFAULT 0, "
 	  + MediaLibrary.TrackColumns.SKIPCOUNT  +" INTEGER NOT NULL DEFAULT 0, "
 	  + MediaLibrary.TrackColumns.PATH       +" VARCHAR(4096) NOT NULL "
@@ -104,7 +103,7 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	protected void pushDebugData() {
 		SQLiteDatabase dbh = getWritableDatabase();
 		for(int i=0; i<64;i++) {
-			dbh.execSQL("INSERT INTO "+MediaLibrary.TRACKS_TABLE+" VALUES(NULL, 'foobar"+i+"', 'fbx', 0, 0, 0, 0, '/example/song');");
+			dbh.execSQL("INSERT INTO "+MediaLibrary.TRACKS_TABLE+" VALUES(NULL, 'foobar"+i+"', 'fbx', 0, 0, 0, '/example/song');");
 			dbh.execSQL("INSERT INTO "+MediaLibrary.ALBUMS_TABLE+" VALUES(NULL, 'album "+i+"', 'abx', 0, 0, 0);");
 			Log.v(TAG, "Inserting fake song "+i);
 		}
