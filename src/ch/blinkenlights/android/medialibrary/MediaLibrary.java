@@ -49,7 +49,7 @@ public class MediaLibrary  {
 		/**
 		 * The id of this track in the database
 		 */
-		public static final String TRACK_ID = "track_id";
+		public static final String _ID = "id";
 		/**
 		 * The title of this track
 		 */
@@ -81,7 +81,7 @@ public class MediaLibrary  {
 		/**
 		 * The id of this album in the database
 		 */
-		public static final String ALBUM_ID = TrackColumns.ALBUM_ID;
+		public static final String _ID = TrackColumns._ID;
 		/**
 		 * The title of this album
 		 */

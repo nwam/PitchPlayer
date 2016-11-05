@@ -42,14 +42,25 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	/**
 	 * SQL Schema of `tracks' table
 	 */
-	private static final String DATABASE_CREATE = "CREATE TABLE "+ MediaLibrary.TRACKS_TABLE + " ("
-	  + MediaLibrary.TrackColumns.TRACK_ID   +" INTEGER PRIMARY KEY, "
+	private static final String DATABASE_CREATE_TRACKS = "CREATE TABLE "+ MediaLibrary.TRACKS_TABLE + " ("
+	  + MediaLibrary.TrackColumns._ID        +" INTEGER PRIMARY KEY, "
 	  + MediaLibrary.TrackColumns.LABEL      +" TEXT NOT NULL, "
 	  + MediaLibrary.TrackColumns.LABEL_SORT +" VARCHAR(64) NOT NULL, "
 	  + MediaLibrary.TrackColumns.ALBUM_ID   +" INTEGER NOT NULL, "
 	  + MediaLibrary.TrackColumns.PLAYCOUNT  +" INTEGER NOT NULL DEFAULT 0, "
 	  + MediaLibrary.TrackColumns.SKIPCOUNT  +" INTEGER NOT NULL DEFAULT 0, "
 	  + MediaLibrary.TrackColumns.PATH       +" VARCHAR(4096) NOT NULL "
+	  + ");";
+	/**
+	 * SQL Schema of `albums' table
+	 */
+	private static final String DATABASE_CREATE_ALBUMS = "CREATE TABLE "+ MediaLibrary.ALBUMS_TABLE + " ("
+	  + MediaLibrary.AlbumColumns._ID         +" INTEGER PRIMARY KEY, "
+	  + MediaLibrary.AlbumColumns.LABEL       +" TEXT NOT NULL, "
+	  + MediaLibrary.AlbumColumns.LABEL_SORT  +" VARCHAR(64) NOT NULL, "
+	  + MediaLibrary.AlbumColumns.DISC_NUMBER +" INTEGER, "
+	  + MediaLibrary.AlbumColumns.DISC_COUNT  +" INTEGER, "
+	  + MediaLibrary.AlbumColumns.CONTRIBUTOR +" INTEGER NOT NULL DEFAULT 0"
 	  + ");";
 
 	/**
@@ -64,7 +75,8 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	 */
 	@Override
 	public void onCreate(SQLiteDatabase dbh) {
-		dbh.execSQL(DATABASE_CREATE);
+		dbh.execSQL(DATABASE_CREATE_TRACKS);
+		dbh.execSQL(DATABASE_CREATE_ALBUMS);
 		//dbh.execSQL(INDEX_UNIQUE_CREATE);
 		//dbh.execSQL(INDEX_TYPE_CREATE);
 	}
@@ -84,6 +96,7 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 		SQLiteDatabase dbh = getWritableDatabase();
 		for(int i=0; i<64;i++) {
 			dbh.execSQL("INSERT INTO "+MediaLibrary.TRACKS_TABLE+" VALUES(NULL, 'foobar"+i+"', 'fbx', 0, 0, 0, '/example/song');");
+			dbh.execSQL("INSERT INTO "+MediaLibrary.ALBUMS_TABLE+" VALUES(NULL, 'album "+i+"', 'abx', 0, 0, 0);");
 			Log.v(TAG, "Inserting fake song "+i);
 		}
 		dbh.close();
