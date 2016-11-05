@@ -52,7 +52,7 @@ public class MediaLibrary  {
 	 */
 	public static Cursor queryLibrary(Context context, String table, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		MediaLibraryBackend be = getBackend(context);
-		return null;
+		return getBackend(context).runRawQuery("SELECT id, id, label, id FROM albums;");
 	}
 
 	/**

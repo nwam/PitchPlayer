@@ -71,7 +71,7 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * @desc Called when database does not exist
+	 * Called when database does not exist
 	 */
 	@Override
 	public void onCreate(SQLiteDatabase dbh) {
@@ -82,11 +82,19 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * @desc Called when the existing database
+	 * Called when the existing database
 	 * schema is outdated
 	 */
 	@Override
 	public void onUpgrade(SQLiteDatabase dbh, int oldVersion, int newVersion) {
+	}
+
+	/**
+	 * Runs a raw sql query without any checks
+	 */
+	public Cursor runRawQuery(String sql) {
+		SQLiteDatabase dbh = getReadableDatabase();
+		return dbh.rawQuery(sql, null);
 	}
 
 	/**

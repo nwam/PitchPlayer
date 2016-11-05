@@ -296,12 +296,15 @@ public class MediaAdapter
 	 * @param forceMusicCheck Force the is_music check to be added to the
 	 * selection.
 	 */
-	private OBSOLETED_QueryTask buildQuery(String[] projection, boolean returnSongs)
+	private QueryTask buildQuery(String[] projection, boolean returnSongs) {
+		QueryTask query = new QueryTask(MediaLibrary.ALBUMS_TABLE, new String[]{MediaLibrary.AlbumColumns._ID, MediaLibrary.AlbumColumns.LABEL}, null, null, null);
+		return query;
+	}
+
+	private OBSOLETED_QueryTask OBSOLETED_buildQuery(String[] projection, boolean returnSongs)
 	{
 		String constraint = mConstraint;
 		Limiter limiter = mLimiter;
-
-		MediaLibrary.query(mContext);
 
 		StringBuilder selection = new StringBuilder();
 		String[] selectionArgs = null;
@@ -407,7 +410,12 @@ public class MediaAdapter
 	@Override
 	public Cursor query()
 	{
-		return buildQuery(mProjection, false).runQuery(mContext.getContentResolver());
+		if (mType == MediaUtils.TYPE_ALBUM) {
+			return buildQuery(mProjection, false).runQuery(mContext);
+		}
+		else {
+			return OBSOLETED_buildQuery(mProjection, false).runQuery(mContext.getContentResolver());
+		}
 	}
 
 	@Override
@@ -424,7 +432,7 @@ public class MediaAdapter
 	 */
 	public OBSOLETED_QueryTask buildSongQuery(String[] projection)
 	{
-		OBSOLETED_QueryTask query = buildQuery(projection, true);
+		OBSOLETED_QueryTask query = OBSOLETED_buildQuery(projection, true);
 		query.type = mType;
 		return query;
 	}
