@@ -558,7 +558,7 @@ public class LibraryActivity
 		ContentResolver resolver = getContentResolver();
 		Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 		String[] projection = new String[] { MediaStore.Audio.Media.ARTIST_ID, MediaStore.Audio.Media.ALBUM_ID, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM };
-		Cursor cursor = MediaUtils.queryResolver(resolver, uri, projection, selection, null, null);
+		Cursor cursor = MediaUtils.OBSOLETED_queryResolver(resolver, uri, projection, selection, null, null);
 		if (cursor != null) {
 			if (cursor.moveToNext()) {
 				String[] fields;

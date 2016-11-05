@@ -125,7 +125,7 @@ public class AudioPickerActivity extends PlaybackActivity {
 		Cursor cursor = null;
 
 		if (uri.getScheme().equals("content"))
-			cursor = MediaUtils.queryResolver(getContentResolver(), uri, Song.FILLED_PROJECTION, null, null, null);
+			cursor = MediaUtils.OBSOLETED_queryResolver(getContentResolver(), uri, Song.FILLED_PROJECTION, null, null, null);
 		if (uri.getScheme().equals("file"))
 			cursor = MediaUtils.getCursorForFileQuery(uri.getPath());
 

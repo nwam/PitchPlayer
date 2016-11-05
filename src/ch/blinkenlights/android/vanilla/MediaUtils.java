@@ -32,6 +32,8 @@ import java.util.Random;
 import java.util.Vector;
 import java.util.zip.CRC32;
 
+import android.util.Log;
+
 import junit.framework.Assert;
 
 import android.content.ActivityNotFoundException;
@@ -350,7 +352,7 @@ public class MediaUtils {
 	{
 		String[] projection = { "_id" };
 		Uri uri = MediaStore.Audio.Genres.getContentUriForAudioId("external", (int)id);
-		Cursor cursor = queryResolver(resolver, uri, projection, null, null, null);
+		Cursor cursor = OBSOLETED_queryResolver(resolver, uri, projection, null, null, null);
 
 		if (cursor != null) {
 			if (cursor.moveToNext())
@@ -439,7 +441,7 @@ public class MediaUtils {
 			Uri media = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 			String selection = MediaStore.Audio.Media.IS_MUSIC;
 			selection += " AND length(_data)";
-			Cursor cursor = queryResolver(resolver, media, new String[]{"count(_id)"}, selection, null, null);
+			Cursor cursor = OBSOLETED_queryResolver(resolver, media, new String[]{"count(_id)"}, selection, null, null);
 			if (cursor == null) {
 				sSongCount = 0;
 			} else {
@@ -463,7 +465,7 @@ public class MediaUtils {
 		Uri media = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 		String selection = MediaStore.Audio.Media.IS_MUSIC;
 		selection += " AND length(_data)";
-		Cursor cursor = queryResolver(resolver, media, Song.EMPTY_PROJECTION, selection, null, null);
+		Cursor cursor = OBSOLETED_queryResolver(resolver, media, Song.EMPTY_PROJECTION, selection, null, null);
 		if (cursor == null || cursor.getCount() == 0) {
 			sSongCount = 0;
 			return null;
@@ -497,8 +499,12 @@ public class MediaUtils {
 	 *
 	 * @return a cursor or null
 	 */
-	public static Cursor queryResolver(ContentResolver resolver, Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
+	public static Cursor OBSOLETED_queryResolver(ContentResolver resolver, Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
 	{
+	Log.v("VanillaMusic", "FIXME: OBSOLETE FUNCTION USE!");
+	Log.v("VanillaMusic", ">>> OBSOLETED_queryResolver "+resolver+", uri="+uri);
+	for (String x : projection) { Log.v("VanillaMusic", " --> "+x); }
+	Log.v("VanillaMusic", "Selection = "+selection);
 		Cursor cursor = null;
 		try {
 			cursor = resolver.query(uri, projection, selection, selectionArgs, sortOrder);

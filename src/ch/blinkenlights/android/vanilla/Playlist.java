@@ -48,7 +48,7 @@ public class Playlist {
 		Uri media = MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI;
 		String[] projection = { MediaStore.Audio.Playlists._ID, MediaStore.Audio.Playlists.NAME };
 		String sort = MediaStore.Audio.Playlists.NAME;
-		return MediaUtils.queryResolver(resolver, media, projection, null, null, sort);
+		return MediaUtils.OBSOLETED_queryResolver(resolver, media, projection, null, null, sort);
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class Playlist {
 	{
 		long id = -1;
 
-		Cursor cursor = MediaUtils.queryResolver(resolver, MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
+		Cursor cursor = MediaUtils.OBSOLETED_queryResolver(resolver, MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
 			new String[] { MediaStore.Audio.Playlists._ID },
 			MediaStore.Audio.Playlists.NAME + "=?",
 			new String[] { name }, null);
@@ -147,7 +147,7 @@ public class Playlist {
 		// Find the greatest PLAY_ORDER in the playlist
 		Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId);
 		String[] projection = new String[] { MediaStore.Audio.Playlists.Members.PLAY_ORDER };
-		Cursor cursor = MediaUtils.queryResolver(resolver, uri, projection, null, null, null);
+		Cursor cursor = MediaUtils.OBSOLETED_queryResolver(resolver, uri, projection, null, null, null);
 		int base = 0;
 		if (cursor.moveToLast())
 			base = cursor.getInt(0) + 1;

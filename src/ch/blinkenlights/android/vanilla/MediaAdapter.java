@@ -23,6 +23,8 @@
 
 package ch.blinkenlights.android.vanilla;
 
+import ch.blinkenlights.android.medialibrary.MediaLibrary;
+
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -298,6 +300,8 @@ public class MediaAdapter
 	{
 		String constraint = mConstraint;
 		Limiter limiter = mLimiter;
+
+		MediaLibrary.query(mContext);
 
 		StringBuilder selection = new StringBuilder();
 		String[] selectionArgs = null;
