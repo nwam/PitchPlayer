@@ -17,10 +17,32 @@
 
 package ch.blinkenlights.android.medialibrary;
 
+import android.content.Context;
+
 public class MediaLibrary  {
 
 	public static final String TRACKS_TABLE = "tracks";
 	public static final String ALBUMS_TABLE = "albums";
+
+	private static MediaLibraryBackend sBackend;
+
+	private static MediaLibraryBackend getBackend(Context context) {
+		if (sBackend == null) {
+			// -> unlikely
+//			synchronized(sLock) {
+				if (sBackend == null)
+					sBackend = new MediaLibraryBackend(context);
+					sBackend.pushDebugData();
+//			}
+		}
+		return sBackend;
+	}
+
+
+	public static void query(Context context) {
+		MediaLibraryBackend be = getBackend(context);
+	}
+
 
 	// Columns of Track entries
 	public interface TrackColumns {

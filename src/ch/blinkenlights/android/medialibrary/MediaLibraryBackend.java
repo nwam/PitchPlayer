@@ -35,17 +35,22 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	private static final String DATABASE_NAME = "media-library.db";
 
 	/**
+	 * The tag to use for log messages
+	 */
+	private static final String TAG = "VanillaMediaLibraryBackend";
+
+	/**
 	 * SQL Schema of `tracks' table
 	 */
 	private static final String DATABASE_CREATE = "CREATE TABLE "+ MediaLibrary.TRACKS_TABLE + " ("
-	  + MediaLibrary.TrackColumns.TRACK_ID   +" INT(10) UNSIGNED NOT NULL AUTO_INCREMENT, "
+	  + MediaLibrary.TrackColumns.TRACK_ID   +" INTEGER PRIMARY KEY, "
 	  + MediaLibrary.TrackColumns.LABEL      +" TEXT NOT NULL, "
 	  + MediaLibrary.TrackColumns.LABEL_SORT +" VARCHAR(64) NOT NULL, "
-	  + MediaLibrary.TrackColumns.ALBUM_ID   +" INT(10) UNSIGNED NOT NULL, "
-	  + MediaLibrary.TrackColumns.PLAYCOUNT  + "INT(10) UNSIGNED NOT NULL, "
-	  + MediaLibrary.TrackColumns.SKIPCOUNT  + "INT(10) UNSIGNED NOT NULL, "
-	  + MediaLibrary.TrackColumns.PATH       + "VARCHAR(4096) NOT NULL "
-	  + ";";
+	  + MediaLibrary.TrackColumns.ALBUM_ID   +" INTEGER NOT NULL, "
+	  + MediaLibrary.TrackColumns.PLAYCOUNT  +" INTEGER NOT NULL DEFAULT 0, "
+	  + MediaLibrary.TrackColumns.SKIPCOUNT  +" INTEGER NOT NULL DEFAULT 0, "
+	  + MediaLibrary.TrackColumns.PATH       +" VARCHAR(4096) NOT NULL "
+	  + ");";
 
 	/**
 	* @desc Constructor for the MediaLibraryBackend helper
@@ -72,4 +77,15 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	public void onUpgrade(SQLiteDatabase dbh, int oldVersion, int newVersion) {
 	}
 
+	/**
+	 * Populate database with fake data
+	 */
+	protected void pushDebugData() {
+		SQLiteDatabase dbh = getWritableDatabase();
+		for(int i=0; i<64;i++) {
+			dbh.execSQL("INSERT INTO "+MediaLibrary.TRACKS_TABLE+" VALUES(NULL, 'foobar"+i+"', 'fbx', 0, 0, 0, '/example/song');");
+			Log.v(TAG, "Inserting fake song "+i);
+		}
+		dbh.close();
+	}
 }
