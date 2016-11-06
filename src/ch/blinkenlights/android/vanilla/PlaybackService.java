@@ -1522,7 +1522,7 @@ public final class PlaybackService extends Service
 			processSong((Song)message.obj);
 			break;
 		case MSG_QUERY:
-			runQuery((OBSOLETED_QueryTask)message.obj);
+			runQuery((QueryTask)message.obj);
 			break;
 		case MSG_IDLE_TIMEOUT:
 			if ((mState & FLAG_PLAYING) != 0) {
@@ -1751,7 +1751,7 @@ public final class PlaybackService extends Service
 	 *
 	 * @param query The query to run.
 	 */
-	public void runQuery(OBSOLETED_QueryTask query)
+	public void runQuery(QueryTask query)
 	{
 		int count = mTimeline.addSongs(this, query);
 
@@ -1783,9 +1783,13 @@ public final class PlaybackService extends Service
 	 *
 	 * @param query The query.
 	 */
-	public void addSongs(OBSOLETED_QueryTask query)
+	public void addSongs(QueryTask query)
 	{
 		mHandler.sendMessage(mHandler.obtainMessage(MSG_QUERY, query));
+	}
+
+	public void addSongs(OBSOLETED_QueryTask q) {
+		// FIXME OBSOLETED -> KILL ME
 	}
 
 	/**

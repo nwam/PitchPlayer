@@ -187,7 +187,8 @@ public class SlidingPlaybackActivity extends PlaybackActivity
 			action = MSG_ADD_QUEUE_TO_PLAYLIST;
 		} else {
 			// we got a source intent: build the query here
-			playlistTask.query = buildQueryFromIntent(data.sourceIntent, true, data.allSource);
+//			playlistTask.query = buildQueryFromIntent(data.sourceIntent, true, data.allSource);
+// FIXME OBSOLETED
 			action = MSG_ADD_TO_PLAYLIST;
 		}
 		if (playlistTask.playlistId < 0) {
@@ -231,7 +232,7 @@ public class SlidingPlaybackActivity extends PlaybackActivity
 	 * @param empty If true, use the empty projection (only query id).
 	 * @param allSource use this mediaAdapter to queue all hold items
 	 */
-	protected OBSOLETED_QueryTask buildQueryFromIntent(Intent intent, boolean empty, MediaAdapter allSource)
+	protected QueryTask buildQueryFromIntent(Intent intent, boolean empty, MediaAdapter allSource)
 	{
 		int type = intent.getIntExtra("type", MediaUtils.TYPE_INVALID);
 
@@ -242,16 +243,18 @@ public class SlidingPlaybackActivity extends PlaybackActivity
 			projection = empty ? Song.EMPTY_PROJECTION : Song.FILLED_PROJECTION;
 
 		long id = intent.getLongExtra("id", LibraryAdapter.INVALID_ID);
-		OBSOLETED_QueryTask query;
+		QueryTask query;
 		if (type == MediaUtils.TYPE_FILE) {
-			query = MediaUtils.buildFileQuery(intent.getStringExtra("file"), projection);
-		} else if (allSource != null) {
-//			query = allSource.buildSongQuery(projection);
+//			query = MediaUtils.buildFileQuery(intent.getStringExtra("file"), projection);
 // FIXME OBSOLETED
 query = null;
+		} else if (allSource != null) {
+			query = allSource.buildSongQuery(projection);
 			query.data = id;
 		} else {
-			query = MediaUtils.buildQuery(type, id, projection, null);
+//			query = MediaUtils.buildQuery(type, id, projection, null);
+// FIXME OBSOLETED
+query = null;
 		}
 
 		return query;
