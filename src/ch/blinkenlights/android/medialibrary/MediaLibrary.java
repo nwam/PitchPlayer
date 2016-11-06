@@ -144,7 +144,7 @@ public class MediaLibrary  {
 		/**
 		 * The primary contributor / artist reference for this album
 		 */
-		public static final String CONTRIBUTOR_ID = "contributor_id";
+		public static final String CONTRIBUTOR_ID = "album_primary_contributor_id";
 	}
 
 	// Columns of Contributors entries
