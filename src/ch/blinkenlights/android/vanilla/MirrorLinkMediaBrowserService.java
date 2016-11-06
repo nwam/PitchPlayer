@@ -324,9 +324,7 @@ public class MirrorLinkMediaBrowserService extends MediaBrowserService
 			query.data = parent.mId;
 			query.mode = SongTimeline.MODE_PLAY_ID_FIRST;
 		} else {
-//			query = MediaUtils.buildQuery(parent.mType, parent.mId, projection, null);
-// FIXME OBSOLETED
-query = null;
+			query = MediaUtils.buildQuery(parent.mType, parent.mId, projection, null);
 			query.mode = SongTimeline.MODE_PLAY;
 		}
 
@@ -529,8 +527,7 @@ query = null;
 			setSessionActive();
 			if(PlaybackService.hasInstance()) {
 				QueryTask query = buildQueryFromMediaID(new MediaID((String)message.obj), false, true);
-// FIXME OBSOLETED
-//				PlaybackService.get(MirrorLinkMediaBrowserService.this).addSongs(query);
+				PlaybackService.get(MirrorLinkMediaBrowserService.this).addSongs(query);
 			}
 		break;
 		case MSG_PAUSE:
