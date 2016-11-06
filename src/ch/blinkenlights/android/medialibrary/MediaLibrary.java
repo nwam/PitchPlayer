@@ -26,8 +26,9 @@ public class MediaLibrary  {
 	public static final String TABLE_ALBUMS               = "albums";
 	public static final String TABLE_CONTRIBUTORS         = "contributors";
 	public static final String TABLE_CONTRIBUTORS_TRACKS  = "contributors_tracks";
-	public static final String VIEW_TRACKS_ALBUMS_ARTISTS = "_tracks_albums_artists";
+	public static final String VIEW_ARTISTS               = "contributors"; // FIXME: THIS SHOULD GET ITS OWN VIEW!!
 	public static final String VIEW_ALBUMS_ARTISTS        = "_albums_artists";
+	public static final String VIEW_TRACKS_ALBUMS_ARTISTS = "_tracks_albums_artists";
 
 	private static MediaLibraryBackend sBackend;
 

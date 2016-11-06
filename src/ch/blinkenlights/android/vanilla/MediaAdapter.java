@@ -100,7 +100,11 @@ public class MediaAdapter
 	/**
 	 * The URI of the content provider backing this adapter.
 	 */
-	private Uri mStore;
+	private Uri OBSOLETED_mStore;
+	/**
+	 * The table / view to use for this query
+	 */
+	private String mSource;
 	/**
 	 * The fields to use from the content provider. The last field will be
 	 * displayed in the MediaView, as will the first field if there are
@@ -191,25 +195,25 @@ public class MediaAdapter
 
 		switch (type) {
 		case MediaUtils.TYPE_ARTIST:
-			mStore = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
-			mFields = new String[] { MediaStore.Audio.Artists.ARTIST };
+			mSource = MediaLibrary.VIEW_ARTISTS;
+			mFields = new String[] { MediaLibrary.ContributorColumns.CONTRIBUTOR };
 			mFieldKeys = new String[] { MediaStore.Audio.Artists.ARTIST_KEY };
 			mSortEntries = new int[] { R.string.name, R.string.number_of_tracks };
 			mAdapterSortValues = new String[] { "artist_key %1$s", "number_of_tracks %1$s,artist_key %1$s" };
 			mSongSortValues = new String[] { "artist_key %1$s,track", "artist_key %1$s,track" /* cannot sort by number_of_tracks */ };
 			break;
 		case MediaUtils.TYPE_ALBUM:
-			mFields = new String[] { MediaLibrary.AlbumColumns.ALBUM, MediaLibrary.AlbumColumns.ALBUM /* <- fixme: should be artist */ };
-			// Why is there no artist_key column constant in the album MediaStore? The column does seem to exist.
-			mFieldKeys = new String[] { MediaStore.Audio.Albums.ALBUM_KEY, "artist_key" };
+			mSource = MediaLibrary.VIEW_ALBUMS_ARTISTS;
+			mFields = new String[] { MediaLibrary.AlbumColumns.ALBUM, MediaLibrary.ContributorColumns.CONTRIBUTOR };
+			//mFieldKeys = new String[] { MediaStore.Audio.Albums.ALBUM_KEY, "artist_key" };
 			mSortEntries = new int[] { R.string.name, R.string.artist_album, R.string.artist_year_album, R.string.number_of_tracks, R.string.date_added };
 			mAdapterSortValues = new String[] { "album_key %1$s", "artist_key %1$s,album_key %1$s", "artist_key %1$s,minyear %1$s,album_key %1$s", "numsongs %1$s,album_key %1$s", "_id %1$s" };
 			mSongSortValues = new String[] { "album_key %1$s,track", "artist_key %1$s,album_key %1$s,track", "artist_key %1$s,year %1$s,album_key %1$s,track", "album_key %1$s,track", "album_id %1$s,track" };
 			break;
 		case MediaUtils.TYPE_SONG:
-			mStore = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-			mFields = new String[] { MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ARTIST };
-			mFieldKeys = new String[] { MediaStore.Audio.Media.TITLE_KEY, MediaStore.Audio.Media.ALBUM_KEY, MediaStore.Audio.Media.ARTIST_KEY };
+			mSource = MediaLibrary.VIEW_TRACKS_ALBUMS_ARTISTS;
+			mFields = new String[] { MediaLibrary.TrackColumns.TITLE, MediaLibrary.AlbumColumns.ALBUM, MediaLibrary.ContributorColumns.CONTRIBUTOR };
+			//mFieldKeys = new String[] { MediaStore.Audio.Media.TITLE_KEY, MediaStore.Audio.Media.ALBUM_KEY, MediaStore.Audio.Media.ARTIST_KEY };
 			mSortEntries = new int[] { R.string.name, R.string.artist_album_track, R.string.artist_album_title,
 			                           R.string.artist_year_album, R.string.album_track,
 			                           R.string.year, R.string.date_added, R.string.song_playcount };
@@ -222,7 +226,7 @@ public class MediaAdapter
 			coverCacheKey = MediaStore.Audio.Albums.ALBUM_ID;
 			break;
 		case MediaUtils.TYPE_PLAYLIST:
-			mStore = MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI;
+			OBSOLETED_mStore = MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI;
 			mFields = new String[] { MediaStore.Audio.Playlists.NAME };
 			mFieldKeys = null;
 			mSortEntries = new int[] { R.string.name, R.string.date_added };
@@ -231,7 +235,7 @@ public class MediaAdapter
 			mExpandable = true;
 			break;
 		case MediaUtils.TYPE_GENRE:
-			mStore = MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI;
+			OBSOLETED_mStore = MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI;
 			mFields = new String[] { MediaStore.Audio.Genres.NAME };
 			mFieldKeys = null;
 			mSortEntries = new int[] { R.string.name };
@@ -296,7 +300,7 @@ public class MediaAdapter
 	 * selection.
 	 */
 	private QueryTask buildQuery(String[] projection, boolean returnSongs) {
-		QueryTask query = new QueryTask(MediaLibrary.TABLE_ALBUMS, projection, null, null, null);
+		QueryTask query = new QueryTask(mSource, projection, null, null, null);
 		return query;
 	}
 
@@ -399,7 +403,7 @@ public class MediaAdapter
 					selection.append(" AND ");
 				selection.append(limiter.data);
 			}
-			query = new OBSOLETED_QueryTask(mStore, enrichedProjection, selection.toString(), selectionArgs, sort);
+			query = new OBSOLETED_QueryTask(OBSOLETED_mStore, enrichedProjection, selection.toString(), selectionArgs, sort);
 			if (returnSongs) // force query on song provider as we are requested to return songs
 				query.uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 		}
@@ -409,7 +413,7 @@ public class MediaAdapter
 	@Override
 	public Cursor query()
 	{
-		if (mType == MediaUtils.TYPE_ALBUM) {
+		if (mType == MediaUtils.TYPE_SONG || mType == MediaUtils.TYPE_ARTIST || mType == MediaUtils.TYPE_ALBUM) {
 			return buildQuery(mProjection, false).runQuery(mContext);
 		}
 		else {

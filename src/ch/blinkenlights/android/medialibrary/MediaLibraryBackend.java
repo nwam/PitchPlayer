@@ -105,7 +105,6 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	  +" ON "+MediaLibrary.TABLE_CONTRIBUTORS+"."+MediaLibrary.ContributorColumns._ID+" = "+MediaLibrary.TABLE_ALBUMS+"."+MediaLibrary.AlbumColumns.CONTRIBUTOR_ID
 	  +" ;";
 
-
 	/**
 	* @desc Constructor for the MediaLibraryBackend helper
 	*/
@@ -124,8 +123,6 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 		dbh.execSQL(DATABASE_CREATE_CONTRIBUTORS_TRACKS);
 		dbh.execSQL(VIEW_CREATE_TRACKS_ALBUMS_ARTISTS);
 		dbh.execSQL(VIEW_CREATE_ALBUMS_ARTISTS);
-		//dbh.execSQL(INDEX_UNIQUE_CREATE);
-		//dbh.execSQL(INDEX_TYPE_CREATE);
 	}
 
 	/**
@@ -149,12 +146,12 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	 */
 	protected void pushDebugData() {
 		SQLiteDatabase dbh = getWritableDatabase();
-		dbh.execSQL("INSERT INTO contributors VALUES(NULL, 'Hans Wurst', 'Hans Wurst');");
+		//dbh.execSQL("INSERT INTO contributors VALUES(NULL, 'The wurst', 'Wurst');");
 
 		for(int i=0; i<64;i++) {
 			dbh.execSQL("INSERT INTO "+MediaLibrary.TABLE_TRACKS+" VALUES(NULL, 'foobar"+i+"', 'fbx', 2, 0, 0, '/example/song');");
 			dbh.execSQL("INSERT INTO "+MediaLibrary.TABLE_ALBUMS+" VALUES(NULL, 'album "+i+"', 'abx', 0, 0, 1);");
-			dbh.execSQL("INSERT INTO "+MediaLibrary.TABLE_CONTRIBUTORS_TRACKS+" VALUES(0, 1, "+i+");");
+		//	dbh.execSQL("INSERT INTO "+MediaLibrary.TABLE_CONTRIBUTORS_TRACKS+" VALUES(0, 1, "+i+");");
 			Log.v(TAG, "Inserting fake song "+i);
 		}
 		dbh.close();
