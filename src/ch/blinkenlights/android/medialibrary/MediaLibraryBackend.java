@@ -44,13 +44,14 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	 * SQL Schema of `tracks' table
 	 */
 	private static final String DATABASE_CREATE_TRACKS = "CREATE TABLE "+ MediaLibrary.TABLE_TRACKS + " ("
-	  + MediaLibrary.TrackColumns._ID        +" INTEGER PRIMARY KEY, "
-	  + MediaLibrary.TrackColumns.TITLE      +" TEXT NOT NULL, "
-	  + MediaLibrary.TrackColumns.TITLE_SORT +" VARCHAR(64) NOT NULL, "
-	  + MediaLibrary.TrackColumns.ALBUM_ID   +" INTEGER NOT NULL, "
-	  + MediaLibrary.TrackColumns.PLAYCOUNT  +" INTEGER NOT NULL DEFAULT 0, "
-	  + MediaLibrary.TrackColumns.SKIPCOUNT  +" INTEGER NOT NULL DEFAULT 0, "
-	  + MediaLibrary.TrackColumns.PATH       +" VARCHAR(4096) NOT NULL "
+	  + MediaLibrary.TrackColumns._ID          +" INTEGER PRIMARY KEY, "
+	  + MediaLibrary.TrackColumns.TITLE        +" TEXT NOT NULL, "
+	  + MediaLibrary.TrackColumns.TITLE_SORT   +" VARCHAR(64) NOT NULL, "
+	  + MediaLibrary.TrackColumns.TRACK_NUMBER +" INTEGER, "
+	  + MediaLibrary.TrackColumns.ALBUM_ID     +" INTEGER NOT NULL, "
+	  + MediaLibrary.TrackColumns.PLAYCOUNT    +" INTEGER NOT NULL DEFAULT 0, "
+	  + MediaLibrary.TrackColumns.SKIPCOUNT    +" INTEGER NOT NULL DEFAULT 0, "
+	  + MediaLibrary.TrackColumns.PATH         +" VARCHAR(4096) NOT NULL "
 	  + ");";
 
 	/**
@@ -60,6 +61,7 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	  + MediaLibrary.AlbumColumns._ID            +" INTEGER PRIMARY KEY, "
 	  + MediaLibrary.AlbumColumns.ALBUM          +" TEXT NOT NULL, "
 	  + MediaLibrary.AlbumColumns.ALBUM_SORT     +" VARCHAR(64) NOT NULL, "
+	  + MediaLibrary.AlbumColumns.TRACK_COUNT    +" INTEGER, "
 	  + MediaLibrary.AlbumColumns.DISC_NUMBER    +" INTEGER, "
 	  + MediaLibrary.AlbumColumns.DISC_COUNT     +" INTEGER, "
 	  + MediaLibrary.AlbumColumns.CONTRIBUTOR_ID +" INTEGER NOT NULL DEFAULT 0"

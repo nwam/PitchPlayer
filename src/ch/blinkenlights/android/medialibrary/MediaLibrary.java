@@ -90,6 +90,10 @@ public class MediaLibrary  {
 		 */
 		public static final String TITLE_SORT = "title_sort";
 		/**
+		 * The position in the album of this track
+		 */
+		public static final String TRACK_NUMBER = "track_num";
+		/**
 		 * The album where this track belongs to
 		 */
 		public static final String ALBUM_ID = "album_id";
@@ -121,6 +125,10 @@ public class MediaLibrary  {
 		 * The sortable title of this album
 		 */
 		public static final String ALBUM_SORT = "album_sort";
+		/**
+		 * How many tracks are on this album
+		 */
+		public static final String TRACK_COUNT = "track_count";
 		/**
 		 * The disc number of this album
 		 */
