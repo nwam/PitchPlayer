@@ -49,19 +49,19 @@ public class Song implements Comparable<Song> {
 
 
 	public static final String[] EMPTY_PROJECTION = {
-		MediaLibrary.TrackColumns._ID,
+		MediaLibrary.SongColumns._ID,
 	};
 
 	public static final String[] FILLED_PROJECTION = {
-		MediaLibrary.TrackColumns._ID,
-		MediaLibrary.TrackColumns.PATH,
-		MediaLibrary.TrackColumns.TITLE,
+		MediaLibrary.SongColumns._ID,
+		MediaLibrary.SongColumns.PATH,
+		MediaLibrary.SongColumns.TITLE,
 		MediaLibrary.AlbumColumns.ALBUM,
 		MediaLibrary.ContributorColumns.CONTRIBUTOR,
-		MediaLibrary.TrackColumns.ALBUM_ID,
+		MediaLibrary.SongColumns.ALBUM_ID,
 		MediaLibrary.AlbumColumns.CONTRIBUTOR_ID,
-		MediaLibrary.TrackColumns.DURATION,
-		MediaLibrary.TrackColumns.TRACK_NUMBER,
+		MediaLibrary.SongColumns.DURATION,
+		MediaLibrary.SongColumns.SONG_NUMBER,
 	};
 
 	public static final String[] EMPTY_PLAYLIST_PROJECTION = {

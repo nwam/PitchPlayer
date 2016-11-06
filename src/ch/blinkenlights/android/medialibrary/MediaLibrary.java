@@ -22,13 +22,13 @@ import android.database.Cursor;
 
 public class MediaLibrary  {
 
-	public static final String TABLE_TRACKS               = "tracks";
+	public static final String TABLE_SONGS                = "songs";
 	public static final String TABLE_ALBUMS               = "albums";
 	public static final String TABLE_CONTRIBUTORS         = "contributors";
-	public static final String TABLE_CONTRIBUTORS_TRACKS  = "contributors_tracks";
+	public static final String TABLE_CONTRIBUTORS_SONGS   = "contributors_songs";
 	public static final String VIEW_ARTISTS               = "contributors"; // FIXME: THIS SHOULD GET ITS OWN VIEW!!
 	public static final String VIEW_ALBUMS_ARTISTS        = "_albums_artists";
-	public static final String VIEW_TRACKS_ALBUMS_ARTISTS = "_tracks_albums_artists";
+	public static final String VIEW_SONGS_ALBUMS_ARTISTS  = "_songs_albums_artists";
 
 	private static MediaLibraryBackend sBackend;
 
@@ -71,38 +71,38 @@ public class MediaLibrary  {
 		return false;
 	}
 
-	// Columns of Track entries
-	public interface TrackColumns {
+	// Columns of Song entries
+	public interface SongColumns {
 		/**
-		 * The id of this track in the database
+		 * The id of this song in the database
 		 */
 		public static final String _ID = "_id";
 		/**
-		 * The title of this track
+		 * The title of this song
 		 */
 		public static final String TITLE = "title";
 		/**
-		 * The sortable title of this track
+		 * The sortable title of this song
 		 */
 		public static final String TITLE_SORT = "title_sort";
 		/**
-		 * The position in the album of this track
+		 * The position in the album of this song
 		 */
-		public static final String TRACK_NUMBER = "track_num";
+		public static final String SONG_NUMBER = "song_num";
 		/**
-		 * The album where this track belongs to
+		 * The album where this song belongs to
 		 */
 		public static final String ALBUM_ID = "album_id";
 		/**
-		 * How often the track was played
+		 * How often the song was played
 		 */
 		public static final String PLAYCOUNT = "playcount";
 		/**
-		 * How often the track was skipped
+		 * How often the song was skipped
 		 */
 		public static final String SKIPCOUNT = "skipcount";
 		/**
-		 * The duration of this track
+		 * The duration of this song
 		 */
 		public static final String DURATION = "duration";
 		/**
@@ -116,7 +116,7 @@ public class MediaLibrary  {
 		/**
 		 * The id of this album in the database
 		 */
-		public static final String _ID = TrackColumns._ID;
+		public static final String _ID = SongColumns._ID;
 		/**
 		 * The title of this album
 		 */
@@ -126,9 +126,9 @@ public class MediaLibrary  {
 		 */
 		public static final String ALBUM_SORT = "album_sort";
 		/**
-		 * How many tracks are on this album
+		 * How many songs are on this album
 		 */
-		public static final String TRACK_COUNT = "track_count";
+		public static final String SONG_COUNT = "song_count";
 		/**
 		 * The disc number of this album
 		 */
@@ -148,7 +148,7 @@ public class MediaLibrary  {
 		/**
 		 * The id of this contributor
 		 */
-		public static final String _ID = TrackColumns._ID;
+		public static final String _ID = SongColumns._ID;
 		/**
 		 * The name of this contributor
 		 */
@@ -159,8 +159,8 @@ public class MediaLibrary  {
 		public static final String CONTRIBUTOR_SORT = "contributor_sort";
 	}
 
-	// Tracks <-> Contributor mapping
-	public interface ContributorTrackColumns {
+	// Songs <-> Contributor mapping
+	public interface ContributorSongColumns {
 		/**
 		 * The role of this entry
 		 */
@@ -170,8 +170,8 @@ public class MediaLibrary  {
 		 */
 		public static final String CONTRIBUTOR_ID = "contributor_id";
 		/**
-		 * the track this maps to
+		 * the song this maps to
 		 */
-		public static final String TRACK_ID = "track_id";
+		public static final String SONG_ID = "song_id";
 	}
 }

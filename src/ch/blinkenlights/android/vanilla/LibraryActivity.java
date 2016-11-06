@@ -549,7 +549,7 @@ public class LibraryActivity
 
 	/**
 	 * Set a new limiter of the given type built from the first
-	 * MediaLibrary.VIEW_TRACKS_ALBUMS_ARTISTS row that matches the selection.
+	 * MediaLibrary.VIEW_SONGS_ALBUMS_ARTISTS row that matches the selection.
 	 *
 	 * @param limiterType The type of limiter to create. Must be either
 	 * MediaUtils.TYPE_ARTIST or MediaUtils.TYPE_ALBUM.
@@ -557,8 +557,8 @@ public class LibraryActivity
 	 */
 	private void setLimiter(int limiterType, String selection)
 	{
-		String[] projection = new String[] { MediaLibrary.ContributorTrackColumns.CONTRIBUTOR_ID, MediaLibrary.TrackColumns.ALBUM_ID, MediaLibrary.ContributorColumns.CONTRIBUTOR, MediaLibrary.AlbumColumns.ALBUM };
-		QueryTask query = new QueryTask(MediaLibrary.VIEW_TRACKS_ALBUMS_ARTISTS, projection, selection, null, null);
+		String[] projection = new String[] { MediaLibrary.ContributorSongColumns.CONTRIBUTOR_ID, MediaLibrary.SongColumns.ALBUM_ID, MediaLibrary.ContributorColumns.CONTRIBUTOR, MediaLibrary.AlbumColumns.ALBUM };
+		QueryTask query = new QueryTask(MediaLibrary.VIEW_SONGS_ALBUMS_ARTISTS, projection, selection, null, null);
 		Cursor cursor = query.runQuery(getApplicationContext());
 
 		if (cursor != null) {
@@ -572,7 +572,7 @@ public class LibraryActivity
 					break;
 				case MediaUtils.TYPE_ALBUM:
 					fields = new String[] { cursor.getString(2), cursor.getString(3) };
-					data = String.format(MediaLibrary.TrackColumns.ALBUM_ID+"=%d", cursor.getLong(1));
+					data = String.format(MediaLibrary.SongColumns.ALBUM_ID+"=%d", cursor.getLong(1));
 					break;
 				default:
 					throw new IllegalArgumentException("setLimiter() does not support limiter type " + limiterType);

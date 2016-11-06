@@ -48,18 +48,18 @@ public class MediaScanner  {
 		String album = (tags.containsKey("ALBUM") ? (String)((Vector)tags.get("ALBUM")).get(0) : "No Album");
 		String artist = (tags.containsKey("ARTIST") ? (String)((Vector)tags.get("ARTIST")).get(0) : "Unknown Artist");
 
-		long trackId = hash63(path);
+		long songId = hash63(path);
 		long albumId = hash63(album);
 		long artistId = hash63(artist);
 
 		ContentValues v = new ContentValues();
-		v.put(MediaLibrary.TrackColumns._ID,        trackId);
-		v.put(MediaLibrary.TrackColumns.TITLE,      title);
-		v.put(MediaLibrary.TrackColumns.TITLE_SORT, title);
-		v.put(MediaLibrary.TrackColumns.ALBUM_ID,   albumId);
-		v.put(MediaLibrary.TrackColumns.DURATION,   50000);
-		v.put(MediaLibrary.TrackColumns.PATH,       path);
-		backend.insert(MediaLibrary.TABLE_TRACKS, null, v);
+		v.put(MediaLibrary.SongColumns._ID,        songId);
+		v.put(MediaLibrary.SongColumns.TITLE,      title);
+		v.put(MediaLibrary.SongColumns.TITLE_SORT, title);
+		v.put(MediaLibrary.SongColumns.ALBUM_ID,   albumId);
+		v.put(MediaLibrary.SongColumns.DURATION,   50000);
+		v.put(MediaLibrary.SongColumns.PATH,       path);
+		backend.insert(MediaLibrary.TABLE_SONGS, null, v);
 
 		v.clear();
 		v.put(MediaLibrary.AlbumColumns._ID,            albumId);
@@ -75,10 +75,10 @@ public class MediaScanner  {
 		backend.insert(MediaLibrary.TABLE_CONTRIBUTORS, null, v);
 
 		v.clear();
-		v.put(MediaLibrary.ContributorTrackColumns.CONTRIBUTOR_ID, artistId);
-		v.put(MediaLibrary.ContributorTrackColumns.TRACK_ID,       trackId);
-		v.put(MediaLibrary.ContributorTrackColumns.ROLE,           0);
-		backend.insert(MediaLibrary.TABLE_CONTRIBUTORS_TRACKS, null, v);
+		v.put(MediaLibrary.ContributorSongColumns.CONTRIBUTOR_ID, artistId);
+		v.put(MediaLibrary.ContributorSongColumns.SONG_ID,       songId);
+		v.put(MediaLibrary.ContributorSongColumns.ROLE,           0);
+		backend.insert(MediaLibrary.TABLE_CONTRIBUTORS_SONGS, null, v);
 		Log.v("VanillaMusic", "Inserted "+path);
 	}
 

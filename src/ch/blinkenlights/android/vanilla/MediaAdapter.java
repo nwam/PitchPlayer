@@ -214,12 +214,12 @@ public class MediaAdapter
 			// mSongSortValues = new String[] { "album_key %1$s,track", "artist_key %1$s,album_key %1$s,track", "artist_key %1$s,year %1$s,album_key %1$s,track", "album_key %1$s,track", "album_id %1$s,track" };
 			break;
 		case MediaUtils.TYPE_SONG:
-			mSource = MediaLibrary.VIEW_TRACKS_ALBUMS_ARTISTS;
-			mFields = new String[] { MediaLibrary.TrackColumns.TITLE, MediaLibrary.AlbumColumns.ALBUM, MediaLibrary.ContributorColumns.CONTRIBUTOR };
+			mSource = MediaLibrary.VIEW_SONGS_ALBUMS_ARTISTS;
+			mFields = new String[] { MediaLibrary.SongColumns.TITLE, MediaLibrary.AlbumColumns.ALBUM, MediaLibrary.ContributorColumns.CONTRIBUTOR };
 			//mFieldKeys = new String[] { MediaStore.Audio.Media.TITLE_KEY, MediaStore.Audio.Media.ALBUM_KEY, MediaStore.Audio.Media.ARTIST_KEY };
 			mSortEntries = new int[] { R.string.name, R.string.artist_album_track };
-			mAdapterSortValues = new String[] { MediaLibrary.TrackColumns.TITLE_SORT+" %1$s",
-			                                    MediaLibrary.ContributorColumns.CONTRIBUTOR_SORT+" %1$s,"+MediaLibrary.AlbumColumns.ALBUM_SORT+" %1$s,"+MediaLibrary.TrackColumns.TRACK_NUMBER };
+			mAdapterSortValues = new String[] { MediaLibrary.SongColumns.TITLE_SORT+" %1$s",
+			                                    MediaLibrary.ContributorColumns.CONTRIBUTOR_SORT+" %1$s,"+MediaLibrary.AlbumColumns.ALBUM_SORT+" %1$s,"+MediaLibrary.SongColumns.SONG_NUMBER };
 			//mSongSortValues = mAdapterSortValues;
 			// Songs covers are cached per-album
 			mCoverCacheType = MediaUtils.TYPE_ALBUM;
@@ -519,7 +519,7 @@ public class MediaAdapter
 			break;
 		case MediaUtils.TYPE_ALBUM:
 			fields = new String[] { cursor.getString(3), cursor.getString(2) };
-			data = String.format("%s=%d",  MediaLibrary.TrackColumns.ALBUM_ID, id);
+			data = String.format("%s=%d",  MediaLibrary.SongColumns.ALBUM_ID, id);
 			break;
 		case MediaUtils.TYPE_GENRE:
 			fields = new String[] { cursor.getString(2) };

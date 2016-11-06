@@ -1672,7 +1672,7 @@ public final class PlaybackService extends Service
 	public int deleteMedia(int type, long id)
 	{
 		int count = 0;
-		String[] projection = new String [] { MediaLibrary.TrackColumns._ID, MediaLibrary.TrackColumns.PATH };
+		String[] projection = new String [] { MediaLibrary.SongColumns._ID, MediaLibrary.SongColumns.PATH };
 		Cursor cursor = MediaUtils.buildQuery(type, id, projection, null).runQuery(getApplicationContext());
 
 		if (cursor != null) {

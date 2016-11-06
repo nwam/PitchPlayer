@@ -41,18 +41,18 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	private static final String TAG = "VanillaMediaLibraryBackend";
 
 	/**
-	 * SQL Schema of `tracks' table
+	 * SQL Schema of `songs' table
 	 */
-	private static final String DATABASE_CREATE_TRACKS = "CREATE TABLE "+ MediaLibrary.TABLE_TRACKS + " ("
-	  + MediaLibrary.TrackColumns._ID          +" INTEGER PRIMARY KEY, "
-	  + MediaLibrary.TrackColumns.TITLE        +" TEXT NOT NULL, "
-	  + MediaLibrary.TrackColumns.TITLE_SORT   +" VARCHAR(64) NOT NULL, "
-	  + MediaLibrary.TrackColumns.TRACK_NUMBER +" INTEGER, "
-	  + MediaLibrary.TrackColumns.ALBUM_ID     +" INTEGER NOT NULL, "
-	  + MediaLibrary.TrackColumns.PLAYCOUNT    +" INTEGER NOT NULL DEFAULT 0, "
-	  + MediaLibrary.TrackColumns.SKIPCOUNT    +" INTEGER NOT NULL DEFAULT 0, "
-	  + MediaLibrary.TrackColumns.DURATION     +" INTEGER NOT NULL, "
-	  + MediaLibrary.TrackColumns.PATH         +" VARCHAR(4096) NOT NULL "
+	private static final String DATABASE_CREATE_SONGS = "CREATE TABLE "+ MediaLibrary.TABLE_SONGS + " ("
+	  + MediaLibrary.SongColumns._ID          +" INTEGER PRIMARY KEY, "
+	  + MediaLibrary.SongColumns.TITLE        +" TEXT NOT NULL, "
+	  + MediaLibrary.SongColumns.TITLE_SORT   +" VARCHAR(64) NOT NULL, "
+	  + MediaLibrary.SongColumns.SONG_NUMBER  +" INTEGER, "
+	  + MediaLibrary.SongColumns.ALBUM_ID     +" INTEGER NOT NULL, "
+	  + MediaLibrary.SongColumns.PLAYCOUNT    +" INTEGER NOT NULL DEFAULT 0, "
+	  + MediaLibrary.SongColumns.SKIPCOUNT    +" INTEGER NOT NULL DEFAULT 0, "
+	  + MediaLibrary.SongColumns.DURATION     +" INTEGER NOT NULL, "
+	  + MediaLibrary.SongColumns.PATH         +" VARCHAR(4096) NOT NULL "
 	  + ");";
 
 	/**
@@ -62,7 +62,7 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	  + MediaLibrary.AlbumColumns._ID            +" INTEGER PRIMARY KEY, "
 	  + MediaLibrary.AlbumColumns.ALBUM          +" TEXT NOT NULL, "
 	  + MediaLibrary.AlbumColumns.ALBUM_SORT     +" VARCHAR(64) NOT NULL, "
-	  + MediaLibrary.AlbumColumns.TRACK_COUNT    +" INTEGER, "
+	  + MediaLibrary.AlbumColumns.SONG_COUNT     +" INTEGER, "
 	  + MediaLibrary.AlbumColumns.DISC_NUMBER    +" INTEGER, "
 	  + MediaLibrary.AlbumColumns.DISC_COUNT     +" INTEGER, "
 	  + MediaLibrary.AlbumColumns.CONTRIBUTOR_ID +" INTEGER NOT NULL DEFAULT 0"
@@ -80,24 +80,24 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	/**
 	 * SQL Schema of 'contributors' table
 	 */
-	private static final String DATABASE_CREATE_CONTRIBUTORS_TRACKS = "CREATE TABLE "+ MediaLibrary.TABLE_CONTRIBUTORS_TRACKS+ " ("
-	  + MediaLibrary.ContributorTrackColumns.ROLE           +" INTEGER, "
-	  + MediaLibrary.ContributorTrackColumns.CONTRIBUTOR_ID +" INTEGER, "
-	  + MediaLibrary.ContributorTrackColumns.TRACK_ID       +" INTEGER, "
-	  + "PRIMARY KEY("+MediaLibrary.ContributorTrackColumns.ROLE+","
-	                  +MediaLibrary.ContributorTrackColumns.CONTRIBUTOR_ID+","
-	                  +MediaLibrary.ContributorTrackColumns.TRACK_ID+") "
+	private static final String DATABASE_CREATE_CONTRIBUTORS_SONGS = "CREATE TABLE "+ MediaLibrary.TABLE_CONTRIBUTORS_SONGS+ " ("
+	  + MediaLibrary.ContributorSongColumns.ROLE           +" INTEGER, "
+	  + MediaLibrary.ContributorSongColumns.CONTRIBUTOR_ID +" INTEGER, "
+	  + MediaLibrary.ContributorSongColumns.SONG_ID       +" INTEGER, "
+	  + "PRIMARY KEY("+MediaLibrary.ContributorSongColumns.ROLE+","
+	                  +MediaLibrary.ContributorSongColumns.CONTRIBUTOR_ID+","
+	                  +MediaLibrary.ContributorSongColumns.SONG_ID+") "
 	  + ");";
 
 	/**
-	 * View which includes track, album and artist information
+	 * View which includes song, album and artist information
 	 */
-	private static final String VIEW_CREATE_TRACKS_ALBUMS_ARTISTS = "CREATE VIEW "+ MediaLibrary.VIEW_TRACKS_ALBUMS_ARTISTS+ " AS "
-	  + "SELECT * FROM "+MediaLibrary.TABLE_TRACKS
-	  +" LEFT JOIN "+MediaLibrary.TABLE_ALBUMS+" ON "+MediaLibrary.TABLE_TRACKS+"."+MediaLibrary.TrackColumns.ALBUM_ID+" = "+MediaLibrary.TABLE_ALBUMS+"."+MediaLibrary.AlbumColumns._ID
-	  +" LEFT JOIN "+MediaLibrary.TABLE_CONTRIBUTORS_TRACKS+" ON "+MediaLibrary.TABLE_CONTRIBUTORS_TRACKS+"."+MediaLibrary.ContributorTrackColumns.ROLE+"=0 "
-	  +" AND "+MediaLibrary.TABLE_CONTRIBUTORS_TRACKS+"."+MediaLibrary.ContributorTrackColumns.TRACK_ID+" = "+MediaLibrary.TABLE_TRACKS+"."+MediaLibrary.TrackColumns._ID
-	  +" LEFT JOIN "+MediaLibrary.TABLE_CONTRIBUTORS+" ON "+MediaLibrary.TABLE_CONTRIBUTORS+"."+MediaLibrary.ContributorColumns._ID+" = "+MediaLibrary.TABLE_CONTRIBUTORS_TRACKS+"."+MediaLibrary.ContributorTrackColumns.CONTRIBUTOR_ID
+	private static final String VIEW_CREATE_SONGS_ALBUMS_ARTISTS = "CREATE VIEW "+ MediaLibrary.VIEW_SONGS_ALBUMS_ARTISTS+ " AS "
+	  + "SELECT * FROM "+MediaLibrary.TABLE_SONGS
+	  +" LEFT JOIN "+MediaLibrary.TABLE_ALBUMS+" ON "+MediaLibrary.TABLE_SONGS+"."+MediaLibrary.SongColumns.ALBUM_ID+" = "+MediaLibrary.TABLE_ALBUMS+"."+MediaLibrary.AlbumColumns._ID
+	  +" LEFT JOIN "+MediaLibrary.TABLE_CONTRIBUTORS_SONGS+" ON "+MediaLibrary.TABLE_CONTRIBUTORS_SONGS+"."+MediaLibrary.ContributorSongColumns.ROLE+"=0 "
+	  +" AND "+MediaLibrary.TABLE_CONTRIBUTORS_SONGS+"."+MediaLibrary.ContributorSongColumns.SONG_ID+" = "+MediaLibrary.TABLE_SONGS+"."+MediaLibrary.SongColumns._ID
+	  +" LEFT JOIN "+MediaLibrary.TABLE_CONTRIBUTORS+" ON "+MediaLibrary.TABLE_CONTRIBUTORS+"."+MediaLibrary.ContributorColumns._ID+" = "+MediaLibrary.TABLE_CONTRIBUTORS_SONGS+"."+MediaLibrary.ContributorSongColumns.CONTRIBUTOR_ID
 	  +" ;";
 
 	/**
@@ -121,11 +121,11 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	 */
 	@Override
 	public void onCreate(SQLiteDatabase dbh) {
-		dbh.execSQL(DATABASE_CREATE_TRACKS);
+		dbh.execSQL(DATABASE_CREATE_SONGS);
 		dbh.execSQL(DATABASE_CREATE_ALBUMS);
 		dbh.execSQL(DATABASE_CREATE_CONTRIBUTORS);
-		dbh.execSQL(DATABASE_CREATE_CONTRIBUTORS_TRACKS);
-		dbh.execSQL(VIEW_CREATE_TRACKS_ALBUMS_ARTISTS);
+		dbh.execSQL(DATABASE_CREATE_CONTRIBUTORS_SONGS);
+		dbh.execSQL(VIEW_CREATE_SONGS_ALBUMS_ARTISTS);
 		dbh.execSQL(VIEW_CREATE_ALBUMS_ARTISTS);
 	}
 

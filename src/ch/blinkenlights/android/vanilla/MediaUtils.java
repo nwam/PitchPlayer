@@ -93,14 +93,14 @@ public class MediaUtils {
 
 	/**
 	 * The default sort order for media queries. First artist, then album, then
-	 * track number.
+	 * song number.
 	 */
-	private static final String DEFAULT_SORT = "contributor_sort,album_sort,track_num";
+	private static final String DEFAULT_SORT = "contributor_sort,album_sort,song_num";
 
 	/**
-	 * The default sort order for albums. First the album, then tracknumber
+	 * The default sort order for albums. First the album, then songnumber
 	 */
-	private static final String ALBUM_SORT = "contributor_sort,track_num";
+	private static final String ALBUM_SORT = "contributor_sort,song_num";
 
 	/**
 	 * The default sort order for files. Simply use the path
@@ -150,13 +150,13 @@ public class MediaUtils {
 
 		switch (type) {
 		case TYPE_SONG:
-			selection.append(MediaLibrary.TrackColumns._ID);
+			selection.append(MediaLibrary.SongColumns._ID);
 			break;
 		case TYPE_ARTIST:
-			selection.append(MediaLibrary.ContributorTrackColumns.CONTRIBUTOR_ID);
+			selection.append(MediaLibrary.ContributorSongColumns.CONTRIBUTOR_ID);
 			break;
 		case TYPE_ALBUM:
-			selection.append(MediaLibrary.TrackColumns.ALBUM_ID);
+			selection.append(MediaLibrary.SongColumns.ALBUM_ID);
 			sort = ALBUM_SORT;
 			break;
 		default:
@@ -171,7 +171,7 @@ public class MediaUtils {
 			selection.append(select);
 		}
 
-		QueryTask result = new QueryTask(MediaLibrary.VIEW_TRACKS_ALBUMS_ARTISTS, projection, selection.toString(), null, sort);
+		QueryTask result = new QueryTask(MediaLibrary.VIEW_SONGS_ALBUMS_ARTISTS, projection, selection.toString(), null, sort);
 		result.type = type;
 		return result;
 	}
@@ -383,7 +383,7 @@ public class MediaUtils {
 	/**
 	 * Shuffle a Song list using Collections.shuffle().
 	 *
-	 * @param albumShuffle If true, preserve the order of tracks inside albums.
+	 * @param albumShuffle If true, preserve the order of songs inside albums.
 	 */
 	public static void shuffle(List<Song> list, boolean albumShuffle)
 	{
@@ -439,7 +439,7 @@ public class MediaUtils {
 	 */
 	public static boolean isSongAvailable(Context context) {
 		if (sSongCount == -1) {
-			QueryTask query = new QueryTask(MediaLibrary.TABLE_TRACKS, new String[]{"count(*)"}, null, null, null);
+			QueryTask query = new QueryTask(MediaLibrary.TABLE_SONGS, new String[]{"count(*)"}, null, null, null);
 			Cursor cursor = query.runQuery(context);
 			if (cursor == null) {
 				sSongCount = 0;
@@ -460,7 +460,7 @@ public class MediaUtils {
 	 * @param context The Context to use
 	 */
 	private static long[] queryAllSongs(Context context) {
-		QueryTask query = new QueryTask(MediaLibrary.TABLE_TRACKS, Song.EMPTY_PROJECTION, null, null, null);
+		QueryTask query = new QueryTask(MediaLibrary.TABLE_SONGS, Song.EMPTY_PROJECTION, null, null, null);
 		Cursor cursor = query.runQuery(context);
 		if (cursor == null || cursor.getCount() == 0) {
 			sSongCount = 0;
@@ -523,7 +523,7 @@ public class MediaUtils {
 			return;
 		}
 
-		String[] projection = new String [] { MediaLibrary.TrackColumns._ID, MediaLibrary.TrackColumns.PATH };
+		String[] projection = new String [] { MediaLibrary.SongColumns._ID, MediaLibrary.SongColumns.PATH };
 		Cursor cursor = buildQuery(type, id, projection, null).runQuery(ctx);
 		if(cursor == null) {
 			return;
@@ -669,7 +669,7 @@ public class MediaUtils {
 		final String query = "path LIKE ? AND "+MediaStore.Audio.Media.IS_MUSIC;
 		String[] qargs = { path };
 
-		QueryTask result = new QueryTask(MediaLibrary.VIEW_TRACKS_ALBUMS_ARTISTS, projection, query, qargs, FILE_SORT);
+		QueryTask result = new QueryTask(MediaLibrary.VIEW_SONGS_ALBUMS_ARTISTS, projection, query, qargs, FILE_SORT);
 		result.type = TYPE_FILE;
 		return result;
 	}
