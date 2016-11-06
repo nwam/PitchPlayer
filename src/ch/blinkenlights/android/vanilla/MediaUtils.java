@@ -506,11 +506,6 @@ public class MediaUtils {
 	for (String x : projection) { Log.v("VanillaMusic", " --> "+x); }
 	Log.v("VanillaMusic", "Selection = "+selection);
 		Cursor cursor = null;
-		try {
-			cursor = resolver.query(uri, projection, selection, selectionArgs, sortOrder);
-		} catch(java.lang.SecurityException e) {
-			// we do not have read permission - just return a null cursor
-		}
 		return cursor;
 	}
 

@@ -37,18 +37,18 @@ public class QueryTask {
 	 * Used for {@link SongTimeline#addSongs(android.content.Context, QueryTask)}.
 	 * One of SongTimeline.MODE_*.
 	 */
-	public int modeImplementMe;
+	public int mode;
 
 	/**
 	 * Type of the group being query. One of MediaUtils.TYPE_*.
 	 */
-	public int typeImplementMe;
+	public int type;
 
 	/**
 	 * Data. Required value depends on value of mode. See individual mode
 	 * documentation for details.
 	 */
-	public long dataImplementMe;
+	public long data;
 
 	/**
 	 * Create the tasks. All arguments are passed directly to

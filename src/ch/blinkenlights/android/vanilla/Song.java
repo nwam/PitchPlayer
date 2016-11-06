@@ -22,6 +22,8 @@
 
 package ch.blinkenlights.android.vanilla;
 
+import ch.blinkenlights.android.medialibrary.MediaLibrary;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -47,19 +49,19 @@ public class Song implements Comparable<Song> {
 
 
 	public static final String[] EMPTY_PROJECTION = {
-		MediaStore.Audio.Media._ID,
+		MediaLibrary.TrackColumns._ID,
 	};
 
 	public static final String[] FILLED_PROJECTION = {
-		MediaStore.Audio.Media._ID,
-		MediaStore.Audio.Media.DATA,
-		MediaStore.Audio.Media.TITLE,
-		MediaStore.Audio.Media.ALBUM,
-		MediaStore.Audio.Media.ARTIST,
-		MediaStore.Audio.Media.ALBUM_ID,
-		MediaStore.Audio.Media.ARTIST_ID,
-		MediaStore.Audio.Media.DURATION,
-		MediaStore.Audio.Media.TRACK,
+		MediaLibrary.TrackColumns._ID,
+		MediaLibrary.TrackColumns.PATH,
+		MediaLibrary.TrackColumns.TITLE,
+		MediaLibrary.AlbumColumns.ALBUM,
+		MediaLibrary.ContributorColumns.CONTRIBUTOR,
+		MediaLibrary.TrackColumns.ALBUM_ID,
+		MediaLibrary.AlbumColumns.CONTRIBUTOR_ID,
+		MediaLibrary.TrackColumns.DURATION,
+		MediaLibrary.TrackColumns.TRACK_NUMBER,
 	};
 
 	public static final String[] EMPTY_PLAYLIST_PROJECTION = {

@@ -304,6 +304,9 @@ public class MediaAdapter
 		Log.v("VanillaMusic", "limiter = "+ (mLimiter == null ? "NULL" : mLimiter.data));
 		Log.v("VanillaMusic", "sortMode = "+mSortMode);
 
+		if (returnSongs == true)
+			Log.v("VanillaMusic", "Warning: return songs not implemented yet, you will burn!");
+
 		String constrain = mConstraint;
 		Limiter limiter = mLimiter;
 
@@ -463,9 +466,9 @@ public class MediaAdapter
 	 *
 	 * @param projection The columns to query.
 	 */
-	public OBSOLETED_QueryTask buildSongQuery(String[] projection)
+	public QueryTask buildSongQuery(String[] projection)
 	{
-		OBSOLETED_QueryTask query = OBSOLETED_buildQuery(projection, true);
+		QueryTask query = buildQuery(projection, true);
 		query.type = mType;
 		return query;
 	}

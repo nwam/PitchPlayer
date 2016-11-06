@@ -308,7 +308,7 @@ public class MirrorLinkMediaBrowserService extends MediaBrowserService
 		return limiter;
 	}
 
-	private OBSOLETED_QueryTask buildQueryFromMediaID(MediaID parent, boolean empty, boolean all)
+	private QueryTask buildQueryFromMediaID(MediaID parent, boolean empty, boolean all)
 	{
 		String[] projection;
 
@@ -318,13 +318,15 @@ public class MirrorLinkMediaBrowserService extends MediaBrowserService
 			projection = empty ? Song.EMPTY_PROJECTION : Song.FILLED_PROJECTION;
 		}
 
-		OBSOLETED_QueryTask query;
+		QueryTask query;
 		if (all && (parent.mType != MediaUtils.TYPE_PLAYLIST)) {
 			query = (mMediaAdapters[parent.mType]).buildSongQuery(projection);
 			query.data = parent.mId;
 			query.mode = SongTimeline.MODE_PLAY_ID_FIRST;
 		} else {
-			query = MediaUtils.buildQuery(parent.mType, parent.mId, projection, null);
+//			query = MediaUtils.buildQuery(parent.mType, parent.mId, projection, null);
+// FIXME OBSOLETED
+query = null;
 			query.mode = SongTimeline.MODE_PLAY;
 		}
 
@@ -527,8 +529,9 @@ public class MirrorLinkMediaBrowserService extends MediaBrowserService
 		case MSG_PLAY_QUERY:
 			setSessionActive();
 			if(PlaybackService.hasInstance()) {
-				OBSOLETED_QueryTask query = buildQueryFromMediaID(new MediaID((String)message.obj), false, true);
-				PlaybackService.get(MirrorLinkMediaBrowserService.this).addSongs(query);
+				QueryTask query = buildQueryFromMediaID(new MediaID((String)message.obj), false, true);
+// FIXME OBSOLETED
+//				PlaybackService.get(MirrorLinkMediaBrowserService.this).addSongs(query);
 			}
 		break;
 		case MSG_PAUSE:
