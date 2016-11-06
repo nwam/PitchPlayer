@@ -19,6 +19,7 @@ package ch.blinkenlights.android.medialibrary;
 
 import android.content.Context;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.Cursor;
@@ -90,7 +91,7 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	 */
 	private static final String VIEW_CREATE_TRACKS_ALBUMS_ARTISTS = "CREATE VIEW "+ MediaLibrary.VIEW_TRACKS_ALBUMS_ARTISTS+ " AS "
 	  + "SELECT * FROM "+MediaLibrary.TABLE_TRACKS
-	  +" LEFT JOIN "+MediaLibrary.TABLE_ALBUMS+" ON "+MediaLibrary.TABLE_TRACKS+"."+MediaLibrary.TrackColumns._ID+" = "+MediaLibrary.TABLE_ALBUMS+"."+MediaLibrary.AlbumColumns._ID
+	  +" LEFT JOIN "+MediaLibrary.TABLE_ALBUMS+" ON "+MediaLibrary.TABLE_TRACKS+"."+MediaLibrary.TrackColumns.ALBUM_ID+" = "+MediaLibrary.TABLE_ALBUMS+"."+MediaLibrary.AlbumColumns._ID
 	  +" LEFT JOIN "+MediaLibrary.TABLE_CONTRIBUTORS_TRACKS+" ON "+MediaLibrary.TABLE_CONTRIBUTORS_TRACKS+"."+MediaLibrary.ContributorTrackColumns.ROLE+"=0 "
 	  +" AND "+MediaLibrary.TABLE_CONTRIBUTORS_TRACKS+"."+MediaLibrary.ContributorTrackColumns.TRACK_ID+" = "+MediaLibrary.TABLE_TRACKS+"."+MediaLibrary.TrackColumns._ID
 	  +" LEFT JOIN "+MediaLibrary.TABLE_CONTRIBUTORS+" ON "+MediaLibrary.TABLE_CONTRIBUTORS+"."+MediaLibrary.ContributorColumns._ID+" = "+MediaLibrary.TABLE_CONTRIBUTORS_TRACKS+"."+MediaLibrary.ContributorTrackColumns.CONTRIBUTOR_ID
@@ -133,27 +134,17 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	public void onUpgrade(SQLiteDatabase dbh, int oldVersion, int newVersion) {
 	}
 
+	/**
+	 * Wrapper for SQLiteDatabase.insert() function
+	 */
+	public long insert (String table, String nullColumnHack, ContentValues values) {
+		return getWritableDatabase().insert(table, nullColumnHack, values);
+	}
 
 	/**
 	 * Wrappr for SQLiteDatabase.query() function
 	 */
 	public Cursor query (boolean distinct, String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
 		return getReadableDatabase().query(distinct, table, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
-	}
-
-	/**
-	 * Populate database with fake data
-	 */
-	protected void pushDebugData() {
-		SQLiteDatabase dbh = getWritableDatabase();
-		//dbh.execSQL("INSERT INTO contributors VALUES(NULL, 'The wurst', 'Wurst');");
-
-		for(int i=0; i<64;i++) {
-			dbh.execSQL("INSERT INTO "+MediaLibrary.TABLE_TRACKS+" VALUES(NULL, 'foobar"+i+"', 'fbx', 2, 0, 0, '/example/song');");
-			dbh.execSQL("INSERT INTO "+MediaLibrary.TABLE_ALBUMS+" VALUES(NULL, 'album "+i+"', 'abx', 0, 0, 1);");
-		//	dbh.execSQL("INSERT INTO "+MediaLibrary.TABLE_CONTRIBUTORS_TRACKS+" VALUES(0, 1, "+i+");");
-			Log.v(TAG, "Inserting fake song "+i);
-		}
-		dbh.close();
 	}
 }

@@ -38,7 +38,7 @@ public class MediaLibrary  {
 //			synchronized(sLock) {
 				if (sBackend == null)
 					sBackend = new MediaLibraryBackend(context);
-					sBackend.pushDebugData();
+					MediaScanner.scanSingleDirectory(sBackend, "/sdcard/Music");
 //			}
 		}
 		return sBackend;
