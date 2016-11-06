@@ -243,7 +243,7 @@ public class PlaylistActivity extends Activity
 		case LibraryActivity.ACTION_PLAY:
 		case LibraryActivity.ACTION_ENQUEUE:
 		case LibraryActivity.ACTION_ENQUEUE_AS_NEXT: {
-			OBSOLETED_QueryTask query = MediaUtils.buildQuery(MediaUtils.TYPE_SONG, audioId, Song.FILLED_PROJECTION, null);
+			OBSOLETED_QueryTask query = null; // FIXME OBSOLETED MediaUtils.buildQuery(MediaUtils.TYPE_SONG, audioId, Song.FILLED_PROJECTION, null);
 			query.mode = MODE_FOR_ACTION[action];
 			PlaybackService.get(this).addSongs(query);
 			break;

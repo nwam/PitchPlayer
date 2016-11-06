@@ -1670,7 +1670,7 @@ public final class PlaybackService extends Service
 	public int deleteMedia(int type, long id)
 	{
 		int count = 0;
-
+/*
 		ContentResolver resolver = getContentResolver();
 		String[] projection = new String [] { MediaStore.Audio.Media._ID, MediaStore.Audio.Media.DATA };
 		Cursor cursor = MediaUtils.buildQuery(type, id, projection, null).runQuery(resolver);
@@ -1688,7 +1688,8 @@ public final class PlaybackService extends Service
 
 			cursor.close();
 		}
-
+		FIXME OBSOLETED
+*/
 		return count;
 	}
 
@@ -1824,7 +1825,7 @@ public final class PlaybackService extends Service
 		}
 
 		String selection = "_id!=" + song.id;
-		OBSOLETED_QueryTask query = MediaUtils.buildQuery(type, id, Song.FILLED_PROJECTION, selection);
+		QueryTask query = MediaUtils.buildQuery(type, id, Song.FILLED_PROJECTION, selection);
 		query.mode = SongTimeline.MODE_FLUSH_AND_PLAY_NEXT;
 		addSongs(query);
 	}

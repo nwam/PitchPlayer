@@ -120,7 +120,7 @@ public class PlayCountsHelper extends SQLiteOpenHelper {
 		}
 		cursor.close();
 
-		for (Long id : toCheck) {
+/*		for (Long id : toCheck) {
 			query = MediaUtils.buildQuery(type, id, null, null);
 			cursor = query.runQuery(ctx.getContentResolver());
 			if(cursor.getCount() == 0) {
@@ -129,6 +129,7 @@ public class PlayCountsHelper extends SQLiteOpenHelper {
 			}
 			cursor.close();
 		}
+		*/
 		Log.v("VanillaMusic", "performGC: items removed="+removed);
 		dbh.close();
 		return removed;

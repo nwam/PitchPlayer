@@ -22,6 +22,8 @@
 
 package ch.blinkenlights.android.vanilla;
 
+import ch.blinkenlights.android.medialibrary.MediaLibrary;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -93,17 +95,17 @@ public class MediaUtils {
 	 * The default sort order for media queries. First artist, then album, then
 	 * track number.
 	 */
-	private static final String DEFAULT_SORT = "artist_key,album_key,track";
+	private static final String DEFAULT_SORT = "contributor_sort,album_sort,track_num";
 
 	/**
 	 * The default sort order for albums. First the album, then tracknumber
 	 */
-	private static final String ALBUM_SORT = "album_key,track";
+	private static final String ALBUM_SORT = "contributor_sort,track_num";
 
 	/**
 	 * The default sort order for files. Simply use the path
 	 */
-	private static final String FILE_SORT = "_data";
+	private static final String FILE_SORT = "path";
 
 	/**
 	 * Cached random instance.
@@ -141,21 +143,20 @@ public class MediaUtils {
 	 * @param select An extra selection to pass to the query, or null.
 	 * @return The initialized query.
 	 */
-	private static OBSOLETED_QueryTask buildMediaQuery(int type, long id, String[] projection, String select)
+	private static QueryTask buildMediaQuery(int type, long id, String[] projection, String select)
 	{
-		Uri media = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 		StringBuilder selection = new StringBuilder();
 		String sort = DEFAULT_SORT;
 
 		switch (type) {
 		case TYPE_SONG:
-			selection.append(MediaStore.Audio.Media._ID);
+			selection.append(MediaLibrary.TrackColumns._ID);
 			break;
 		case TYPE_ARTIST:
-			selection.append(MediaStore.Audio.Media.ARTIST_ID);
+			selection.append(MediaLibrary.ContributorTrackColumns.CONTRIBUTOR_ID);
 			break;
 		case TYPE_ALBUM:
-			selection.append(MediaStore.Audio.Media.ALBUM_ID);
+			selection.append(MediaLibrary.TrackColumns.ALBUM_ID);
 			sort = ALBUM_SORT;
 			break;
 		default:
@@ -164,14 +165,13 @@ public class MediaUtils {
 
 		selection.append('=');
 		selection.append(id);
-		selection.append(" AND length(_data) AND "+MediaStore.Audio.Media.IS_MUSIC);
 
 		if (select != null) {
 			selection.append(" AND ");
 			selection.append(select);
 		}
 
-		OBSOLETED_QueryTask result = new OBSOLETED_QueryTask(media, projection, selection.toString(), null, sort);
+		QueryTask result = new QueryTask(MediaLibrary.VIEW_TRACKS_ALBUMS_ARTISTS, projection, selection.toString(), null, sort);
 		result.type = type;
 		return result;
 	}
@@ -325,7 +325,7 @@ public class MediaUtils {
 	 * @param selection An extra selection to be passed to the query. May be
 	 * null. Must not be used with type == TYPE_SONG or type == TYPE_PLAYLIST
 	 */
-	public static OBSOLETED_QueryTask buildQuery(int type, long id, String[] projection, String selection)
+	public static QueryTask buildQuery(int type, long id, String[] projection, String selection)
 	{
 		switch (type) {
 		case TYPE_ARTIST:
@@ -333,9 +333,11 @@ public class MediaUtils {
 		case TYPE_SONG:
 			return buildMediaQuery(type, id, projection, selection);
 		case TYPE_PLAYLIST:
-			return buildPlaylistQuery(id, projection, selection);
+//			return buildPlaylistQuery(id, projection, selection);
+// FIXME OBSOLETED
 		case TYPE_GENRE:
-			return buildGenreQuery(id, projection, selection, null,  MediaStore.Audio.Genres.Members.TITLE_KEY, TYPE_SONG, true);
+//			return buildGenreQuery(id, projection, selection, null,  MediaStore.Audio.Genres.Members.TITLE_KEY, TYPE_SONG, true);
+// FIXME OBSOLETED
 		default:
 			throw new IllegalArgumentException("Specified type not valid: " + type);
 		}
@@ -527,9 +529,8 @@ public class MediaUtils {
 			return;
 		}
 
-		ContentResolver resolver = ctx.getContentResolver();
-		String[] projection = new String [] { MediaStore.Audio.Media._ID, MediaStore.Audio.Media.DATA };
-		Cursor cursor = buildQuery(type, id, projection, null).runQuery(resolver);
+		String[] projection = new String [] { MediaLibrary.TrackColumns._ID, MediaLibrary.TrackColumns.PATH };
+		Cursor cursor = buildQuery(type, id, projection, null).runQuery(ctx);
 		if(cursor == null) {
 			return;
 		}
@@ -556,10 +557,10 @@ public class MediaUtils {
 	 * @param type The MediaTye to query
 	 * @param id The id of given type to query
 	 */
-	public static Song getSongByTypeId(ContentResolver resolver, int type, long id) {
+	public static Song getSongByTypeId(Context context, int type, long id) {
 		Song song = new Song(-1);
-		OBSOLETED_QueryTask query = buildQuery(type, id, Song.FILLED_PROJECTION, null);
-		Cursor cursor = query.runQuery(resolver);
+		QueryTask query = buildQuery(type, id, Song.FILLED_PROJECTION, null);
+		Cursor cursor = query.runQuery(context);
 		if (cursor != null) {
 			if (cursor.getCount() > 0) {
 				cursor.moveToPosition(0);
@@ -591,7 +592,7 @@ public class MediaUtils {
 			shuffle(sAllSongs);
 		}
 
-		Song result = getSongByTypeId(resolver, MediaUtils.TYPE_SONG, sAllSongs[sAllSongsIdx]);
+		Song result = null; // FIXME OBSOLETE getSongByTypeId(resolver, MediaUtils.TYPE_SONG, sAllSongs[sAllSongsIdx]);
 		result.flags |= Song.FLAG_RANDOM;
 		sAllSongsIdx++;
 		return result;
@@ -663,7 +664,7 @@ public class MediaUtils {
 	 * @param projection The columns to query
 	 * @return The initialized query.
 	 */
-	public static OBSOLETED_QueryTask buildFileQuery(String path, String[] projection)
+	public static QueryTask buildFileQuery(String path, String[] projection)
 	{
 		/* make sure that the path is:
 		   -> fixed-up to point to the real mountpoint if user browsed to the mediadir symlink
@@ -671,11 +672,10 @@ public class MediaUtils {
 		   -> ended with a % for the LIKE query
 		*/
 		path = addDirEndSlash(sanitizeMediaPath(path)) + "%";
-		final String query = "_data LIKE ? AND "+MediaStore.Audio.Media.IS_MUSIC;
+		final String query = "path LIKE ? AND "+MediaStore.Audio.Media.IS_MUSIC;
 		String[] qargs = { path };
 
-		Uri media = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-		OBSOLETED_QueryTask result = new OBSOLETED_QueryTask(media, projection, query, qargs, FILE_SORT);
+		QueryTask result = new QueryTask(MediaLibrary.VIEW_TRACKS_ALBUMS_ARTISTS, projection, query, qargs, FILE_SORT);
 		result.type = TYPE_FILE;
 		return result;
 	}
