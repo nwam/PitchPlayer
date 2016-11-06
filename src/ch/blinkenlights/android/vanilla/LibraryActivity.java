@@ -549,7 +549,7 @@ public class LibraryActivity
 
 	/**
 	 * Set a new limiter of the given type built from the first
-	 * MediaStore.Audio.Media row that matches the selection.
+	 * MediaLibrary.VIEW_TRACKS_ALBUMS_ARTISTS row that matches the selection.
 	 *
 	 * @param limiterType The type of limiter to create. Must be either
 	 * MediaUtils.TYPE_ARTIST or MediaUtils.TYPE_ALBUM.
@@ -557,10 +557,10 @@ public class LibraryActivity
 	 */
 	private void setLimiter(int limiterType, String selection)
 	{
-		ContentResolver resolver = getContentResolver();
-		Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-		String[] projection = new String[] { MediaStore.Audio.Media.ARTIST_ID, MediaStore.Audio.Media.ALBUM_ID, MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.ALBUM };
-		Cursor cursor = MediaUtils.OBSOLETED_queryResolver(resolver, uri, projection, selection, null, null);
+		String[] projection = new String[] { MediaLibrary.ContributorTrackColumns.CONTRIBUTOR_ID, MediaLibrary.TrackColumns.ALBUM_ID, MediaLibrary.ContributorColumns.CONTRIBUTOR, MediaLibrary.AlbumColumns.ALBUM };
+		QueryTask query = new QueryTask(MediaLibrary.VIEW_TRACKS_ALBUMS_ARTISTS, projection, selection, null, null);
+		Cursor cursor = query.runQuery(getApplicationContext());
+
 		if (cursor != null) {
 			if (cursor.moveToNext()) {
 				String[] fields;
