@@ -1298,7 +1298,7 @@ public final class PlaybackService extends Service
 		Song song = mTimeline.shiftCurrentSong(delta);
 		mCurrentSong = song;
 		if (song == null) {
-			if (MediaUtils.isSongAvailable(getContentResolver())) {
+			if (MediaUtils.isSongAvailable(getApplicationContext())) {
 				int flag = finishAction(mState) == SongTimeline.FINISH_RANDOM ? FLAG_ERROR : FLAG_EMPTY_QUEUE;
 				synchronized (mStateLock) {
 					updateState((mState | flag) & ~FLAG_NO_MEDIA);
@@ -1448,7 +1448,7 @@ public final class PlaybackService extends Service
 
 	public void onMediaChange()
 	{
-		if (MediaUtils.isSongAvailable(getContentResolver())) {
+		if (MediaUtils.isSongAvailable(getApplicationContext())) {
 			if ((mState & FLAG_NO_MEDIA) != 0)
 				setCurrentSong(0);
 		} else {

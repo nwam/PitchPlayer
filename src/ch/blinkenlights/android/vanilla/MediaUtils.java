@@ -433,17 +433,14 @@ public class MediaUtils {
 	/**
 	 * Determine if any songs are available from the library.
 	 *
-	 * @param resolver A ContentResolver to use.
+	 * @param context The Context to use
 	 * @return True if it's possible to retrieve any songs, false otherwise. For
 	 * example, false could be returned if there are no songs in the library.
 	 */
-	public static boolean isSongAvailable(ContentResolver resolver)
-	{
+	public static boolean isSongAvailable(Context context) {
 		if (sSongCount == -1) {
-			Uri media = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-			String selection = MediaStore.Audio.Media.IS_MUSIC;
-			selection += " AND length(_data)";
-			Cursor cursor = OBSOLETED_queryResolver(resolver, media, new String[]{"count(_id)"}, selection, null, null);
+			QueryTask query = new QueryTask(MediaLibrary.TABLE_TRACKS, new String[]{"count(*)"}, null, null, null);
+			Cursor cursor = query.runQuery(context);
 			if (cursor == null) {
 				sSongCount = 0;
 			} else {
@@ -460,14 +457,11 @@ public class MediaUtils {
 	 * Returns a shuffled array contaning the ids of all the songs on the
 	 * device's library.
 	 *
-	 * @param resolver A ContentResolver to use.
+	 * @param context The Context to use
 	 */
-	private static long[] queryAllSongs(ContentResolver resolver)
-	{
-		Uri media = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-		String selection = MediaStore.Audio.Media.IS_MUSIC;
-		selection += " AND length(_data)";
-		Cursor cursor = OBSOLETED_queryResolver(resolver, media, Song.EMPTY_PROJECTION, selection, null, null);
+	private static long[] queryAllSongs(Context context) {
+		QueryTask query = new QueryTask(MediaLibrary.TABLE_TRACKS, Song.EMPTY_PROJECTION, null, null, null);
+		Cursor cursor = query.runQuery(context);
 		if (cursor == null || cursor.getCount() == 0) {
 			sSongCount = 0;
 			return null;
@@ -575,14 +569,14 @@ public class MediaUtils {
 	 * Returns a song randomly selected from all the songs in the Android
 	 * MediaStore.
 	 *
-	 * @param resolver A ContentResolver to use.
+	 * @param context The Context to use
 	 */
-	public static Song getRandomSong(ContentResolver resolver)
+	public static Song getRandomSong(Context context)
 	{
 		long[] songs = sAllSongs;
 
 		if (songs == null) {
-			songs = queryAllSongs(resolver);
+			songs = queryAllSongs(context);
 			if (songs == null)
 				return null;
 			sAllSongs = songs;
@@ -592,7 +586,7 @@ public class MediaUtils {
 			shuffle(sAllSongs);
 		}
 
-		Song result = null; // FIXME OBSOLETE getSongByTypeId(resolver, MediaUtils.TYPE_SONG, sAllSongs[sAllSongsIdx]);
+		Song result = getSongByTypeId(context, MediaUtils.TYPE_SONG, sAllSongs[sAllSongsIdx]);
 		result.flags |= Song.FLAG_RANDOM;
 		sAllSongsIdx++;
 		return result;
