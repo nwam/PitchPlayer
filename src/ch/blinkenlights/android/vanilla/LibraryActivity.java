@@ -23,6 +23,8 @@
 
 package ch.blinkenlights.android.vanilla;
 
+import ch.blinkenlights.android.medialibrary.MediaLibrary;
+
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
@@ -566,11 +568,11 @@ public class LibraryActivity
 				switch (limiterType) {
 				case MediaUtils.TYPE_ARTIST:
 					fields = new String[] { cursor.getString(2) };
-					data = String.format("artist_id=%d", cursor.getLong(0));
+					data = String.format(MediaLibrary.AlbumColumns.CONTRIBUTOR_ID+"=%d", cursor.getLong(0));
 					break;
 				case MediaUtils.TYPE_ALBUM:
 					fields = new String[] { cursor.getString(2), cursor.getString(3) };
-					data = String.format("album_id=%d", cursor.getLong(1));
+					data = String.format(MediaLibrary.TrackColumns.ALBUM_ID+"=%d", cursor.getLong(1));
 					break;
 				default:
 					throw new IllegalArgumentException("setLimiter() does not support limiter type " + limiterType);

@@ -304,6 +304,12 @@ public class MediaAdapter
 		Log.v("VanillaMusic", "limiter = "+ (mLimiter == null ? "NULL" : mLimiter.data));
 		Log.v("VanillaMusic", "sortMode = "+mSortMode);
 
+		String constrain = mConstraint;
+		Limiter limiter = mLimiter;
+
+		StringBuilder selection = new StringBuilder();
+		String[] selectionArgs = null;
+
 		int mode = mSortMode;
 		String sortDir;
 		if (mode < 0) {
@@ -316,7 +322,15 @@ public class MediaAdapter
 
 		Log.v("VanillaMusic", "SORT BY: "+sort);
 
-		QueryTask query = new QueryTask(mSource, projection, null, null, sort);
+		// fixme: implement constrain
+		if (limiter != null) {
+			if (selection.length() != 0) {
+				selection.append(" AND ");
+			}
+			selection.append(limiter.data);
+		}
+
+		QueryTask query = new QueryTask(mSource, projection, selection.toString(), selectionArgs, sort);
 		return query;
 	}
 
@@ -498,11 +512,11 @@ public class MediaAdapter
 		switch (mType) {
 		case MediaUtils.TYPE_ARTIST:
 			fields = new String[] { cursor.getString(2) };
-			data = String.format("%s=%d", MediaStore.Audio.Media.ARTIST_ID, id);
+			data = String.format("%s=%d", MediaLibrary.AlbumColumns.CONTRIBUTOR_ID, id);
 			break;
 		case MediaUtils.TYPE_ALBUM:
 			fields = new String[] { cursor.getString(3), cursor.getString(2) };
-			data = String.format("%s=%d",  MediaStore.Audio.Media.ALBUM_ID, id);
+			data = String.format("%s=%d",  MediaLibrary.TrackColumns.ALBUM_ID, id);
 			break;
 		case MediaUtils.TYPE_GENRE:
 			fields = new String[] { cursor.getString(2) };
