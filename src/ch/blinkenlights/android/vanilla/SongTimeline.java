@@ -23,6 +23,8 @@
 
 package ch.blinkenlights.android.vanilla;
 
+import ch.blinkenlights.android.medialibrary.MediaLibrary;
+
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -89,19 +91,19 @@ public final class SongTimeline {
 	/**
 	 * Clear the timeline and use only the provided songs.
 	 *
-	 * @see SongTimeline#addSongs(Context, OBSOLETED_QueryTask)
+	 * @see SongTimeline#addSongs(Context, QueryTask)
 	 */
 	public static final int MODE_PLAY = 0;
 	/**
 	 * Clear the queue and add the songs after the current song.
 	 *
-	 * @see SongTimeline#addSongs(Context, OBSOLETED_QueryTask)
+	 * @see SongTimeline#addSongs(Context, QueryTask)
 	 */
 	public static final int MODE_FLUSH_AND_PLAY_NEXT = 1;
 	/**
 	 * Add the songs at the end of the timeline, clearing random songs.
 	 *
-	 * @see SongTimeline#addSongs(Context, OBSOLETED_QueryTask)
+	 * @see SongTimeline#addSongs(Context, QueryTask)
 	 */
 	public static final int MODE_ENQUEUE = 2;
 	/**
@@ -109,9 +111,9 @@ public final class SongTimeline {
 	 * removing the songs before the given position in the query and appending
 	 * them to the end of the queue.
 	 *
-	 * Pass the position in OBSOLETED_QueryTask.data.
+	 * Pass the position in QueryTask.data.
 	 *
-	 * @see SongTimeline#addSongs(Context, OBSOLETED_QueryTask)
+	 * @see SongTimeline#addSongs(Context, QueryTask)
 	 */
 	public static final int MODE_PLAY_POS_FIRST = 3;
 	/**
@@ -120,9 +122,9 @@ public final class SongTimeline {
 	 * them to the end of the queue. If there are multiple songs with
 	 * the given id, picks the first song with that id.
 	 *
-	 * Pass the id in OBSOLETED_QueryTask.data.
+	 * Pass the id in QueryTask.data.
 	 *
-	 * @see SongTimeline#addSongs(Context, OBSOLETED_QueryTask)
+	 * @see SongTimeline#addSongs(Context, QueryTask)
 	 */
 	public static final int MODE_PLAY_ID_FIRST = 4;
 	/**
@@ -131,9 +133,9 @@ public final class SongTimeline {
 	 * them to the end of the queue. If there are multiple songs with
 	 * the given id, picks the first song with that id.
 	 *
-	 * Pass the id in OBSOLETED_QueryTask.data.
+	 * Pass the id in QueryTask.data.
 	 *
-	 * @see SongTimeline#addSongs(Context, OBSOLETED_QueryTask)
+	 * @see SongTimeline#addSongs(Context, QueryTask)
 	 */
 	public static final int MODE_ENQUEUE_ID_FIRST = 5;
 	/**
@@ -141,17 +143,17 @@ public final class SongTimeline {
 	 * removing the songs before the given position in the query and appending
 	 * them to the end of the queue.
 	 *
-	 * Pass the position in OBSOLETED_QueryTask.data.
+	 * Pass the position in QueryTask.data.
 	 *
-	 * @see SongTimeline#addSongs(Context, OBSOLETED_QueryTask)
+	 * @see SongTimeline#addSongs(Context, QueryTask)
 	 */
 	public static final int MODE_ENQUEUE_POS_FIRST = 6;
 	/**
 	 * Enqueues the result as next item(s)
 	 *
-	 * Pass the position in OBSOLETED_QueryTask.data.
+	 * Pass the position in QueryTask.data.
 	 *
-	 * @see SongTimeline#addSongs(Context, OBSOLETED_QueryTask)
+	 * @see SongTimeline#addSongs(Context, QueryTask)
 	 */
 	public static final int MODE_ENQUEUE_AS_NEXT = 7;
 
@@ -326,7 +328,7 @@ public final class SongTimeline {
 
 				// Fill the selection with the ids of all the saved songs
 				// and initialize the timeline with unpopulated songs.
-				StringBuilder selection = new StringBuilder("_ID IN (");
+				StringBuilder selection = new StringBuilder(MediaLibrary.SongColumns._ID+" IN (");
 				for (int i = 0; i != n; ++i) {
 					long id = in.readLong();
 					if (id == -1)
@@ -346,10 +348,8 @@ public final class SongTimeline {
 				// return its results in.
 				Collections.sort(songs, new IdComparator());
 
-				ContentResolver resolver = mContext.getContentResolver();
-				Uri media = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-
-				Cursor cursor = MediaUtils.OBSOLETED_queryResolver(resolver, media, Song.FILLED_PROJECTION, selection.toString(), null, "_id");
+				QueryTask query = new QueryTask(MediaLibrary.VIEW_SONGS_ALBUMS_ARTISTS, Song.FILLED_PROJECTION, selection.toString(), null, MediaLibrary.SongColumns._ID);
+				Cursor cursor = query.runQuery(mContext);
 				if (cursor != null) {
 					if (cursor.getCount() != 0) {
 						cursor.moveToNext();
