@@ -59,12 +59,8 @@ public class MediaLibrary  {
 		return getBackend(context).query(false, table, projection, selection, selectionArgs, null, null, orderBy, null);
 	}
 
-	/**
-	 * Returns true if there are no songs in the database
-	 */
-	public static boolean isLibraryEmpty(Context context) {
+	public static void removeSong(Context context, long id) {
 		// FIXME: IMPLEMENT THIS
-		return true;
 	}
 
 	/**

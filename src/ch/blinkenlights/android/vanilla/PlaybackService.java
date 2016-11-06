@@ -23,6 +23,8 @@
 
 package ch.blinkenlights.android.vanilla;
 
+import ch.blinkenlights.android.medialibrary.MediaLibrary;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -1474,7 +1476,7 @@ public final class PlaybackService extends Service
 	/**
 	 * Run the given query and add the results to the timeline.
 	 *
-	 * obj is the OBSOLETED_QueryTask. arg1 is the add mode (one of SongTimeline.MODE_*)
+	 * obj is the QueryTask. arg1 is the add mode (one of SongTimeline.MODE_*)
 	 */
 	private static final int MSG_QUERY = 2;
 	/**
@@ -1670,26 +1672,20 @@ public final class PlaybackService extends Service
 	public int deleteMedia(int type, long id)
 	{
 		int count = 0;
-/*
-		ContentResolver resolver = getContentResolver();
-		String[] projection = new String [] { MediaStore.Audio.Media._ID, MediaStore.Audio.Media.DATA };
-		Cursor cursor = MediaUtils.buildQuery(type, id, projection, null).runQuery(resolver);
+		String[] projection = new String [] { MediaLibrary.TrackColumns._ID, MediaLibrary.TrackColumns.PATH };
+		Cursor cursor = MediaUtils.buildQuery(type, id, projection, null).runQuery(getApplicationContext());
 
 		if (cursor != null) {
 			while (cursor.moveToNext()) {
 				if (new File(cursor.getString(1)).delete()) {
 					long songId = cursor.getLong(0);
-					String where = MediaStore.Audio.Media._ID + '=' + songId;
-					resolver.delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, where, null);
+					MediaLibrary.removeSong(getApplicationContext(), songId);
 					mTimeline.removeSong(songId);
 					++count;
 				}
 			}
-
 			cursor.close();
 		}
-		FIXME OBSOLETED
-*/
 		return count;
 	}
 
@@ -1789,9 +1785,6 @@ public final class PlaybackService extends Service
 		mHandler.sendMessage(mHandler.obtainMessage(MSG_QUERY, query));
 	}
 
-	public void addSongs(OBSOLETED_QueryTask q) {
-		// FIXME OBSOLETED -> KILL ME
-	}
 
 	/**
 	 * Enqueues all the songs with the same album/artist/genre as the passed
