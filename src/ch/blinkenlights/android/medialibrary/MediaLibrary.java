@@ -22,9 +22,12 @@ import android.database.Cursor;
 
 public class MediaLibrary  {
 
-	public static final String TABLE_TRACKS = "tracks";
-	public static final String TABLE_ALBUMS = "albums";
-	public static final String TABLE_CONTRIBUTORS = "contributors";
+	public static final String TABLE_TRACKS               = "tracks";
+	public static final String TABLE_ALBUMS               = "albums";
+	public static final String TABLE_CONTRIBUTORS         = "contributors";
+	public static final String TABLE_CONTRIBUTORS_TRACKS  = "contributors_tracks";
+	public static final String VIEW_TRACKS_ALBUMS_ARTISTS = "_tracks_albums_artists";
+	public static final String VIEW_ALBUMS_ARTISTS        = "_albums_artists";
 
 	private static MediaLibraryBackend sBackend;
 
@@ -49,11 +52,10 @@ public class MediaLibrary  {
 	 * @param projection the columns to returns in this query
 	 * @param selection the selection (WHERE) to use
 	 * @param selectionArgs arguments for the selection
-	 * @param sortOrder how the result should be sorted
+	 * @param orderBy how the result should be sorted
 	 */
-	public static Cursor queryLibrary(Context context, String table, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-		MediaLibraryBackend be = getBackend(context);
-		return getBackend(context).runRawQuery("SELECT id, id, label, id FROM albums;");
+	public static Cursor queryLibrary(Context context, String table, String[] projection, String selection, String[] selectionArgs, String orderBy) {
+		return getBackend(context).query(false, table, projection, selection, selectionArgs, null, null, orderBy, null);
 	}
 
 	/**
@@ -72,21 +74,20 @@ public class MediaLibrary  {
 		return false;
 	}
 
-
 	// Columns of Track entries
 	public interface TrackColumns {
 		/**
 		 * The id of this track in the database
 		 */
-		public static final String _ID = "id";
+		public static final String _ID = "_id";
 		/**
 		 * The title of this track
 		 */
-		public static final String LABEL = "label";
+		public static final String TITLE = "title";
 		/**
 		 * The sortable title of this track
 		 */
-		public static final String LABEL_SORT = "label_sort";
+		public static final String TITLE_SORT = "title_sort";
 		/**
 		 * The album where this track belongs to
 		 */
@@ -114,11 +115,11 @@ public class MediaLibrary  {
 		/**
 		 * The title of this album
 		 */
-		public static final String LABEL = TrackColumns.LABEL;
+		public static final String ALBUM = "album";
 		/**
 		 * The sortable title of this album
 		 */
-		public static final String LABEL_SORT = TrackColumns.LABEL_SORT;
+		public static final String ALBUM_SORT = "album_sort";
 		/**
 		 * The disc number of this album
 		 */
@@ -128,9 +129,9 @@ public class MediaLibrary  {
 		 */
 		public static final String DISC_COUNT = "disc_count";
 		/**
-		 * The contributor / artist reference for this album
+		 * The primary contributor / artist reference for this album
 		 */
-		public static final String CONTRIBUTOR = "contributor";
+		public static final String CONTRIBUTOR_ID = "contributor_id";
 	}
 
 	// Columns of Contributors entries
@@ -142,11 +143,26 @@ public class MediaLibrary  {
 		/**
 		 * The name of this contributor
 		 */
-		public static final String LABEL = TrackColumns.LABEL;
+		public static final String CONTRIBUTOR = "contributor";
 		/**
 		 * The sortable title of this contributor
 		 */
-		public static final String LABEL_SORT = TrackColumns.LABEL_SORT;
+		public static final String CONTRIBUTOR_SORT = "contributor_sort";
 	}
 
+	// Tracks <-> Contributor mapping
+	public interface ContributorTrackColumns {
+		/**
+		 * The role of this entry
+		 */
+		public static final String ROLE = "role";
+		/**
+		 * the contirbutor id this maps to
+		 */
+		public static final String CONTRIBUTOR_ID = "contributor_id";
+		/**
+		 * the track this maps to
+		 */
+		public static final String TRACK_ID = "track_id";
+	}
 }

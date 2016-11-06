@@ -199,8 +199,7 @@ public class MediaAdapter
 			mSongSortValues = new String[] { "artist_key %1$s,track", "artist_key %1$s,track" /* cannot sort by number_of_tracks */ };
 			break;
 		case MediaUtils.TYPE_ALBUM:
-			mStore = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
-			mFields = new String[] { MediaStore.Audio.Albums.ALBUM, MediaStore.Audio.Albums.ARTIST };
+			mFields = new String[] { MediaLibrary.AlbumColumns.ALBUM, MediaLibrary.AlbumColumns.ALBUM /* <- fixme: should be artist */ };
 			// Why is there no artist_key column constant in the album MediaStore? The column does seem to exist.
 			mFieldKeys = new String[] { MediaStore.Audio.Albums.ALBUM_KEY, "artist_key" };
 			mSortEntries = new int[] { R.string.name, R.string.artist_album, R.string.artist_year_album, R.string.number_of_tracks, R.string.date_added };
@@ -297,7 +296,7 @@ public class MediaAdapter
 	 * selection.
 	 */
 	private QueryTask buildQuery(String[] projection, boolean returnSongs) {
-		QueryTask query = new QueryTask(MediaLibrary.ALBUMS_TABLE, new String[]{MediaLibrary.AlbumColumns._ID, MediaLibrary.AlbumColumns.LABEL}, null, null, null);
+		QueryTask query = new QueryTask(MediaLibrary.TABLE_ALBUMS, projection, null, null, null);
 		return query;
 	}
 
