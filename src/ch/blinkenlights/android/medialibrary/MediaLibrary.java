@@ -106,6 +106,10 @@ public class MediaLibrary  {
 		 */
 		public static final String SKIPCOUNT = "skipcount";
 		/**
+		 * The duration of this track
+		 */
+		public static final String DURATION = "duration";
+		/**
 		 * The path to the music file
 		 */
 		public static final String PATH = "path";

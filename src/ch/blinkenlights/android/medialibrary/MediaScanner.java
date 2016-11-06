@@ -57,6 +57,7 @@ public class MediaScanner  {
 		v.put(MediaLibrary.TrackColumns.TITLE,      title);
 		v.put(MediaLibrary.TrackColumns.TITLE_SORT, title);
 		v.put(MediaLibrary.TrackColumns.ALBUM_ID,   albumId);
+		v.put(MediaLibrary.TrackColumns.DURATION,   50000);
 		v.put(MediaLibrary.TrackColumns.PATH,       path);
 		backend.insert(MediaLibrary.TABLE_TRACKS, null, v);
 

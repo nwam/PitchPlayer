@@ -51,6 +51,7 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	  + MediaLibrary.TrackColumns.ALBUM_ID     +" INTEGER NOT NULL, "
 	  + MediaLibrary.TrackColumns.PLAYCOUNT    +" INTEGER NOT NULL DEFAULT 0, "
 	  + MediaLibrary.TrackColumns.SKIPCOUNT    +" INTEGER NOT NULL DEFAULT 0, "
+	  + MediaLibrary.TrackColumns.DURATION     +" INTEGER NOT NULL, "
 	  + MediaLibrary.TrackColumns.PATH         +" VARCHAR(4096) NOT NULL "
 	  + ");";
 
