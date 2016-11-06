@@ -245,9 +245,7 @@ public class SlidingPlaybackActivity extends PlaybackActivity
 		long id = intent.getLongExtra("id", LibraryAdapter.INVALID_ID);
 		QueryTask query;
 		if (type == MediaUtils.TYPE_FILE) {
-//			query = MediaUtils.buildFileQuery(intent.getStringExtra("file"), projection);
-// FIXME OBSOLETED
-query = null;
+			query = MediaUtils.buildFileQuery(intent.getStringExtra("file"), projection);
 		} else if (allSource != null) {
 			query = allSource.buildSongQuery(projection);
 			query.data = id;
