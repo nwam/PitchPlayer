@@ -252,9 +252,7 @@ query = null;
 			query = allSource.buildSongQuery(projection);
 			query.data = id;
 		} else {
-//			query = MediaUtils.buildQuery(type, id, projection, null);
-// FIXME OBSOLETED
-query = null;
+			query = MediaUtils.buildQuery(type, id, projection, null);
 		}
 
 		return query;
