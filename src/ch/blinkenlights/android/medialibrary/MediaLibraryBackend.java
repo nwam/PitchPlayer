@@ -20,6 +20,7 @@ package ch.blinkenlights.android.medialibrary;
 import android.content.Context;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.Cursor;
@@ -152,6 +153,14 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	 */
 	@Override
 	public void onUpgrade(SQLiteDatabase dbh, int oldVersion, int newVersion) {
+	}
+
+	/**
+	 * Returns true if given song id is already present in the library
+	 */
+	public boolean isSongExisting(long id) {
+		long count = DatabaseUtils.queryNumEntries(getReadableDatabase(), MediaLibrary.TABLE_SONGS, MediaLibrary.SongColumns._ID+"=?", new String[]{""+id});
+		return count != 0;
 	}
 
 	/**

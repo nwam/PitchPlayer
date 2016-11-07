@@ -33,7 +33,11 @@ public class MediaScanner  {
 		if (dir.isDirectory() == false)
 			return;
 
-		for (File file : dir.listFiles()) {
+		File[] dirents = dir.listFiles();
+		if (dirents == null)
+			return;
+
+		for (File file : dirents) {
 			if (file.isFile()) {
 				Log.v("VanillaMusic", "MediaScanner: inspecting file "+file);
 				addSingleFile(backend, file);
@@ -46,13 +50,20 @@ public class MediaScanner  {
 	}
 
 	public static void addSingleFile(MediaLibraryBackend backend, File file) {
-		String path     = file.getAbsolutePath();
+		String path  = file.getAbsolutePath();
+		long songId  = hash63(path);
 
-		HashMap tags    = (new Bastp()).getTags(path);
+		HashMap tags = (new Bastp()).getTags(path);
 		if (tags.containsKey("type") == false)
 			return; // no tags found
 
 Log.v("VanillaMusic", "> Found mime "+((String)tags.get("type")));
+
+		if (backend.isSongExisting(songId)) {
+			Log.v("VanillaMusic", "Skipping already known song with id "+songId);
+			return;
+		}
+
 		MediaMetadataRetriever data = new MediaMetadataRetriever();
 		try {
 			data.setDataSource(path);
@@ -71,7 +82,6 @@ Log.v("VanillaMusic", "> Found mime "+((String)tags.get("type")));
 
 		String composer = "Composer and "+artist;
 
-		long songId = hash63(path);
 		long albumId = hash63(album);
 		long artistId = hash63(artist);
 		long composerId = hash63(composer);
