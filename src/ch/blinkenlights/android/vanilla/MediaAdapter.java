@@ -303,11 +303,15 @@ public class MediaAdapter
 		Log.v("VanillaMusic", "limiter = "+ (mLimiter == null ? "NULL" : mLimiter.data));
 		Log.v("VanillaMusic", "sortMode = "+mSortMode);
 
-		if (returnSongs == true)
-			Log.v("VanillaMusic", "Warning: return songs not implemented yet, you will burn!");
 
+		String source = mSource;
 		String constrain = mConstraint;
 		Limiter limiter = mLimiter;
+
+		if (returnSongs == true) {
+			source = MediaLibrary.VIEW_SONGS_ALBUMS_ARTISTS;
+			Log.v("VanillaMusic", "Warning: return songs not implemented yet, you will burn!");
+		}
 
 		StringBuilder selection = new StringBuilder();
 		String[] selectionArgs = null;
@@ -332,7 +336,7 @@ public class MediaAdapter
 			selection.append(limiter.data);
 		}
 
-		QueryTask query = new QueryTask(mSource, projection, selection.toString(), selectionArgs, sort);
+		QueryTask query = new QueryTask(source, projection, selection.toString(), selectionArgs, sort);
 		return query;
 	}
 
