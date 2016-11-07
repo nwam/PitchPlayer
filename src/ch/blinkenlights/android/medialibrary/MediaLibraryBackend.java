@@ -118,10 +118,11 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 
 	/**
 	 * View which includes artist information
-	 * FIXME: SHOULD ONLY INCLUDE ARTISTS!
 	 */
 	private static final String VIEW_CREATE_ARTISTS = "CREATE VIEW "+ MediaLibrary.VIEW_ARTISTS+ " AS "
-	  + "SELECT *, " + VIEW_ARTIST_SELECT + " FROM " + MediaLibrary.TABLE_CONTRIBUTORS + " AS _artist"
+	  + "SELECT *, " + VIEW_ARTIST_SELECT + " FROM "+MediaLibrary.TABLE_CONTRIBUTORS+" AS _artist WHERE "+MediaLibrary.ContributorColumns._ID+" IN "
+	  +" (SELECT "+MediaLibrary.ContributorSongColumns._CONTRIBUTOR_ID+" FROM "+MediaLibrary.TABLE_CONTRIBUTORS_SONGS
+	  +" WHERE "+MediaLibrary.ContributorSongColumns.ROLE+"=0 GROUP BY "+MediaLibrary.ContributorSongColumns._CONTRIBUTOR_ID+")"
 	  +" ;";
 
 	/**
