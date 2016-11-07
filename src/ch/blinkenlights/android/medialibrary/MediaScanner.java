@@ -65,17 +65,17 @@ public class MediaScanner  {
 		v.put(MediaLibrary.AlbumColumns._ID,            albumId);
 		v.put(MediaLibrary.AlbumColumns.ALBUM,          album);
 		v.put(MediaLibrary.AlbumColumns.ALBUM_SORT,     album);
-		v.put(MediaLibrary.AlbumColumns.CONTRIBUTOR_ID, artistId);
+		v.put(MediaLibrary.AlbumColumns.PRIMARY_ARTIST_ID, artistId);
 		backend.insert(MediaLibrary.TABLE_ALBUMS, null, v);
 
 		v.clear();
 		v.put(MediaLibrary.ContributorColumns._ID,              artistId);
-		v.put(MediaLibrary.ContributorColumns.CONTRIBUTOR,      artist);
-		v.put(MediaLibrary.ContributorColumns.CONTRIBUTOR_SORT, artist);
+		v.put(MediaLibrary.ContributorColumns._CONTRIBUTOR,      artist);
+		v.put(MediaLibrary.ContributorColumns._CONTRIBUTOR_SORT, artist);
 		backend.insert(MediaLibrary.TABLE_CONTRIBUTORS, null, v);
 
 		v.clear();
-		v.put(MediaLibrary.ContributorSongColumns.CONTRIBUTOR_ID, artistId);
+		v.put(MediaLibrary.ContributorSongColumns._CONTRIBUTOR_ID, artistId);
 		v.put(MediaLibrary.ContributorSongColumns.SONG_ID,       songId);
 		v.put(MediaLibrary.ContributorSongColumns.ROLE,           0);
 		backend.insert(MediaLibrary.TABLE_CONTRIBUTORS_SONGS, null, v);

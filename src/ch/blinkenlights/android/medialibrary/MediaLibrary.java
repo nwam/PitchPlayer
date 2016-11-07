@@ -26,7 +26,7 @@ public class MediaLibrary  {
 	public static final String TABLE_ALBUMS               = "albums";
 	public static final String TABLE_CONTRIBUTORS         = "contributors";
 	public static final String TABLE_CONTRIBUTORS_SONGS   = "contributors_songs";
-	public static final String VIEW_ARTISTS               = "contributors"; // FIXME: THIS SHOULD GET ITS OWN VIEW!!
+	public static final String VIEW_ARTISTS               = "_artists";
 	public static final String VIEW_ALBUMS_ARTISTS        = "_albums_artists";
 	public static final String VIEW_SONGS_ALBUMS_ARTISTS  = "_songs_albums_artists";
 
@@ -140,7 +140,7 @@ public class MediaLibrary  {
 		/**
 		 * The primary contributor / artist reference for this album
 		 */
-		public static final String CONTRIBUTOR_ID = "album_primary_contributor_id";
+		public static final String PRIMARY_ARTIST_ID = "primary_artist_id";
 	}
 
 	// Columns of Contributors entries
@@ -152,11 +152,23 @@ public class MediaLibrary  {
 		/**
 		 * The name of this contributor
 		 */
-		public static final String CONTRIBUTOR = "contributor";
+		public static final String _CONTRIBUTOR = "_contributor";
 		/**
 		 * The sortable title of this contributor
 		 */
-		public static final String CONTRIBUTOR_SORT = "contributor_sort";
+		public static final String _CONTRIBUTOR_SORT = "_contributor_sort";
+		/**
+		 * ONLY IN VIEWS - the artist
+		 */
+		public static final String ARTIST = "artist";
+		/**
+		 * ONLY IN VIEWS - the artist_sort key
+		 */
+		public static final String ARTIST_SORT = "artist_sort";
+		/**
+		 * ONLY IN VIEWS - the artist id
+		 */
+		public static final String ARTIST_ID = "artist_id";
 	}
 
 	// Songs <-> Contributor mapping
@@ -168,7 +180,7 @@ public class MediaLibrary  {
 		/**
 		 * the contirbutor id this maps to
 		 */
-		public static final String CONTRIBUTOR_ID = "contributor_id";
+		public static final String _CONTRIBUTOR_ID = "_contributor_id";
 		/**
 		 * the song this maps to
 		 */

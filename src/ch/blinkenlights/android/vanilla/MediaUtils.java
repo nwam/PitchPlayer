@@ -95,12 +95,12 @@ public class MediaUtils {
 	 * The default sort order for media queries. First artist, then album, then
 	 * song number.
 	 */
-	private static final String DEFAULT_SORT = "contributor_sort,album_sort,song_num";
+	private static final String DEFAULT_SORT = "artist_sort,album_sort,song_num";
 
 	/**
 	 * The default sort order for albums. First the album, then songnumber
 	 */
-	private static final String ALBUM_SORT = "contributor_sort,song_num";
+	private static final String ALBUM_SORT = "artist_sort,song_num";
 
 	/**
 	 * The default sort order for files. Simply use the path
@@ -153,7 +153,7 @@ public class MediaUtils {
 			selection.append(MediaLibrary.SongColumns._ID);
 			break;
 		case TYPE_ARTIST:
-			selection.append(MediaLibrary.ContributorSongColumns.CONTRIBUTOR_ID);
+			selection.append(MediaLibrary.ContributorColumns.ARTIST_ID);
 			break;
 		case TYPE_ALBUM:
 			selection.append(MediaLibrary.SongColumns.ALBUM_ID);
@@ -666,7 +666,7 @@ public class MediaUtils {
 		   -> ended with a % for the LIKE query
 		*/
 		path = addDirEndSlash(sanitizeMediaPath(path)) + "%";
-		final String query = "path LIKE ? AND "+MediaStore.Audio.Media.IS_MUSIC;
+		final String query = MediaLibrary.SongColumns.PATH+" LIKE ?";
 		String[] qargs = { path };
 
 		QueryTask result = new QueryTask(MediaLibrary.VIEW_SONGS_ALBUMS_ARTISTS, projection, query, qargs, FILE_SORT);

@@ -557,7 +557,7 @@ public class LibraryActivity
 	 */
 	private void setLimiter(int limiterType, String selection)
 	{
-		String[] projection = new String[] { MediaLibrary.ContributorSongColumns.CONTRIBUTOR_ID, MediaLibrary.SongColumns.ALBUM_ID, MediaLibrary.ContributorColumns.CONTRIBUTOR, MediaLibrary.AlbumColumns.ALBUM };
+		String[] projection = new String[] { MediaLibrary.ContributorColumns.ARTIST_ID, MediaLibrary.SongColumns.ALBUM_ID, MediaLibrary.ContributorColumns.ARTIST, MediaLibrary.AlbumColumns.ALBUM };
 		QueryTask query = new QueryTask(MediaLibrary.VIEW_SONGS_ALBUMS_ARTISTS, projection, selection, null, null);
 		Cursor cursor = query.runQuery(getApplicationContext());
 
@@ -568,7 +568,7 @@ public class LibraryActivity
 				switch (limiterType) {
 				case MediaUtils.TYPE_ARTIST:
 					fields = new String[] { cursor.getString(2) };
-					data = String.format(MediaLibrary.AlbumColumns.CONTRIBUTOR_ID+"=%d", cursor.getLong(0));
+					data = String.format(MediaLibrary.ContributorColumns.ARTIST_ID+"=%d", cursor.getLong(0));
 					break;
 				case MediaUtils.TYPE_ALBUM:
 					fields = new String[] { cursor.getString(2), cursor.getString(3) };
