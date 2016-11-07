@@ -19,6 +19,7 @@ package ch.blinkenlights.android.medialibrary;
 
 import ch.blinkenlights.bastp.Bastp;
 import android.content.ContentValues;
+import android.media.MediaMetadataRetriever;
 import android.util.Log;
 
 import java.io.File;
@@ -42,6 +43,19 @@ public class MediaScanner  {
 
 	public static void addSingleFile(MediaLibraryBackend backend, File file) {
 		String path     = file.getAbsolutePath();
+
+		MediaMetadataRetriever data = new MediaMetadataRetriever();
+		try {
+			data.setDataSource(path);
+		} catch (Exception e) {
+				Log.w("VanillaMusic", "Failed to extract metadata from " + path);
+		}
+
+		String duration = data.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+
+		if (duration == null)
+			return; // not a supported media file!
+
 		HashMap tags    = (new Bastp()).getTags(path);
 
 		String title = (tags.containsKey("TITLE") ? (String)((Vector)tags.get("TITLE")).get(0) : "Untitled");
@@ -60,7 +74,7 @@ public class MediaScanner  {
 		v.put(MediaLibrary.SongColumns.TITLE,      title);
 		v.put(MediaLibrary.SongColumns.TITLE_SORT, title);
 		v.put(MediaLibrary.SongColumns.ALBUM_ID,   albumId);
-		v.put(MediaLibrary.SongColumns.DURATION,   50000);
+		v.put(MediaLibrary.SongColumns.DURATION,   duration);
 		v.put(MediaLibrary.SongColumns.PATH,       path);
 		backend.insert(MediaLibrary.TABLE_SONGS, null, v);
 
