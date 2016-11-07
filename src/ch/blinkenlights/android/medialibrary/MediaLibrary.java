@@ -20,6 +20,7 @@ package ch.blinkenlights.android.medialibrary;
 import android.content.Context;
 import android.database.Cursor;
 
+import java.io.File;
 public class MediaLibrary  {
 
 	public static final String TABLE_SONGS                = "songs";
@@ -36,9 +37,11 @@ public class MediaLibrary  {
 		if (sBackend == null) {
 			// -> unlikely
 //			synchronized(sLock) {
-				if (sBackend == null)
+				if (sBackend == null) {
 					sBackend = new MediaLibraryBackend(context);
-					MediaScanner.scanSingleDirectory(sBackend, "/sdcard/Music");
+					File dir = new File("/sdcard");
+					MediaScanner.scanSingleDirectory(sBackend, dir);
+				}
 //			}
 		}
 		return sBackend;

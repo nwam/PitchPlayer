@@ -28,15 +28,19 @@ import java.util.Vector;
 
 public class MediaScanner  {
 
-	public static void scanSingleDirectory(MediaLibraryBackend backend, String dirpath) {
-		File dir = new File(dirpath);
+
+	public static void scanSingleDirectory(MediaLibraryBackend backend, File dir) {
 		if (dir.isDirectory() == false)
 			return;
 
 		for (File file : dir.listFiles()) {
 			if (file.isFile()) {
-				Log.v("VanillaMusic", "+ "+file);
+				Log.v("VanillaMusic", "MediaScanner: inspecting file "+file);
 				addSingleFile(backend, file);
+			}
+			else if (file.isDirectory()) {
+				Log.v("VanillaMusic", "MediaScanner: scanning subdir "+file);
+				scanSingleDirectory(backend, file);
 			}
 		}
 	}
@@ -44,6 +48,11 @@ public class MediaScanner  {
 	public static void addSingleFile(MediaLibraryBackend backend, File file) {
 		String path     = file.getAbsolutePath();
 
+		HashMap tags    = (new Bastp()).getTags(path);
+		if (tags.containsKey("type") == false)
+			return; // no tags found
+
+Log.v("VanillaMusic", "> Found mime "+((String)tags.get("type")));
 		MediaMetadataRetriever data = new MediaMetadataRetriever();
 		try {
 			data.setDataSource(path);
@@ -52,11 +61,9 @@ public class MediaScanner  {
 		}
 
 		String duration = data.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-
 		if (duration == null)
 			return; // not a supported media file!
 
-		HashMap tags    = (new Bastp()).getTags(path);
 
 		String title = (tags.containsKey("TITLE") ? (String)((Vector)tags.get("TITLE")).get(0) : "Untitled");
 		String album = (tags.containsKey("ALBUM") ? (String)((Vector)tags.get("ALBUM")).get(0) : "No Album");
@@ -108,7 +115,7 @@ public class MediaScanner  {
 		v.put(MediaLibrary.ContributorSongColumns.SONG_ID,       songId);
 		v.put(MediaLibrary.ContributorSongColumns.ROLE,           1);
 		backend.insert(MediaLibrary.TABLE_CONTRIBUTORS_SONGS, null, v);
-		Log.v("VanillaMusic", "Inserted "+path);
+		Log.v("VanillaMusic", "MediaScanner: inserted "+path);
 	}
 
 
