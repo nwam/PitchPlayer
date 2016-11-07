@@ -296,8 +296,7 @@ public class MediaAdapter
 	 * Build the query to be run with runQuery().
 	 *
 	 * @param projection The columns to query.
-	 * @param forceMusicCheck Force the is_music check to be added to the
-	 * selection.
+	 * @param returnSongs return songs instead of mType if true.
 	 */
 	private QueryTask buildQuery(String[] projection, boolean returnSongs) {
 		Log.v("VanillaMusic", "constrain = "+mConstraint);
