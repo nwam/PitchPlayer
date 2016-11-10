@@ -125,6 +125,19 @@ Log.v("VanillaMusic", "> Found mime "+((String)tags.get("type")));
 		v.put(MediaLibrary.ContributorSongColumns.SONG_ID,       songId);
 		v.put(MediaLibrary.ContributorSongColumns.ROLE,           1);
 		backend.insert(MediaLibrary.TABLE_CONTRIBUTORS_SONGS, null, v);
+
+		if (tags.containsKey("GENRE")) {
+			Vector<String> genres = (Vector)tags.get("GENRE");
+			for (String genre : genres) {
+				long genreId = hash63(genre);
+				v.clear();
+				v.put(MediaLibrary.GenreColumns._ID,         genreId);
+				v.put(MediaLibrary.GenreColumns._GENRE,      genre);
+				v.put(MediaLibrary.GenreColumns._GENRE_SORT, genre);
+				backend.insert(MediaLibrary.TABLE_GENRES, null, v);
+			}
+		}
+
 		Log.v("VanillaMusic", "MediaScanner: inserted "+path);
 	}
 

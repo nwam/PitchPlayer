@@ -235,11 +235,11 @@ public class MediaAdapter
 			mExpandable = true;
 			break;
 		case MediaUtils.TYPE_GENRE:
-			OBSOLETED_mStore = MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI;
-			mFields = new String[] { MediaStore.Audio.Genres.NAME };
+			mSource = MediaLibrary.TABLE_GENRES;
+			mFields = new String[] { MediaLibrary.GenreColumns._GENRE };
 			mFieldKeys = null;
 			mSortEntries = new int[] { R.string.name };
-			mAdapterSortValues = new String[] { "name %1$s" };
+			mAdapterSortValues = new String[] { MediaLibrary.GenreColumns._GENRE_SORT+" %1$s" };
 			mSongSortValues = null;
 			break;
 		default:
@@ -426,10 +426,7 @@ public class MediaAdapter
 		}
 
 		OBSOLETED_QueryTask query;
-		if(mType == MediaUtils.TYPE_GENRE && !returnSongs) {
-			query = MediaUtils.buildGenreExcludeEmptyQuery(enrichedProjection, selection.toString(),
-					selectionArgs, sort);
-		} else if (limiter != null && limiter.type == MediaUtils.TYPE_GENRE) {
+		if (limiter != null && limiter.type == MediaUtils.TYPE_GENRE) {
 			// Genre is not standard metadata for MediaStore.Audio.Media.
 			// We have to query it through a separate provider. : /
 			query = MediaUtils.buildGenreQuery((Long)limiter.data, enrichedProjection,  selection.toString(), selectionArgs, sort, mType, returnSongs);
@@ -449,7 +446,7 @@ public class MediaAdapter
 	@Override
 	public Cursor query()
 	{
-		if (mType == MediaUtils.TYPE_SONG || mType == MediaUtils.TYPE_ARTIST || mType == MediaUtils.TYPE_ALBUM) {
+		if (mType == MediaUtils.TYPE_SONG || mType == MediaUtils.TYPE_ARTIST || mType == MediaUtils.TYPE_ALBUM || mType == MediaUtils.TYPE_GENRE) {
 			return buildQuery(mProjection, false).runQuery(mContext);
 		}
 		else {

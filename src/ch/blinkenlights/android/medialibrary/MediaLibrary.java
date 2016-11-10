@@ -27,6 +27,7 @@ public class MediaLibrary  {
 	public static final String TABLE_ALBUMS               = "albums";
 	public static final String TABLE_CONTRIBUTORS         = "contributors";
 	public static final String TABLE_CONTRIBUTORS_SONGS   = "contributors_songs";
+	public static final String TABLE_GENRES               = "genres";
 	public static final String VIEW_ARTISTS               = "_artists";
 	public static final String VIEW_ALBUMS_ARTISTS        = "_albums_artists";
 	public static final String VIEW_SONGS_ALBUMS_ARTISTS  = "_songs_albums_artists";
@@ -188,5 +189,21 @@ public class MediaLibrary  {
 		 * the song this maps to
 		 */
 		public static final String SONG_ID = "song_id";
+	}
+
+	// Columns of Genres entries
+	public interface GenreColumns {
+		/**
+		 * The id of this genre
+		 */
+		public static final String _ID = SongColumns._ID;
+		/**
+		 * The name of this genre
+		 */
+		public static final String _GENRE = "_genre";
+		/**
+		 * The sortable title of this genre
+		 */
+		public static final String _GENRE_SORT = "_genre_sort";
 	}
 }

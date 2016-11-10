@@ -97,6 +97,15 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	  +";";
 
 	/**
+	 * SQL Schema of `genres' table
+	 */
+	private static final String DATABASE_CREATE_GENRES = "CREATE TABLE "+ MediaLibrary.TABLE_GENRES + " ("
+	  + MediaLibrary.GenreColumns._ID         +" INTEGER PRIMARY KEY, "
+	  + MediaLibrary.GenreColumns._GENRE      +" TEXT NOT NULL, "
+	  + MediaLibrary.GenreColumns._GENRE_SORT +" TEXT NOT NULL "
+	  + ");";
+
+	/**
 	 * Additional columns to select for artist info
 	 */
 	private static final String VIEW_ARTIST_SELECT = "_artist."+MediaLibrary.ContributorColumns._CONTRIBUTOR+" AS "+MediaLibrary.ContributorColumns.ARTIST
@@ -148,6 +157,7 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 		dbh.execSQL(DATABASE_CREATE_ALBUMS);
 		dbh.execSQL(DATABASE_CREATE_CONTRIBUTORS);
 		dbh.execSQL(DATABASE_CREATE_CONTRIBUTORS_SONGS);
+		dbh.execSQL(DATABASE_CREATE_GENRES);
 		dbh.execSQL(VIEW_CREATE_SONGS_ALBUMS_ARTISTS);
 		dbh.execSQL(VIEW_CREATE_ALBUMS_ARTISTS);
 		dbh.execSQL(VIEW_CREATE_ARTISTS);
