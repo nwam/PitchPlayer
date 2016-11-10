@@ -88,7 +88,10 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	  + "PRIMARY KEY("+MediaLibrary.ContributorSongColumns.ROLE+","
 	                  +MediaLibrary.ContributorSongColumns._CONTRIBUTOR_ID+","
 	                  +MediaLibrary.ContributorSongColumns.SONG_ID+") "
-	  + ");";
+	  + ");"
+	  + "CREATE INDEX idx_contributors_songs ON "+MediaLibrary.TABLE_CONTRIBUTORS_SONGS
+	  +" ("+MediaLibrary.ContributorSongColumns.SONG_ID+", "+MediaLibrary.ContributorSongColumns.ROLE+")"
+	  +";";
 
 	/**
 	 * Additional columns to select for artist info
