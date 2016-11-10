@@ -160,7 +160,8 @@ public class MediaUtils {
 			sort = ALBUM_SORT;
 			break;
 		case TYPE_GENRE:
-			selection.append(MediaLibrary.GenreColumns._ID);
+			// FIXME - This is ugly: we should just blindly pass _genre_id=id and lett queryLibrary() optimize + rewrite the query
+			selection.append(MediaLibrary.GenreColumns._ID+" IN (SELECT song_id FROM genres_songs WHERE _genre_id="+id+" ) AND "+id);
 			break;
 		default:
 			throw new IllegalArgumentException("Invalid type specified: " + type);
