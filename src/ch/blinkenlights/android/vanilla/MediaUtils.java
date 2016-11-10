@@ -159,6 +159,9 @@ public class MediaUtils {
 			selection.append(MediaLibrary.SongColumns.ALBUM_ID);
 			sort = ALBUM_SORT;
 			break;
+		case TYPE_GENRE:
+			selection.append(MediaLibrary.GenreColumns._ID);
+			break;
 		default:
 			throw new IllegalArgumentException("Invalid type specified: " + type);
 		}
@@ -195,71 +198,6 @@ public class MediaUtils {
 	}
 
 	/**
-	 * Builds a query that will return all the songs in the genre with the
-	 * given id.
-	 *
-	 * @param id The id of the genre in MediaStore.Audio.Genres.
-	 * @param projection The columns to query.
-	 * @param selection The selection to pass to the query, or null.
-	 * @param selectionArgs The arguments to substitute into the selection.
-	 * @param sort The sort order.
-	 * @param type The media type to query and return
-	 * @param returnSongs returns matching songs instead of `type' if true
-	 */
-	public static OBSOLETED_QueryTask buildGenreQuery(long id, String[] projection, String selection, String[] selectionArgs, String sort, int type, boolean returnSongs)
-	{
-		// Note: This function works on a raw sql query with way too much internal
-		// knowledge about the mediaProvider SQL table layout. Yes: it's ugly.
-		// The reason for this mess is that android has a very crippled genre implementation
-		// and does, for example, not allow us to query the albumbs beloging to a genre.
-
-		Uri uri = MediaStore.Audio.Genres.Members.getContentUri("external", id);
-		String[] clonedProjection = projection.clone(); // we modify the projection, but this should not be visible to the caller
-		String sql = "";
-		String authority = "audio";
-
-		if (type == TYPE_ARTIST)
-			authority = "artist_info";
-		if (type == TYPE_ALBUM)
-			authority = "album_info";
-
-		// Our raw SQL query includes the album_info table (well: it's actually a view)
-		// which shares some columns with audio.
-		// This regexp should matche duplicate column names and forces them to use
-		// the audio table as a source
-		final String _FORCE_AUDIO_SRC = "(^|[ |,\\(])(_id|album(_\\w+)?|artist(_\\w+)?)";
-
-		// Prefix the SELECTed rows with the current table authority name
-		for (int i=0 ;i<clonedProjection.length; i++) {
-			if (clonedProjection[i].equals("0") == false) // do not prefix fake rows
-				clonedProjection[i] = (returnSongs ? "audio" : authority)+"."+clonedProjection[i];
-		}
-
-		sql += TextUtils.join(", ", clonedProjection);
-		sql += " FROM audio_genres_map_noid, audio" + (authority.equals("audio") ? "" : ", "+authority);
-		sql += " WHERE(audio._id = audio_id AND genre_id=?)";
-
-		if (selection != null && selection.length() > 0)
-			sql += " AND("+selection.replaceAll(_FORCE_AUDIO_SRC, "$1audio.$2")+")";
-
-		if (type == TYPE_ARTIST)
-			sql += " AND(artist_info._id = audio.artist_id)" + (returnSongs ? "" : " GROUP BY artist_info._id");
-
-		if (type == TYPE_ALBUM)
-			sql += " AND(album_info._id = audio.album_id)" + (returnSongs ? "" : " GROUP BY album_info._id");
-
-		if (sort != null && sort.length() > 0)
-			sql += " ORDER BY "+sort.replaceAll(_FORCE_AUDIO_SRC, "$1audio.$2");
-
-		// We are now turning this into an sql injection. Fun times.
-		clonedProjection[0] = sql +" --";
-
-		OBSOLETED_QueryTask result = new OBSOLETED_QueryTask(uri, clonedProjection, selection, selectionArgs, sort);
-		result.type = TYPE_GENRE;
-		return result;
-	}
-
-	/**
 	 * Builds a query with the given information.
 	 *
 	 * @param type Type the id represents. Must be one of the Song.TYPE_*
@@ -275,12 +213,10 @@ public class MediaUtils {
 		case TYPE_ARTIST:
 		case TYPE_ALBUM:
 		case TYPE_SONG:
+		case TYPE_GENRE:
 			return buildMediaQuery(type, id, projection, selection);
 		case TYPE_PLAYLIST:
 //			return buildPlaylistQuery(id, projection, selection);
-// FIXME OBSOLETED
-		case TYPE_GENRE:
-//			return buildGenreQuery(id, projection, selection, null,  MediaStore.Audio.Genres.Members.TITLE_KEY, TYPE_SONG, true);
 // FIXME OBSOLETED
 		default:
 			throw new IllegalArgumentException("Specified type not valid: " + type);
@@ -291,15 +227,15 @@ public class MediaUtils {
 	 * Query the MediaStore to determine the id of the genre the song belongs
 	 * to.
 	 *
-	 * @param resolver A ContentResolver to use.
+	 * @param context The context to use
 	 * @param id The id of the song to query the genre for.
 	 */
-	public static long queryGenreForSong(ContentResolver resolver, long id)
-	{
-		String[] projection = { "_id" };
-		Uri uri = MediaStore.Audio.Genres.getContentUriForAudioId("external", (int)id);
-		Cursor cursor = OBSOLETED_queryResolver(resolver, uri, projection, null, null, null);
+	public static long queryGenreForSong(Context context, long id) {
+		String[] projection = { MediaLibrary.GenreSongColumns._GENRE_ID };
+		String query = MediaLibrary.GenreSongColumns.SONG_ID+"=?";
+		String[] queryArgs = new String[] { id+"" };
 
+		Cursor cursor = MediaLibrary.queryLibrary(context, MediaLibrary.TABLE_GENRES_SONGS, projection, query, queryArgs, null); 
 		if (cursor != null) {
 			if (cursor.moveToNext())
 				return cursor.getLong(0);

@@ -1811,7 +1811,7 @@ public final class PlaybackService extends Service
 			id = song.albumId;
 			break;
 		case MediaUtils.TYPE_GENRE:
-			id = MediaUtils.queryGenreForSong(getContentResolver(), song.id);
+			id = MediaUtils.queryGenreForSong(getApplicationContext(), song.id);
 			break;
 		default:
 			throw new IllegalArgumentException("Unsupported media type: " + type);
