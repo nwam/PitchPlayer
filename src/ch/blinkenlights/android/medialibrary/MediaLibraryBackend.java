@@ -82,7 +82,7 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	  + ");";
 
 	/**
-	 * SQL Schema of 'contributors' table
+	 * SQL Schema of 'contributors<->songs' table
 	 */
 	private static final String DATABASE_CREATE_CONTRIBUTORS_SONGS = "CREATE TABLE "+ MediaLibrary.TABLE_CONTRIBUTORS_SONGS+ " ("
 	  + MediaLibrary.ContributorSongColumns.ROLE             +" INTEGER, "
@@ -103,6 +103,16 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	  + MediaLibrary.GenreColumns._ID         +" INTEGER PRIMARY KEY, "
 	  + MediaLibrary.GenreColumns._GENRE      +" TEXT NOT NULL, "
 	  + MediaLibrary.GenreColumns._GENRE_SORT +" TEXT NOT NULL "
+	  + ");";
+
+	/**
+	 * SQL Schema of 'genres<->songs' table
+	 */
+	private static final String DATABASE_CREATE_GENRES_SONGS = "CREATE TABLE "+ MediaLibrary.TABLE_GENRES_SONGS+ " ("
+	  + MediaLibrary.GenreSongColumns._GENRE_ID  +" INTEGER, "
+	  + MediaLibrary.GenreSongColumns.SONG_ID    +" INTEGER, "
+	  + "PRIMARY KEY("+MediaLibrary.GenreSongColumns._GENRE_ID+","
+	                  +MediaLibrary.GenreSongColumns.SONG_ID+") "
 	  + ");";
 
 	/**
@@ -158,6 +168,7 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 		dbh.execSQL(DATABASE_CREATE_CONTRIBUTORS);
 		dbh.execSQL(DATABASE_CREATE_CONTRIBUTORS_SONGS);
 		dbh.execSQL(DATABASE_CREATE_GENRES);
+		dbh.execSQL(DATABASE_CREATE_GENRES_SONGS);
 		dbh.execSQL(VIEW_CREATE_SONGS_ALBUMS_ARTISTS);
 		dbh.execSQL(VIEW_CREATE_ALBUMS_ARTISTS);
 		dbh.execSQL(VIEW_CREATE_ARTISTS);

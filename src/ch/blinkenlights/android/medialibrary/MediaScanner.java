@@ -135,6 +135,11 @@ Log.v("VanillaMusic", "> Found mime "+((String)tags.get("type")));
 				v.put(MediaLibrary.GenreColumns._GENRE,      genre);
 				v.put(MediaLibrary.GenreColumns._GENRE_SORT, genre);
 				backend.insert(MediaLibrary.TABLE_GENRES, null, v);
+
+				v.clear();
+				v.put(MediaLibrary.GenreSongColumns._GENRE_ID, genreId);
+				v.put(MediaLibrary.GenreSongColumns.SONG_ID, songId);
+				backend.insert(MediaLibrary.TABLE_GENRES_SONGS, null, v);
 			}
 		}
 

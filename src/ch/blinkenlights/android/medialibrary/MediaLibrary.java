@@ -28,6 +28,7 @@ public class MediaLibrary  {
 	public static final String TABLE_CONTRIBUTORS         = "contributors";
 	public static final String TABLE_CONTRIBUTORS_SONGS   = "contributors_songs";
 	public static final String TABLE_GENRES               = "genres";
+	public static final String TABLE_GENRES_SONGS         = "genres_songs";
 	public static final String VIEW_ARTISTS               = "_artists";
 	public static final String VIEW_ALBUMS_ARTISTS        = "_albums_artists";
 	public static final String VIEW_SONGS_ALBUMS_ARTISTS  = "_songs_albums_artists";
@@ -205,5 +206,17 @@ public class MediaLibrary  {
 		 * The sortable title of this genre
 		 */
 		public static final String _GENRE_SORT = "_genre_sort";
+	}
+
+	// Songs <-> Contributor mapping
+	public interface GenreSongColumns {
+		/**
+		 * the genre id this maps to
+		 */
+		public static final String _GENRE_ID = "_genre_id";
+		/**
+		 * the song this maps to
+		 */
+		public static final String SONG_ID = "song_id";
 	}
 }
