@@ -29,12 +29,15 @@ import java.util.ArrayList;
 
 public class MediaLibraryBackend extends SQLiteOpenHelper {
 
+	private static final boolean DEBUG = true;
+
 	/**
 	 * SQL constants and CREATE TABLE statements used by
 	 * this java class
 	 */
 	private static final int DATABASE_VERSION = 1;
 	private static final String DATABASE_NAME = "media-library.db";
+
 
 	/**
 	 * The tag to use for log messages
@@ -177,6 +180,50 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	 * Wrappr for SQLiteDatabase.query() function
 	 */
 	public Cursor query (boolean distinct, String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
+
+		if (MediaLibrary.VIEW_SONGS_ALBUMS_ARTISTS.equals(table) && selection.matches("^artist_id=\\d+$")) {
+			selection = "_id IN( SELECT song_id FROM contributors_songs WHERE contributors_songs.role=0 AND contributors_songs._contributor_id="+selection.substring(10)+")";
+			Log.v("VanillaMusic", "++ FIXME: HACKY SQL OPTIMIZED");
+		}
+
+
+		if (DEBUG)
+			debugQuery(distinct, table, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
+
 		return getReadableDatabase().query(distinct, table, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
 	}
+
+
+	private void debugQuery(boolean distinct, String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
+		final String LT = "VanillaMusicSQL";
+		Log.v(LT, "---- start query ---");
+		Log.v(LT, "SELECT");
+		for (String c : columns) {
+			Log.v(LT, "   "+c);
+		}
+		Log.v(LT, "FROM "+table+" WHERE "+selection+" ");
+		if (selectionArgs != null) {
+			Log.v(LT, " /* with args: ");
+			for (String a : selectionArgs) {
+				Log.v(LT, a+", ");
+			}
+			Log.v(LT, " */");
+		}
+		Log.v(LT, " GROUP BY "+groupBy+" HAVING "+having+" ORDER BY "+orderBy+" LIMIT "+limit);
+
+		Log.v(LT, "DBH = "+getReadableDatabase());
+
+		Cursor dryRun = getReadableDatabase().query(distinct, table, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
+		long results = 0;
+		long startAt = System.currentTimeMillis();
+		if (dryRun != null) {
+			while(dryRun.moveToNext()) {
+				results++;
+			}
+		}
+		dryRun.close();
+		long tookMs = System.currentTimeMillis() - startAt;
+		Log.v(LT, "--- finished in "+tookMs+" ms with count="+results);
+	}
+
 }
