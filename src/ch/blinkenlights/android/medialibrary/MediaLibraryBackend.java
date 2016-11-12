@@ -28,135 +28,28 @@ import android.util.Log;
 import java.util.ArrayList;
 
 public class MediaLibraryBackend extends SQLiteOpenHelper {
-
-	private static final boolean DEBUG = true;
-
 	/**
-	 * SQL constants and CREATE TABLE statements used by
-	 * this java class
+	 * Enables or disables debugging
+	 */
+	private static final boolean DEBUG = true;
+	/**
+	 * The database version we are using
 	 */
 	private static final int DATABASE_VERSION = 1;
+	/**
+	 * on-disk file to store the database
+	 */
 	private static final String DATABASE_NAME = "media-library.db";
-
-
 	/**
 	 * The tag to use for log messages
 	 */
 	private static final String TAG = "VanillaMediaLibraryBackend";
 
-	/**
-	 * SQL Schema of `songs' table
-	 */
-	private static final String DATABASE_CREATE_SONGS = "CREATE TABLE "+ MediaLibrary.TABLE_SONGS + " ("
-	  + MediaLibrary.SongColumns._ID          +" INTEGER PRIMARY KEY, "
-	  + MediaLibrary.SongColumns.TITLE        +" TEXT NOT NULL, "
-	  + MediaLibrary.SongColumns.TITLE_SORT   +" VARCHAR(64) NOT NULL, "
-	  + MediaLibrary.SongColumns.SONG_NUMBER  +" INTEGER, "
-	  + MediaLibrary.SongColumns.ALBUM_ID     +" INTEGER NOT NULL, "
-	  + MediaLibrary.SongColumns.PLAYCOUNT    +" INTEGER NOT NULL DEFAULT 0, "
-	  + MediaLibrary.SongColumns.SKIPCOUNT    +" INTEGER NOT NULL DEFAULT 0, "
-	  + MediaLibrary.SongColumns.DURATION     +" INTEGER NOT NULL, "
-	  + MediaLibrary.SongColumns.PATH         +" VARCHAR(4096) NOT NULL "
-	  + ");";
 
 	/**
-	 * SQL Schema of `albums' table
-	 */
-	private static final String DATABASE_CREATE_ALBUMS = "CREATE TABLE "+ MediaLibrary.TABLE_ALBUMS + " ("
-	  + MediaLibrary.AlbumColumns._ID               +" INTEGER PRIMARY KEY, "
-	  + MediaLibrary.AlbumColumns.ALBUM             +" TEXT NOT NULL, "
-	  + MediaLibrary.AlbumColumns.ALBUM_SORT        +" VARCHAR(64) NOT NULL, "
-	  + MediaLibrary.AlbumColumns.SONG_COUNT        +" INTEGER, "
-	  + MediaLibrary.AlbumColumns.DISC_NUMBER       +" INTEGER, "
-	  + MediaLibrary.AlbumColumns.DISC_COUNT        +" INTEGER, "
-	  + MediaLibrary.AlbumColumns.PRIMARY_ARTIST_ID +" INTEGER NOT NULL DEFAULT 0"
-	  + ");";
-
-	/**
-	 * SQL Schema of `contributors' table
-	 */
-	private static final String DATABASE_CREATE_CONTRIBUTORS = "CREATE TABLE "+ MediaLibrary.TABLE_CONTRIBUTORS + " ("
-	  + MediaLibrary.ContributorColumns._ID               +" INTEGER PRIMARY KEY, "
-	  + MediaLibrary.ContributorColumns._CONTRIBUTOR      +" TEXT NOT NULL, "
-	  + MediaLibrary.ContributorColumns._CONTRIBUTOR_SORT +" TEXT NOT NULL "
-	  + ");";
-
-	/**
-	 * SQL Schema of 'contributors<->songs' table
-	 */
-	private static final String DATABASE_CREATE_CONTRIBUTORS_SONGS = "CREATE TABLE "+ MediaLibrary.TABLE_CONTRIBUTORS_SONGS+ " ("
-	  + MediaLibrary.ContributorSongColumns.ROLE             +" INTEGER, "
-	  + MediaLibrary.ContributorSongColumns._CONTRIBUTOR_ID  +" INTEGER, "
-	  + MediaLibrary.ContributorSongColumns.SONG_ID          +" INTEGER, "
-	  + "PRIMARY KEY("+MediaLibrary.ContributorSongColumns.ROLE+","
-	                  +MediaLibrary.ContributorSongColumns._CONTRIBUTOR_ID+","
-	                  +MediaLibrary.ContributorSongColumns.SONG_ID+") "
-	  + ");";
-
-	/**
-	 * song, role index on contributors_songs table
-	 */
-	private static final String INDEX_IDX_CONTRIBUTORS_SONGS = "CREATE INDEX idx_contributors_songs ON "+MediaLibrary.TABLE_CONTRIBUTORS_SONGS
-	  +" ("+MediaLibrary.ContributorSongColumns.SONG_ID+", "+MediaLibrary.ContributorSongColumns.ROLE+")"
-	  +";";
-
-	/**
-	 * SQL Schema of `genres' table
-	 */
-	private static final String DATABASE_CREATE_GENRES = "CREATE TABLE "+ MediaLibrary.TABLE_GENRES + " ("
-	  + MediaLibrary.GenreColumns._ID         +" INTEGER PRIMARY KEY, "
-	  + MediaLibrary.GenreColumns._GENRE      +" TEXT NOT NULL, "
-	  + MediaLibrary.GenreColumns._GENRE_SORT +" TEXT NOT NULL "
-	  + ");";
-
-	/**
-	 * SQL Schema of 'genres<->songs' table
-	 */
-	private static final String DATABASE_CREATE_GENRES_SONGS = "CREATE TABLE "+ MediaLibrary.TABLE_GENRES_SONGS+ " ("
-	  + MediaLibrary.GenreSongColumns._GENRE_ID  +" INTEGER, "
-	  + MediaLibrary.GenreSongColumns.SONG_ID    +" INTEGER, "
-	  + "PRIMARY KEY("+MediaLibrary.GenreSongColumns._GENRE_ID+","
-	                  +MediaLibrary.GenreSongColumns.SONG_ID+") "
-	  + ");";
-
-	/**
-	 * Additional columns to select for artist info
-	 */
-	private static final String VIEW_ARTIST_SELECT = "_artist."+MediaLibrary.ContributorColumns._CONTRIBUTOR+" AS "+MediaLibrary.ContributorColumns.ARTIST
-	                                               +",_artist."+MediaLibrary.ContributorColumns._CONTRIBUTOR_SORT+" AS "+MediaLibrary.ContributorColumns.ARTIST_SORT
-	                                               +",_artist."+MediaLibrary.ContributorColumns._ID+" AS "+MediaLibrary.ContributorColumns.ARTIST_ID;
-
-	/**
-	 * View which includes song, album and artist information
-	 */
-	private static final String VIEW_CREATE_SONGS_ALBUMS_ARTISTS = "CREATE VIEW "+ MediaLibrary.VIEW_SONGS_ALBUMS_ARTISTS+ " AS "
-	  + "SELECT *, " + VIEW_ARTIST_SELECT + " FROM " + MediaLibrary.TABLE_SONGS
-	  +" LEFT JOIN "+MediaLibrary.TABLE_ALBUMS+" ON "+MediaLibrary.TABLE_SONGS+"."+MediaLibrary.SongColumns.ALBUM_ID+" = "+MediaLibrary.TABLE_ALBUMS+"."+MediaLibrary.AlbumColumns._ID
-	  +" LEFT JOIN "+MediaLibrary.TABLE_CONTRIBUTORS_SONGS+" ON "+MediaLibrary.TABLE_CONTRIBUTORS_SONGS+"."+MediaLibrary.ContributorSongColumns.ROLE+"=0 "
-	  +" AND "+MediaLibrary.TABLE_CONTRIBUTORS_SONGS+"."+MediaLibrary.ContributorSongColumns.SONG_ID+" = "+MediaLibrary.TABLE_SONGS+"."+MediaLibrary.SongColumns._ID
-	  +" LEFT JOIN "+MediaLibrary.TABLE_CONTRIBUTORS+" AS _artist ON _artist."+MediaLibrary.ContributorColumns._ID+" = "+MediaLibrary.TABLE_CONTRIBUTORS_SONGS+"."+MediaLibrary.ContributorSongColumns._CONTRIBUTOR_ID
-	  +" ;";
-
-	/**
-	 * View which includes album and artist information
-	 */
-	private static final String VIEW_CREATE_ALBUMS_ARTISTS = "CREATE VIEW "+ MediaLibrary.VIEW_ALBUMS_ARTISTS+ " AS "
-	  + "SELECT *, " + VIEW_ARTIST_SELECT + " FROM " + MediaLibrary.TABLE_ALBUMS
-	  +" LEFT JOIN "+MediaLibrary.TABLE_CONTRIBUTORS+" AS _artist"
-	  +" ON _artist."+MediaLibrary.ContributorColumns._ID+" = "+MediaLibrary.TABLE_ALBUMS+"."+MediaLibrary.AlbumColumns.PRIMARY_ARTIST_ID
-	  +" ;";
-
-	/**
-	 * View which includes artist information
-	 */
-	private static final String VIEW_CREATE_ARTISTS = "CREATE VIEW "+ MediaLibrary.VIEW_ARTISTS+ " AS "
-	  + "SELECT *, " + VIEW_ARTIST_SELECT + " FROM "+MediaLibrary.TABLE_CONTRIBUTORS+" AS _artist WHERE "+MediaLibrary.ContributorColumns._ID+" IN "
-	  +" (SELECT "+MediaLibrary.ContributorSongColumns._CONTRIBUTOR_ID+" FROM "+MediaLibrary.TABLE_CONTRIBUTORS_SONGS
-	  +" WHERE "+MediaLibrary.ContributorSongColumns.ROLE+"=0 GROUP BY "+MediaLibrary.ContributorSongColumns._CONTRIBUTOR_ID+")"
-	  +" ;";
-
-	/**
-	* @desc Constructor for the MediaLibraryBackend helper
+	* Constructor for the MediaLibraryBackend helper
+	*
+	* @param Context the context to use
 	*/
 	public MediaLibraryBackend(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -164,24 +57,21 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 
 	/**
 	 * Called when database does not exist
+	 *
+	 * @param dbh the writeable database handle
 	 */
 	@Override
 	public void onCreate(SQLiteDatabase dbh) {
-		dbh.execSQL(DATABASE_CREATE_SONGS);
-		dbh.execSQL(DATABASE_CREATE_ALBUMS);
-		dbh.execSQL(DATABASE_CREATE_CONTRIBUTORS);
-		dbh.execSQL(DATABASE_CREATE_CONTRIBUTORS_SONGS);
-		dbh.execSQL(INDEX_IDX_CONTRIBUTORS_SONGS);
-		dbh.execSQL(DATABASE_CREATE_GENRES);
-		dbh.execSQL(DATABASE_CREATE_GENRES_SONGS);
-		dbh.execSQL(VIEW_CREATE_SONGS_ALBUMS_ARTISTS);
-		dbh.execSQL(VIEW_CREATE_ALBUMS_ARTISTS);
-		dbh.execSQL(VIEW_CREATE_ARTISTS);
+		MediaSchema.createDatabaseSchema(dbh);
 	}
 
 	/**
 	 * Called when the existing database
 	 * schema is outdated
+	 *
+	 * @param dbh the writeable database handle
+	 * @param oldVersion the current version in use
+	 * @param newVersion the target version
 	 */
 	@Override
 	public void onUpgrade(SQLiteDatabase dbh, int oldVersion, int newVersion) {
@@ -189,6 +79,9 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 
 	/**
 	 * Returns true if given song id is already present in the library
+	 *
+	 * @param id the song id to query
+	 * @return true if a song with given id exists
 	 */
 	public boolean isSongExisting(long id) {
 		long count = DatabaseUtils.queryNumEntries(getReadableDatabase(), MediaLibrary.TABLE_SONGS, MediaLibrary.SongColumns._ID+"=?", new String[]{""+id});
@@ -197,6 +90,10 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 
 	/**
 	 * Wrapper for SQLiteDatabase.insert() function
+	 *
+	 * @param table the table to insert data to
+	 * @param nullColumnHack android hackery (see SQLiteDatabase documentation)
+	 * @param values the values to insert
 	 */
 	public long insert (String table, String nullColumnHack, ContentValues values) {
 		return getWritableDatabase().insert(table, nullColumnHack, values);
@@ -219,7 +116,9 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 		return getReadableDatabase().query(distinct, table, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
 	}
 
-
+	/**
+	 * Debug function to print and benchmark queries
+	 */
 	private void debugQuery(boolean distinct, String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
 		final String LT = "VanillaMusicSQL";
 		Log.v(LT, "---- start query ---");
