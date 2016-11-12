@@ -517,7 +517,7 @@ public class MediaAdapter
 			break;
 		case MediaUtils.TYPE_GENRE:
 			fields = new String[] { cursor.getString(2) };
-			data = id;
+			data = String.format("%s=%d", MediaLibrary.GenreSongColumns._GENRE_ID, id);
 			break;
 		default:
 			throw new IllegalStateException("getLimiter() is not supported for media type: " + mType);
