@@ -426,11 +426,6 @@ public class MediaAdapter
 		}
 
 		OBSOLETED_QueryTask query;
-		if (limiter != null && limiter.type == MediaUtils.TYPE_GENRE) {
-			// Genre is not standard metadata for MediaStore.Audio.Media.
-			// We have to query it through a separate provider. : /
-			query = MediaUtils.buildGenreQuery((Long)limiter.data, enrichedProjection,  selection.toString(), selectionArgs, sort, mType, returnSongs);
-		} else {
 			if (limiter != null) {
 				if (selection.length() != 0)
 					selection.append(" AND ");
@@ -439,7 +434,6 @@ public class MediaAdapter
 			query = new OBSOLETED_QueryTask(OBSOLETED_mStore, enrichedProjection, selection.toString(), selectionArgs, sort);
 			if (returnSongs) // force query on song provider as we are requested to return songs
 				query.uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-		}
 		return query;
 	}
 
