@@ -19,6 +19,8 @@ package ch.blinkenlights.android.medialibrary;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.provider.MediaStore;
+
 
 import java.io.File;
 public class MediaLibrary  {
@@ -74,6 +76,16 @@ public class MediaLibrary  {
 	public static boolean isScannerRunning(Context context) {
 		// FIXME: IMPLEMENT THIS
 		return false;
+	}
+
+	/**
+	 * Returns the 'key' of given string used for sorting and searching
+	 *
+	 * @param name the string to convert
+	 * @return the the key of given name
+	 */
+	public static String keyFor(String name) {
+		return MediaStore.Audio.keyFor(name);
 	}
 
 	// Columns of Song entries

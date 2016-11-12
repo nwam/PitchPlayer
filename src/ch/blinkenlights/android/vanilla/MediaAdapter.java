@@ -200,7 +200,7 @@ public class MediaAdapter
 		case MediaUtils.TYPE_ARTIST:
 			mSource = MediaLibrary.VIEW_ARTISTS;
 			mFields = new String[] { MediaLibrary.ContributorColumns.ARTIST };
-			mFieldKeys = new String[] { MediaStore.Audio.Artists.ARTIST_KEY };
+			mFieldKeys = new String[] { MediaLibrary.ContributorColumns.ARTIST_SORT };
 			mSortEntries = new int[] { R.string.name };
 			mAdapterSortValues = new String[] { MediaLibrary.ContributorColumns.ARTIST_SORT+" %1$s" };
 			//mSongSortValues = new String[] { "artist_key %1$s,track", "artist_key %1$s,track" /* cannot sort by number_of_tracks */ };
@@ -208,7 +208,7 @@ public class MediaAdapter
 		case MediaUtils.TYPE_ALBUM:
 			mSource = MediaLibrary.VIEW_ALBUMS_ARTISTS;
 			mFields = new String[] { MediaLibrary.AlbumColumns.ALBUM, MediaLibrary.ContributorColumns.ARTIST };
-			//mFieldKeys = new String[] { MediaStore.Audio.Albums.ALBUM_KEY, "artist_key" };
+			mFieldKeys = new String[] { MediaLibrary.AlbumColumns.ALBUM_SORT, MediaLibrary.ContributorColumns.ARTIST_SORT };
 			mSortEntries = new int[] { R.string.name, R.string.artist_album };
 			mAdapterSortValues = new String[] { MediaLibrary.AlbumColumns.ALBUM_SORT+" %1$s", MediaLibrary.ContributorColumns.ARTIST_SORT+" %1$s,"+MediaLibrary.AlbumColumns.ALBUM_SORT+" %1$s" };
 			// mSongSortValues = new String[] { "album_key %1$s,track", "artist_key %1$s,album_key %1$s,track", "artist_key %1$s,year %1$s,album_key %1$s,track", "album_key %1$s,track", "album_id %1$s,track" };
@@ -216,7 +216,7 @@ public class MediaAdapter
 		case MediaUtils.TYPE_SONG:
 			mSource = MediaLibrary.VIEW_SONGS_ALBUMS_ARTISTS;
 			mFields = new String[] { MediaLibrary.SongColumns.TITLE, MediaLibrary.AlbumColumns.ALBUM, MediaLibrary.ContributorColumns.ARTIST };
-			//mFieldKeys = new String[] { MediaStore.Audio.Media.TITLE_KEY, MediaStore.Audio.Media.ALBUM_KEY, MediaStore.Audio.Media.ARTIST_KEY };
+			mFieldKeys = new String[] { MediaLibrary.SongColumns.TITLE_SORT, MediaLibrary.AlbumColumns.ALBUM_SORT, MediaLibrary.ContributorColumns.ARTIST_SORT };
 			mSortEntries = new int[] { R.string.name, R.string.artist_album_track };
 			mAdapterSortValues = new String[] { MediaLibrary.SongColumns.TITLE_SORT+" %1$s",
 			                                    MediaLibrary.ContributorColumns.ARTIST_SORT+" %1$s,"+MediaLibrary.AlbumColumns.ALBUM_SORT+" %1$s,"+MediaLibrary.SongColumns.SONG_NUMBER };
@@ -237,7 +237,7 @@ public class MediaAdapter
 		case MediaUtils.TYPE_GENRE:
 			mSource = MediaLibrary.TABLE_GENRES;
 			mFields = new String[] { MediaLibrary.GenreColumns._GENRE };
-			mFieldKeys = null;
+			mFieldKeys = new String[] { MediaLibrary.GenreColumns._GENRE_SORT };
 			mSortEntries = new int[] { R.string.name };
 			mAdapterSortValues = new String[] { MediaLibrary.GenreColumns._GENRE_SORT+" %1$s" };
 			mSongSortValues = null;
@@ -308,14 +308,10 @@ public class MediaAdapter
 		String constrain = mConstraint;
 		Limiter limiter = mLimiter;
 
-		if (returnSongs == true) {
-			source = MediaLibrary.VIEW_SONGS_ALBUMS_ARTISTS;
-			Log.v("VanillaMusic", "Warning: return songs not implemented yet, you will burn!");
-		}
-
 		StringBuilder selection = new StringBuilder();
 		String[] selectionArgs = null;
 
+		// Assemble the sort string as requested by the user
 		int mode = mSortMode;
 		String sortDir;
 		if (mode < 0) {
@@ -324,16 +320,59 @@ public class MediaAdapter
 		} else {
 			sortDir = "ASC";
 		}
+		// fixme: must implement mSongsSortValues (OBSOLETED had this feature)
 		String sort = String.format(mAdapterSortValues[mode], sortDir);
 
 		Log.v("VanillaMusic", "SORT BY: "+sort);
 
-		// fixme: implement constrain
+		// include the constrain (aka: search string) if any
+		if (constrain != null && constrain.length() != 0) {
+			String[] needles;
+			String[] keySource;
+
+			if (mFieldKeys != null) {
+				String colKey = MediaLibrary.keyFor(constrain);
+				String spaceColKey = DatabaseUtils.getCollationKey(" ");
+				needles = colKey.split(spaceColKey);
+				keySource = mFieldKeys;
+			} else {
+				// fixme: is this code still needed?
+				needles = SPACE_SPLIT.split(constrain);
+				keySource = mFields;
+			}
+
+			int size = needles.length;
+			selectionArgs = new String[size];
+
+			StringBuilder keys = new StringBuilder(20);
+			keys.append(keySource[0]);
+			for (int j = 1; j != keySource.length; ++j) {
+				keys.append("||");
+				keys.append(keySource[j]);
+			}
+
+			for (int j = 0; j != needles.length; ++j) {
+				selectionArgs[j] = '%' + needles[j] + '%';
+
+				// If we have something in the selection args (i.e. j > 0), we
+				// must have something in the selection, so we can skip the more
+				// costly direct check of the selection length.
+				if (j != 0 || selection.length() != 0)
+					selection.append(" AND ");
+				selection.append(keys);
+				selection.append(" LIKE ?");
+			}
+		}
+
 		if (limiter != null) {
 			if (selection.length() != 0) {
 				selection.append(" AND ");
 			}
 			selection.append(limiter.data);
+		}
+
+		if (returnSongs == true) {
+			source = MediaLibrary.VIEW_SONGS_ALBUMS_ARTISTS;
 		}
 
 		QueryTask query = new QueryTask(source, projection, selection.toString(), selectionArgs, sort);

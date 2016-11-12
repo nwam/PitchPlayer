@@ -89,7 +89,7 @@ Log.v("VanillaMusic", "> Found mime "+((String)tags.get("type")));
 		ContentValues v = new ContentValues();
 		v.put(MediaLibrary.SongColumns._ID,        songId);
 		v.put(MediaLibrary.SongColumns.TITLE,      title);
-		v.put(MediaLibrary.SongColumns.TITLE_SORT, title);
+		v.put(MediaLibrary.SongColumns.TITLE_SORT, MediaLibrary.keyFor(title));
 		v.put(MediaLibrary.SongColumns.ALBUM_ID,   albumId);
 		v.put(MediaLibrary.SongColumns.DURATION,   duration);
 		v.put(MediaLibrary.SongColumns.PATH,       path);
@@ -98,14 +98,14 @@ Log.v("VanillaMusic", "> Found mime "+((String)tags.get("type")));
 		v.clear();
 		v.put(MediaLibrary.AlbumColumns._ID,            albumId);
 		v.put(MediaLibrary.AlbumColumns.ALBUM,          album);
-		v.put(MediaLibrary.AlbumColumns.ALBUM_SORT,     album);
+		v.put(MediaLibrary.AlbumColumns.ALBUM_SORT,     MediaLibrary.keyFor(album));
 		v.put(MediaLibrary.AlbumColumns.PRIMARY_ARTIST_ID, artistId);
 		backend.insert(MediaLibrary.TABLE_ALBUMS, null, v);
 
 		v.clear();
 		v.put(MediaLibrary.ContributorColumns._ID,              artistId);
 		v.put(MediaLibrary.ContributorColumns._CONTRIBUTOR,      artist);
-		v.put(MediaLibrary.ContributorColumns._CONTRIBUTOR_SORT, artist);
+		v.put(MediaLibrary.ContributorColumns._CONTRIBUTOR_SORT, MediaLibrary.keyFor(artist));
 		backend.insert(MediaLibrary.TABLE_CONTRIBUTORS, null, v);
 
 		v.clear();
@@ -117,7 +117,7 @@ Log.v("VanillaMusic", "> Found mime "+((String)tags.get("type")));
 		v.clear();
 		v.put(MediaLibrary.ContributorColumns._ID,              composerId);
 		v.put(MediaLibrary.ContributorColumns._CONTRIBUTOR,      composer);
-		v.put(MediaLibrary.ContributorColumns._CONTRIBUTOR_SORT, composer);
+		v.put(MediaLibrary.ContributorColumns._CONTRIBUTOR_SORT, MediaLibrary.keyFor(composer));
 		backend.insert(MediaLibrary.TABLE_CONTRIBUTORS, null, v);
 
 		v.clear();
@@ -133,7 +133,7 @@ Log.v("VanillaMusic", "> Found mime "+((String)tags.get("type")));
 				v.clear();
 				v.put(MediaLibrary.GenreColumns._ID,         genreId);
 				v.put(MediaLibrary.GenreColumns._GENRE,      genre);
-				v.put(MediaLibrary.GenreColumns._GENRE_SORT, genre);
+				v.put(MediaLibrary.GenreColumns._GENRE_SORT, MediaLibrary.keyFor(genre));
 				backend.insert(MediaLibrary.TABLE_GENRES, null, v);
 
 				v.clear();
