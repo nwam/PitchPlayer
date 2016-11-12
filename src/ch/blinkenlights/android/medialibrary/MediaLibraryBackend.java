@@ -91,8 +91,12 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	  + "PRIMARY KEY("+MediaLibrary.ContributorSongColumns.ROLE+","
 	                  +MediaLibrary.ContributorSongColumns._CONTRIBUTOR_ID+","
 	                  +MediaLibrary.ContributorSongColumns.SONG_ID+") "
-	  + ");"
-	  + "CREATE INDEX idx_contributors_songs ON "+MediaLibrary.TABLE_CONTRIBUTORS_SONGS
+	  + ");";
+
+	/**
+	 * song, role index on contributors_songs table
+	 */
+	private static final String INDEX_IDX_CONTRIBUTORS_SONGS = "CREATE INDEX idx_contributors_songs ON "+MediaLibrary.TABLE_CONTRIBUTORS_SONGS
 	  +" ("+MediaLibrary.ContributorSongColumns.SONG_ID+", "+MediaLibrary.ContributorSongColumns.ROLE+")"
 	  +";";
 
@@ -167,6 +171,7 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 		dbh.execSQL(DATABASE_CREATE_ALBUMS);
 		dbh.execSQL(DATABASE_CREATE_CONTRIBUTORS);
 		dbh.execSQL(DATABASE_CREATE_CONTRIBUTORS_SONGS);
+		dbh.execSQL(INDEX_IDX_CONTRIBUTORS_SONGS);
 		dbh.execSQL(DATABASE_CREATE_GENRES);
 		dbh.execSQL(DATABASE_CREATE_GENRES_SONGS);
 		dbh.execSQL(VIEW_CREATE_SONGS_ALBUMS_ARTISTS);
