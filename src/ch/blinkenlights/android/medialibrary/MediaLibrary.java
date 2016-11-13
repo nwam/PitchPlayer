@@ -19,6 +19,7 @@ package ch.blinkenlights.android.medialibrary;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.ContentObserver;
 import android.provider.MediaStore;
 
 
@@ -43,7 +44,7 @@ public class MediaLibrary  {
 //			synchronized(sLock) {
 				if (sBackend == null) {
 					sBackend = new MediaLibraryBackend(context);
-					File dir = new File("/sdcard");
+					File dir = new File("/sdcard/Music");
 					MediaScanner.scanSingleDirectory(sBackend, dir);
 				}
 //			}
@@ -68,6 +69,16 @@ public class MediaLibrary  {
 
 	public static void removeSong(Context context, long id) {
 		// FIXME: IMPLEMENT THIS
+	}
+
+	/**
+	 * Registers a new content observer for the media library
+	 *
+	 * @param context the context to use
+	 * @param observer the content observer we are going to call on changes
+	 */
+	public static void registerContentObserver(Context context, ContentObserver observer) {
+		getBackend(context).registerContentObserver(observer);
 	}
 
 	/**

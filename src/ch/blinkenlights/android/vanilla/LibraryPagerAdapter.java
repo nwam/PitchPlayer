@@ -23,6 +23,8 @@
 
 package ch.blinkenlights.android.vanilla;
 
+import ch.blinkenlights.android.medialibrary.MediaLibrary;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.ContentObserver;
@@ -214,7 +216,9 @@ public class LibraryPagerAdapter
 		mUiHandler = new Handler(this);
 		mWorkerHandler = new Handler(workerLooper, this);
 		mCurrentPage = -1;
-		activity.getContentResolver().registerContentObserver(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, true, mPlaylistObserver);
+		// FIXME OBSOLETED_* had this, we should do this again as soon as we have
+		// multiple observers supported in MediaLibrary!
+		// MediaLibrary.registerContentObserver(activity, mPlaylistObserver);
 	}
 
 	/**
