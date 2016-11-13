@@ -38,14 +38,18 @@ public class MediaLibrary  {
 
 	private static MediaLibraryBackend sBackend;
 
+	private static MediaScanner sScanner;
+
 	private static MediaLibraryBackend getBackend(Context context) {
 		if (sBackend == null) {
 			// -> unlikely
 //			synchronized(sLock) {
 				if (sBackend == null) {
 					sBackend = new MediaLibraryBackend(context);
-					File dir = new File("/sdcard/Music");
-					MediaScanner.scanSingleDirectory(sBackend, dir);
+
+					sScanner = new MediaScanner(sBackend);
+					File dir = new File("/sdcard");
+					sScanner.startScan(dir);
 				}
 //			}
 		}

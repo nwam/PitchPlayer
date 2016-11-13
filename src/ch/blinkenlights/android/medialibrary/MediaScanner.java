@@ -21,15 +21,65 @@ import ch.blinkenlights.bastp.Bastp;
 import android.content.ContentValues;
 import android.media.MediaMetadataRetriever;
 import android.util.Log;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Message;
+import android.os.Process;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Vector;
 
-public class MediaScanner  {
+public class MediaScanner implements Handler.Callback {
+	/**
+	 * The backend instance we are acting on
+	 */
+	private MediaLibraryBackend mBackend;
+	/**
+	 * Our message handler
+	 */
+	private Handler mHandler;
+
+	/**
+	 * Constructs a new MediaScanner instance
+	 *
+	 * @param backend the backend to use
+	 */
+	public MediaScanner(MediaLibraryBackend backend) {
+		mBackend = backend;
+		HandlerThread handlerThread = new HandlerThread("MediaScannerThred", Process.THREAD_PRIORITY_LOWEST);
+		handlerThread.start();
+		mHandler = new Handler(handlerThread.getLooper(), this);
+	}
+
+	public void startScan(File dir) {
+		mHandler.sendMessage(mHandler.obtainMessage(MSG_SCAN_DIRECTORY, 1, 0, dir));
+	}
+
+	private static final int MSG_SCAN_DIRECTORY = 1;
+	private static final int MSG_SCAN_FILE      = 2;
+	@Override
+	public boolean handleMessage(Message message) {
+		File file = (File)message.obj;
+		switch (message.what) {
+			case MSG_SCAN_DIRECTORY: {
+				boolean recursive = (message.arg1 == 0 ? false : true);
+				scanDirectory(file, recursive);
+				break;
+			}
+			case MSG_SCAN_FILE: {
+				scanFile(file);
+				break;
+			}
+			default: {
+				throw new IllegalArgumentException();
+			}
+		}
+		return true;
+	}
 
 
-	public static void scanSingleDirectory(MediaLibraryBackend backend, File dir) {
+	private void scanDirectory(File dir, boolean recursive) {
 		if (dir.isDirectory() == false)
 			return;
 
@@ -40,16 +90,18 @@ public class MediaScanner  {
 		for (File file : dirents) {
 			if (file.isFile()) {
 				Log.v("VanillaMusic", "MediaScanner: inspecting file "+file);
-				addSingleFile(backend, file);
+				//scanFile(file);
+				mHandler.sendMessage(mHandler.obtainMessage(MSG_SCAN_FILE, 0, 0, file));
 			}
-			else if (file.isDirectory()) {
+			else if (file.isDirectory() && recursive) {
 				Log.v("VanillaMusic", "MediaScanner: scanning subdir "+file);
-				scanSingleDirectory(backend, file);
+				//scanDirectory(file, recursive);
+				mHandler.sendMessage(mHandler.obtainMessage(MSG_SCAN_DIRECTORY, 1, 0, file));
 			}
 		}
 	}
 
-	public static void addSingleFile(MediaLibraryBackend backend, File file) {
+	private void scanFile(File file) {
 		String path  = file.getAbsolutePath();
 		long songId  = hash63(path);
 
@@ -59,7 +111,7 @@ public class MediaScanner  {
 
 Log.v("VanillaMusic", "> Found mime "+((String)tags.get("type")));
 
-		if (backend.isSongExisting(songId)) {
+		if (mBackend.isSongExisting(songId)) {
 			Log.v("VanillaMusic", "Skipping already known song with id "+songId);
 			return;
 		}
@@ -93,38 +145,38 @@ Log.v("VanillaMusic", "> Found mime "+((String)tags.get("type")));
 		v.put(MediaLibrary.SongColumns.ALBUM_ID,   albumId);
 		v.put(MediaLibrary.SongColumns.DURATION,   duration);
 		v.put(MediaLibrary.SongColumns.PATH,       path);
-		backend.insert(MediaLibrary.TABLE_SONGS, null, v);
+		mBackend.insert(MediaLibrary.TABLE_SONGS, null, v);
 
 		v.clear();
 		v.put(MediaLibrary.AlbumColumns._ID,            albumId);
 		v.put(MediaLibrary.AlbumColumns.ALBUM,          album);
 		v.put(MediaLibrary.AlbumColumns.ALBUM_SORT,     MediaLibrary.keyFor(album));
 		v.put(MediaLibrary.AlbumColumns.PRIMARY_ARTIST_ID, artistId);
-		backend.insert(MediaLibrary.TABLE_ALBUMS, null, v);
+		mBackend.insert(MediaLibrary.TABLE_ALBUMS, null, v);
 
 		v.clear();
 		v.put(MediaLibrary.ContributorColumns._ID,              artistId);
 		v.put(MediaLibrary.ContributorColumns._CONTRIBUTOR,      artist);
 		v.put(MediaLibrary.ContributorColumns._CONTRIBUTOR_SORT, MediaLibrary.keyFor(artist));
-		backend.insert(MediaLibrary.TABLE_CONTRIBUTORS, null, v);
+		mBackend.insert(MediaLibrary.TABLE_CONTRIBUTORS, null, v);
 
 		v.clear();
 		v.put(MediaLibrary.ContributorSongColumns._CONTRIBUTOR_ID, artistId);
 		v.put(MediaLibrary.ContributorSongColumns.SONG_ID,       songId);
 		v.put(MediaLibrary.ContributorSongColumns.ROLE,           0);
-		backend.insert(MediaLibrary.TABLE_CONTRIBUTORS_SONGS, null, v);
+		mBackend.insert(MediaLibrary.TABLE_CONTRIBUTORS_SONGS, null, v);
 
 		v.clear();
 		v.put(MediaLibrary.ContributorColumns._ID,              composerId);
 		v.put(MediaLibrary.ContributorColumns._CONTRIBUTOR,      composer);
 		v.put(MediaLibrary.ContributorColumns._CONTRIBUTOR_SORT, MediaLibrary.keyFor(composer));
-		backend.insert(MediaLibrary.TABLE_CONTRIBUTORS, null, v);
+		mBackend.insert(MediaLibrary.TABLE_CONTRIBUTORS, null, v);
 
 		v.clear();
 		v.put(MediaLibrary.ContributorSongColumns._CONTRIBUTOR_ID, composerId);
 		v.put(MediaLibrary.ContributorSongColumns.SONG_ID,       songId);
 		v.put(MediaLibrary.ContributorSongColumns.ROLE,           1);
-		backend.insert(MediaLibrary.TABLE_CONTRIBUTORS_SONGS, null, v);
+		mBackend.insert(MediaLibrary.TABLE_CONTRIBUTORS_SONGS, null, v);
 
 		if (tags.containsKey("GENRE")) {
 			Vector<String> genres = (Vector)tags.get("GENRE");
@@ -134,12 +186,12 @@ Log.v("VanillaMusic", "> Found mime "+((String)tags.get("type")));
 				v.put(MediaLibrary.GenreColumns._ID,         genreId);
 				v.put(MediaLibrary.GenreColumns._GENRE,      genre);
 				v.put(MediaLibrary.GenreColumns._GENRE_SORT, MediaLibrary.keyFor(genre));
-				backend.insert(MediaLibrary.TABLE_GENRES, null, v);
+				mBackend.insert(MediaLibrary.TABLE_GENRES, null, v);
 
 				v.clear();
 				v.put(MediaLibrary.GenreSongColumns._GENRE_ID, genreId);
 				v.put(MediaLibrary.GenreSongColumns.SONG_ID, songId);
-				backend.insert(MediaLibrary.TABLE_GENRES_SONGS, null, v);
+				mBackend.insert(MediaLibrary.TABLE_GENRES_SONGS, null, v);
 			}
 		}
 
@@ -150,7 +202,7 @@ Log.v("VanillaMusic", "> Found mime "+((String)tags.get("type")));
 	/**
 	 * Simple 63 bit hash function for strings
 	 */
-	private static long hash63(String str) {
+	private long hash63(String str) {
 		long hash = 0;
 		int len = str.length();
 		for (int i = 0; i < len ; i++) {
