@@ -26,6 +26,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.Cursor;
 import android.util.Log;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MediaLibraryBackend extends SQLiteOpenHelper {
 	/**
@@ -44,6 +46,14 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	 * The tag to use for log messages
 	 */
 	private static final String TAG = "VanillaMediaLibraryBackend";
+	/**
+	 * Regexp to detect genre queries which we can optimize
+	 */
+	private static final Pattern sQueryMatchGenreSearch = Pattern.compile("(^|.+ )"+MediaLibrary.GenreSongColumns._GENRE_ID+"=(\\d+)$");
+	/**
+	 * Regexp to detect costy artist_id queries which we can optimize
+	 */
+	private static final Pattern sQueryMatchArtistSearch = Pattern.compile("(^|.+ )"+MediaLibrary.ContributorColumns.ARTIST_ID+"=(\\d+)$");
 
 
 	/**
@@ -105,28 +115,36 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	public Cursor query (boolean distinct, String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
 
 		if (selection != null) {
-			if (MediaLibrary.VIEW_SONGS_ALBUMS_ARTISTS.equals(table) && selection.matches("^artist_id=\\d+$")) {
-				selection = "_id IN( SELECT song_id FROM contributors_songs WHERE contributors_songs.role=0 AND contributors_songs._contributor_id="+selection.substring(10)+")";
-				Log.v("VanillaMusic", "++ FIXME: HACKY SQL OPTIMIZED");
+			if (MediaLibrary.VIEW_SONGS_ALBUMS_ARTISTS.equals(table)) {
+				// artist matches in the song-view are costy: try to give sqlite a hint
+				Matcher artistMatch = sQueryMatchArtistSearch.matcher(selection);
+				if (artistMatch.matches()) {
+					selection = artistMatch.group(1);
+					final String artistId = artistMatch.group(2);
+
+					selection += MediaLibrary.SongColumns._ID+" IN (SELECT "+MediaLibrary.ContributorSongColumns.SONG_ID+" FROM "+MediaLibrary.TABLE_CONTRIBUTORS_SONGS+" WHERE "
+					          + MediaLibrary.ContributorSongColumns.ROLE+"=0 AND "+MediaLibrary.ContributorSongColumns._CONTRIBUTOR_ID+"="+artistId+")";
+				}
 			}
 
-			if (selection.matches("^"+MediaLibrary.GenreSongColumns._GENRE_ID+"=\\d+$")) {
-				final String genreId = selection.substring(MediaLibrary.GenreSongColumns._GENRE_ID.length() + 1);
+			// Genre queries are a special beast: 'optimize' all of them
+			Matcher genreMatch = sQueryMatchGenreSearch.matcher(selection);
+			if (genreMatch.matches()) {
+				selection = genreMatch.group(1); // keep the non-genre search part of the query
+				final String genreId = genreMatch.group(2); // and extract the searched genre id
 				final String songsQuery = buildSongIdFromGenreSelect(genreId);
 
 				if(table.equals(MediaLibrary.VIEW_SONGS_ALBUMS_ARTISTS)) {
-					selection = MediaLibrary.SongColumns._ID+" IN ("+songsQuery+") ";
+					selection += MediaLibrary.SongColumns._ID+" IN ("+songsQuery+") ";
 				}
 
 				if (table.equals(MediaLibrary.VIEW_ARTISTS)) {
-					selection = MediaLibrary.ContributorColumns.ARTIST_ID+" IN ("+ buildSongIdFromGenreSelect(MediaLibrary.ContributorColumns.ARTIST_ID, songsQuery)+") ";
+					selection += MediaLibrary.ContributorColumns.ARTIST_ID+" IN ("+ buildSongIdFromGenreSelect(MediaLibrary.ContributorColumns.ARTIST_ID, songsQuery)+") ";
 				}
 
 				if (table.equals(MediaLibrary.VIEW_ALBUMS_ARTISTS)) {
-					selection = MediaLibrary.AlbumColumns._ID+" IN ("+ buildSongIdFromGenreSelect(MediaLibrary.SongColumns.ALBUM_ID, songsQuery)+") ";
+					selection += MediaLibrary.AlbumColumns._ID+" IN ("+ buildSongIdFromGenreSelect(MediaLibrary.SongColumns.ALBUM_ID, songsQuery)+") ";
 				}
-
-				Log.v("VanillaMusic", "selection for genre = "+selection);
 			}
 		}
 
