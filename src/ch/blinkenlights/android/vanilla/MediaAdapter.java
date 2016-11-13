@@ -265,8 +265,8 @@ public class MediaAdapter
 	private String getFirstSortColumn() {
 		int mode = mSortMode < 0 ? ~mSortMode : mSortMode; // get current sort mode
 		String column = SPACE_SPLIT.split(mAdapterSortValues[mode])[0];
-		if(column.endsWith("_key")) { // we want human-readable string, not machine-composed
-			column = column.substring(0, column.length() - 4);
+		if(column.endsWith("_sort")) { // we want human-readable string, not machine-composed
+			column = column.substring(0, column.length() - 5);
 		}
 
 		return column;
@@ -310,6 +310,7 @@ public class MediaAdapter
 
 		StringBuilder selection = new StringBuilder();
 		String[] selectionArgs = null;
+		String[] enrichedProjection = projection;
 
 		// Assemble the sort string as requested by the user
 		int mode = mSortMode;
@@ -373,9 +374,12 @@ public class MediaAdapter
 
 		if (returnSongs == true) {
 			source = MediaLibrary.VIEW_SONGS_ALBUMS_ARTISTS;
+		} else {
+			enrichedProjection = Arrays.copyOf(projection, projection.length + 1);
+			enrichedProjection[projection.length] = getFirstSortColumn();
 		}
 
-		QueryTask query = new QueryTask(source, projection, selection.toString(), selectionArgs, sort);
+		QueryTask query = new QueryTask(source, enrichedProjection, selection.toString(), selectionArgs, sort);
 		return query;
 	}
 
