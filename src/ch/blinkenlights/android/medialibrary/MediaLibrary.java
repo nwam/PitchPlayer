@@ -141,6 +141,10 @@ public class MediaLibrary  {
 		 * The path to the music file
 		 */
 		public static final String PATH = "path";
+		/**
+		 * The mtime of this item
+		 */
+		public static final String MTIME = "mtime";
 	}
 
 	// Columns of Album entries
@@ -173,6 +177,10 @@ public class MediaLibrary  {
 		 * The primary contributor / artist reference for this album
 		 */
 		public static final String PRIMARY_ARTIST_ID = "primary_artist_id";
+		/**
+		 * The mtime of this item
+		 */
+		public static final String MTIME = "mtime";
 	}
 
 	// Columns of Contributors entries
@@ -189,6 +197,10 @@ public class MediaLibrary  {
 		 * The sortable title of this contributor
 		 */
 		public static final String _CONTRIBUTOR_SORT = "_contributor_sort";
+		/**
+		 * The mtime of this item
+		 */
+		public static final String MTIME = "mtime";
 		/**
 		 * ONLY IN VIEWS - the artist
 		 */

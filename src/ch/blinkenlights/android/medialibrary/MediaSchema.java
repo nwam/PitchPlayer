@@ -31,6 +31,7 @@ public class MediaSchema {
 	  + MediaLibrary.SongColumns.ALBUM_ID     +" INTEGER NOT NULL, "
 	  + MediaLibrary.SongColumns.PLAYCOUNT    +" INTEGER NOT NULL DEFAULT 0, "
 	  + MediaLibrary.SongColumns.SKIPCOUNT    +" INTEGER NOT NULL DEFAULT 0, "
+	  + MediaLibrary.SongColumns.MTIME        +" TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
 	  + MediaLibrary.SongColumns.DURATION     +" INTEGER NOT NULL, "
 	  + MediaLibrary.SongColumns.PATH         +" VARCHAR(4096) NOT NULL "
 	  + ");";
@@ -45,7 +46,8 @@ public class MediaSchema {
 	  + MediaLibrary.AlbumColumns.SONG_COUNT        +" INTEGER, "
 	  + MediaLibrary.AlbumColumns.DISC_NUMBER       +" INTEGER, "
 	  + MediaLibrary.AlbumColumns.DISC_COUNT        +" INTEGER, "
-	  + MediaLibrary.AlbumColumns.PRIMARY_ARTIST_ID +" INTEGER NOT NULL DEFAULT 0"
+	  + MediaLibrary.AlbumColumns.PRIMARY_ARTIST_ID +" INTEGER NOT NULL DEFAULT 0, "
+	  + MediaLibrary.AlbumColumns.MTIME             +" TIMESTAMP DEFAULT CURRENT_TIMESTAMP "
 	  + ");";
 
 	/**
@@ -54,7 +56,8 @@ public class MediaSchema {
 	private static final String DATABASE_CREATE_CONTRIBUTORS = "CREATE TABLE "+ MediaLibrary.TABLE_CONTRIBUTORS + " ("
 	  + MediaLibrary.ContributorColumns._ID               +" INTEGER PRIMARY KEY, "
 	  + MediaLibrary.ContributorColumns._CONTRIBUTOR      +" TEXT NOT NULL, "
-	  + MediaLibrary.ContributorColumns._CONTRIBUTOR_SORT +" TEXT NOT NULL "
+	  + MediaLibrary.ContributorColumns._CONTRIBUTOR_SORT +" TEXT NOT NULL, "
+	  + MediaLibrary.ContributorColumns.MTIME             +" TIMESTAMP DEFAULT CURRENT_TIMESTAMP "
 	  + ");";
 
 	/**
