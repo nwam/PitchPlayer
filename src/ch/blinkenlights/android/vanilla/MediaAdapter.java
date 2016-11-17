@@ -69,9 +69,6 @@ public class MediaAdapter
 		, SectionIndexer
 {
 	private static final Pattern SPACE_SPLIT = Pattern.compile("\\s+");
-
-	private static final String SORT_MAGIC_PLAYCOUNT = "__PLAYCOUNT_SORT";
-
 	/**
 	 * The string to use for length==0 db fields
 	 */
@@ -199,25 +196,32 @@ public class MediaAdapter
 			mSource = MediaLibrary.VIEW_ARTISTS;
 			mFields = new String[] { MediaLibrary.ContributorColumns.ARTIST };
 			mFieldKeys = new String[] { MediaLibrary.ContributorColumns.ARTIST_SORT };
-			mSortEntries = new int[] { R.string.name };
-			mAdapterSortValues = new String[] { MediaLibrary.ContributorColumns.ARTIST_SORT+" %1$s" };
+			mSortEntries = new int[] { R.string.name, R.string.date_added };
+			mAdapterSortValues = new String[] { MediaLibrary.ContributorColumns.ARTIST_SORT+" %1$s", MediaLibrary.ContributorColumns.MTIME+" %1$s" };
 			//mSongSortValues = new String[] { "artist_key %1$s,track", "artist_key %1$s,track" /* cannot sort by number_of_tracks */ };
 			break;
 		case MediaUtils.TYPE_ALBUM:
 			mSource = MediaLibrary.VIEW_ALBUMS_ARTISTS;
 			mFields = new String[] { MediaLibrary.AlbumColumns.ALBUM, MediaLibrary.ContributorColumns.ARTIST };
 			mFieldKeys = new String[] { MediaLibrary.AlbumColumns.ALBUM_SORT, MediaLibrary.ContributorColumns.ARTIST_SORT };
-			mSortEntries = new int[] { R.string.name, R.string.artist_album };
-			mAdapterSortValues = new String[] { MediaLibrary.AlbumColumns.ALBUM_SORT+" %1$s", MediaLibrary.ContributorColumns.ARTIST_SORT+" %1$s,"+MediaLibrary.AlbumColumns.ALBUM_SORT+" %1$s" };
+			mSortEntries = new int[] { R.string.name, R.string.artist_album, R.string.year, R.string.date_added };
+			mAdapterSortValues = new String[] { MediaLibrary.AlbumColumns.ALBUM_SORT+" %1$s", MediaLibrary.ContributorColumns.ARTIST_SORT+" %1$s,"+MediaLibrary.AlbumColumns.ALBUM_SORT+" %1$s",
+			                                    MediaLibrary.AlbumColumns.YEAR+" %1$s", MediaLibrary.AlbumColumns.MTIME+" %1$s" };
 			// mSongSortValues = new String[] { "album_key %1$s,track", "artist_key %1$s,album_key %1$s,track", "artist_key %1$s,year %1$s,album_key %1$s,track", "album_key %1$s,track", "album_id %1$s,track" };
 			break;
 		case MediaUtils.TYPE_SONG:
 			mSource = MediaLibrary.VIEW_SONGS_ALBUMS_ARTISTS;
 			mFields = new String[] { MediaLibrary.SongColumns.TITLE, MediaLibrary.AlbumColumns.ALBUM, MediaLibrary.ContributorColumns.ARTIST };
 			mFieldKeys = new String[] { MediaLibrary.SongColumns.TITLE_SORT, MediaLibrary.AlbumColumns.ALBUM_SORT, MediaLibrary.ContributorColumns.ARTIST_SORT };
-			mSortEntries = new int[] { R.string.name, R.string.artist_album_track };
+			mSortEntries = new int[] { R.string.name, R.string.artist_album_track, R.string.artist_album_title, R.string.album_track, R.string.year, R.string.date_added, R.string.song_playcount };
 			mAdapterSortValues = new String[] { MediaLibrary.SongColumns.TITLE_SORT+" %1$s",
-			                                    MediaLibrary.ContributorColumns.ARTIST_SORT+" %1$s,"+MediaLibrary.AlbumColumns.ALBUM_SORT+" %1$s,"+MediaLibrary.SongColumns.SONG_NUMBER };
+			                                    MediaLibrary.ContributorColumns.ARTIST_SORT+" %1$s,"+MediaLibrary.AlbumColumns.ALBUM_SORT+" %1$s,"+MediaLibrary.AlbumColumns.DISC_NUMBER+","+MediaLibrary.SongColumns.SONG_NUMBER,
+			                                    MediaLibrary.ContributorColumns.ARTIST_SORT+" %1$s,"+MediaLibrary.AlbumColumns.ALBUM_SORT+" %1$s,"+MediaLibrary.SongColumns.TITLE_SORT+" %1$s",
+			                                    MediaLibrary.AlbumColumns.ALBUM_SORT+" %1$s,"+MediaLibrary.AlbumColumns.DISC_NUMBER+","+MediaLibrary.SongColumns.SONG_NUMBER,
+			                                    MediaLibrary.AlbumColumns.YEAR+" %1$s,"+MediaLibrary.AlbumColumns.ALBUM_SORT+" %1$s,"+MediaLibrary.AlbumColumns.DISC_NUMBER+","+MediaLibrary.SongColumns.SONG_NUMBER,
+			                                    MediaLibrary.SongColumns.MTIME+" %1$s",
+			                                    MediaLibrary.SongColumns.PLAYCOUNT+" %1$s",
+			                                  };
 			//mSongSortValues = mAdapterSortValues;
 			// Songs covers are cached per-album
 			mCoverCacheType = MediaUtils.TYPE_ALBUM;
@@ -403,7 +407,7 @@ public class MediaAdapter
 		String[] enrichedProjection = projection;
 
 		// Magic sort mode: sort by playcount
-		if (sortStringRaw == SORT_MAGIC_PLAYCOUNT) {
+		if (sortStringRaw == "OBSOLETED") {
 			ArrayList<Long> topSongs = (new PlayCountsHelper(mContext)).getTopSongs(4096);
 			int sortWeight = -1 * topSongs.size(); // Sort mode is actually reversed (default: mostplayed -> leastplayed)
 
