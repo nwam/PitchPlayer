@@ -48,7 +48,7 @@ public class MediaLibrary  {
 					sBackend = new MediaLibraryBackend(context);
 
 					sScanner = new MediaScanner(sBackend);
-					File dir = new File("/sdcard");
+					File dir = new File("/storage");
 					sScanner.startScan(dir);
 				}
 //			}
@@ -177,6 +177,10 @@ public class MediaLibrary  {
 		 * The primary contributor / artist reference for this album
 		 */
 		public static final String PRIMARY_ARTIST_ID = "primary_artist_id";
+		/**
+		 * The year of this album
+		 */
+		public static final String YEAR = "year";
 		/**
 		 * The mtime of this item
 		 */
