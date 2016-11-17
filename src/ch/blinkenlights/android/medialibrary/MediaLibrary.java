@@ -72,7 +72,7 @@ public class MediaLibrary  {
 	}
 
 	public static void removeSong(Context context, long id) {
-		// FIXME: IMPLEMENT THIS
+		getBackend(context).delete(TABLE_SONGS, SongColumns._ID+"="+id, null);
 	}
 
 	/**

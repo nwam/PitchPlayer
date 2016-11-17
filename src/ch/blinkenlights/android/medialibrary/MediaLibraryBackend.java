@@ -136,6 +136,24 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	}
 
 	/**
+	 * Wrapper for SQLiteDatabse.delete() function
+	 *
+	 * @param table the table to delete data from
+	 * @param whereClause the selection
+	 * @param whereArgs arguments to selection
+	 * @return the number of affected rows
+	 */
+	public int delete(String table, String whereClause, String[] whereArgs) {
+		SQLiteDatabase dbh = getWritableDatabase();
+		int res = dbh.delete(table, whereClause, whereArgs);
+		if (res > 0) {
+			cleanOrphanedEntries();
+			notifyObserver();
+		}
+		return res;
+	}
+
+	/**
 	 * Wrapper for SQLiteDatabase.insert() function
 	 *
 	 * @param table the table to insert data to
