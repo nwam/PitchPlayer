@@ -46,6 +46,7 @@ public class MediaSchema {
 	  + MediaLibrary.AlbumColumns.SONG_COUNT        +" INTEGER, "
 	  + MediaLibrary.AlbumColumns.DISC_NUMBER       +" INTEGER, "
 	  + MediaLibrary.AlbumColumns.DISC_COUNT        +" INTEGER, "
+	  + MediaLibrary.AlbumColumns.YEAR              +" INTEGER, "
 	  + MediaLibrary.AlbumColumns.PRIMARY_ARTIST_ID +" INTEGER NOT NULL DEFAULT 0, "
 	  + MediaLibrary.AlbumColumns.MTIME             +" TIMESTAMP DEFAULT CURRENT_TIMESTAMP "
 	  + ");";
