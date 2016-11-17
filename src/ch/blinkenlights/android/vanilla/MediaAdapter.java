@@ -194,8 +194,6 @@ public class MediaAdapter
 		mCoverCacheType = mType;
 		String coverCacheKey = BaseColumns._ID;
 
-// FIXME: WE MUST ENSURE THAT THE SAVED SORT MODE DOES NOT USE ONE OF THE OBSOLETED SORT MODES,
-// OTHERWISE WE WOULD CRASH AT STARTUP!
 		switch (type) {
 		case MediaUtils.TYPE_ARTIST:
 			mSource = MediaLibrary.VIEW_ARTISTS;
@@ -673,7 +671,7 @@ public class MediaAdapter
 	 */
 	public void setSortMode(int i)
 	{
-		mSortMode = i;
+		mSortMode = (i < mSortEntries.length ? i : 0);
 	}
 
 	/**
