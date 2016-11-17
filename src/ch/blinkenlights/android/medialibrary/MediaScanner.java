@@ -127,12 +127,18 @@ Log.v("VanillaMusic", "> Found mime "+((String)tags.get("type")));
 		if (duration == null)
 			return; // not a supported media file!
 
+		if (data.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_AUDIO) == null)
+			return; // no audio -> do not index
+
+		if (data.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO) != null)
+			return; // has a video stream -> do not index
 
 		String title = (tags.containsKey("TITLE") ? (String)((Vector)tags.get("TITLE")).get(0) : "Untitled");
 		String album = (tags.containsKey("ALBUM") ? (String)((Vector)tags.get("ALBUM")).get(0) : "No Album");
 		String artist = (tags.containsKey("ARTIST") ? (String)((Vector)tags.get("ARTIST")).get(0) : "Unknown Artist");
 
-		String composer = "Composer and "+artist;
+		String songnum = data.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER);
+		String composer = data.extractMetadata(MediaMetadataRetriever.METADATA_KEY_COMPOSER);
 
 		long albumId = hash63(album);
 		long artistId = hash63(artist);
@@ -144,6 +150,7 @@ Log.v("VanillaMusic", "> Found mime "+((String)tags.get("type")));
 		v.put(MediaLibrary.SongColumns.TITLE_SORT, MediaLibrary.keyFor(title));
 		v.put(MediaLibrary.SongColumns.ALBUM_ID,   albumId);
 		v.put(MediaLibrary.SongColumns.DURATION,   duration);
+		v.put(MediaLibrary.SongColumns.SONG_NUMBER,songnum);
 		v.put(MediaLibrary.SongColumns.PATH,       path);
 		mBackend.insert(MediaLibrary.TABLE_SONGS, null, v);
 
@@ -166,17 +173,19 @@ Log.v("VanillaMusic", "> Found mime "+((String)tags.get("type")));
 		v.put(MediaLibrary.ContributorSongColumns.ROLE,           0);
 		mBackend.insert(MediaLibrary.TABLE_CONTRIBUTORS_SONGS, null, v);
 
-		v.clear();
-		v.put(MediaLibrary.ContributorColumns._ID,              composerId);
-		v.put(MediaLibrary.ContributorColumns._CONTRIBUTOR,      composer);
-		v.put(MediaLibrary.ContributorColumns._CONTRIBUTOR_SORT, MediaLibrary.keyFor(composer));
-		mBackend.insert(MediaLibrary.TABLE_CONTRIBUTORS, null, v);
+		if (composer != null) {
+			v.clear();
+			v.put(MediaLibrary.ContributorColumns._ID,              composerId);
+			v.put(MediaLibrary.ContributorColumns._CONTRIBUTOR,      composer);
+			v.put(MediaLibrary.ContributorColumns._CONTRIBUTOR_SORT, MediaLibrary.keyFor(composer));
+			mBackend.insert(MediaLibrary.TABLE_CONTRIBUTORS, null, v);
 
-		v.clear();
-		v.put(MediaLibrary.ContributorSongColumns._CONTRIBUTOR_ID, composerId);
-		v.put(MediaLibrary.ContributorSongColumns.SONG_ID,       songId);
-		v.put(MediaLibrary.ContributorSongColumns.ROLE,           1);
-		mBackend.insert(MediaLibrary.TABLE_CONTRIBUTORS_SONGS, null, v);
+			v.clear();
+			v.put(MediaLibrary.ContributorSongColumns._CONTRIBUTOR_ID, composerId);
+			v.put(MediaLibrary.ContributorSongColumns.SONG_ID,       songId);
+			v.put(MediaLibrary.ContributorSongColumns.ROLE,           1);
+			mBackend.insert(MediaLibrary.TABLE_CONTRIBUTORS_SONGS, null, v);
+		}
 
 		if (tags.containsKey("GENRE")) {
 			Vector<String> genres = (Vector)tags.get("GENRE");
@@ -203,6 +212,9 @@ Log.v("VanillaMusic", "> Found mime "+((String)tags.get("type")));
 	 * Simple 63 bit hash function for strings
 	 */
 	private long hash63(String str) {
+		if (str == null)
+			return 0;
+
 		long hash = 0;
 		int len = str.length();
 		for (int i = 0; i < len ; i++) {
