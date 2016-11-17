@@ -185,7 +185,16 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 		if (DEBUG)
 			debugQuery(distinct, table, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
 
-		return getReadableDatabase().query(distinct, table, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
+		Cursor cursor = getReadableDatabase().query(distinct, table, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
+		if (cursor != null) {
+			// Hold on! This is not some kind of black magic - it makes '''sense''':
+			// SQLites count() performance is pretty poor, but most queries will call getCount() during their
+			// lifetime anyway - unfortunately this might happen in the main thread, causing some lag.
+			// Androids SQLite class caches the result of getCount() calls, so we are going to run it
+			// here as we are (hopefully!) in a background thread anyway.
+			cursor.getCount();
+		}
+		return cursor;
 	}
 
 	/**
