@@ -23,8 +23,9 @@ import android.database.Cursor;
 import android.database.ContentObserver;
 import android.provider.MediaStore;
 
-
+import java.util.ArrayList;
 import java.io.File;
+
 public class MediaLibrary  {
 
 	public static final String TABLE_SONGS                = "songs";
@@ -52,7 +53,7 @@ public class MediaLibrary  {
 
 					sScanner = new MediaScanner(sBackend);
 					File dir = new File("/storage");
-					sScanner.startScan(dir);
+//					sScanner.startScan(dir);
 				}
 //			}
 		}
@@ -89,13 +90,77 @@ public class MediaLibrary  {
 	 *
 	 * @param context the context to use
 	 * @param id the song id to update
-	 * @param boolean true if song was played, false if skipped
+	 * @return boolean true if song was played, false if skipped
 	 */
 	public static void updateSongPlayCounts(Context context, long id, boolean played) {
 		final String column = played ? MediaLibrary.SongColumns.PLAYCOUNT : MediaLibrary.SongColumns.SKIPCOUNT;
 		ContentValues v = new ContentValues();
 		v.put(column, column+" + 1");
 		getBackend(context).update(MediaLibrary.TABLE_SONGS, v, MediaLibrary.SongColumns._ID+"="+id, null, false);
+	}
+
+	/**
+	 * Creates a new empty playlist
+	 *
+	 * @param context the context to use
+	 * @param name the name of the new playlist
+	 * @return long the id of the created playlist, -1 on error
+	 */
+	public static long createPlaylist(Context context, String name) {
+		ContentValues v = new ContentValues();
+		v.put(MediaLibrary.PlaylistColumns.NAME, name);
+		return getBackend(context).insert(MediaLibrary.TABLE_PLAYLISTS, null, v);
+	}
+
+	/**
+	 * Deletes a playlist and all of its child elements
+	 *
+	 * @param context the context to use
+	 * @param id the playlist id to delete
+	 * @return boolean true if the playlist was deleted
+	 */
+	public static boolean removePlaylist(Context context, long id) {
+		// first, wipe all songs
+		getBackend(context).delete(MediaLibrary.TABLE_PLAYLISTS_SONGS, MediaLibrary.PlaylistSongColumns.PLAYLIST_ID+"="+id, null);
+		int rows = getBackend(context).delete(MediaLibrary.TABLE_PLAYLISTS, MediaLibrary.PlaylistColumns._ID+"="+id, null);
+		return (rows > 0);
+	}
+
+	/**
+	 * Adds a batch of songs to a playlist
+	 *
+	 * @param context the context to use
+	 * @param playlistId the id of the playlist parent
+	 * @param ids an array list with the song ids to insert
+	 * @return the number of added items
+	 */
+	public static int addToPlaylist(Context context, long playlistId, ArrayList<Long> ids) {
+		long pos = 0;
+		int added = 0;
+		// First we need to get the position of the last item
+		String[] projection = { MediaLibrary.PlaylistSongColumns.POSITION };
+		String selection = MediaLibrary.PlaylistSongColumns.PLAYLIST_ID+"="+playlistId;
+		String order = MediaLibrary.PlaylistSongColumns.POSITION;
+		Cursor cursor = queryLibrary(context, MediaLibrary.TABLE_PLAYLISTS_SONGS, projection, selection, null, order);
+		if (cursor.moveToLast())
+			pos = cursor.getLong(0) + 1;
+		cursor.close();
+
+		ContentValues v = new ContentValues();
+		for (Long id : ids) {
+
+			if (getBackend(context).isSongExisting(id) == false)
+				continue;
+
+			v.clear();
+			v.put(MediaLibrary.PlaylistSongColumns.PLAYLIST_ID, playlistId);
+			v.put(MediaLibrary.PlaylistSongColumns.SONG_ID, id);
+			v.put(MediaLibrary.PlaylistSongColumns.POSITION, pos);
+			getBackend(context).insert(MediaLibrary.TABLE_PLAYLISTS_SONGS, null, v);
+			pos++;
+			added++;
+		}
+		return added;
 	}
 
 	/**
