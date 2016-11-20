@@ -187,8 +187,7 @@ public class SlidingPlaybackActivity extends PlaybackActivity
 			action = MSG_ADD_QUEUE_TO_PLAYLIST;
 		} else {
 			// we got a source intent: build the query here
-//			playlistTask.query = buildQueryFromIntent(data.sourceIntent, true, data.allSource);
-// FIXME OBSOLETED
+			playlistTask.query = buildQueryFromIntent(data.sourceIntent, true, data.allSource);
 			action = MSG_ADD_TO_PLAYLIST;
 		}
 		if (playlistTask.playlistId < 0) {
