@@ -34,9 +34,9 @@ public class PlaylistTask {
 	 */
 	public String name;
 	/**
-	 * Populate playlist using this OBSOLETED_QueryTask
+	 * Populate playlist using this QueryTask
 	 */
-	public OBSOLETED_QueryTask query;
+	public QueryTask query;
 	/**
 	 * Populate playlist using this audioIds
 	 */

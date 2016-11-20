@@ -277,7 +277,7 @@ public class PlaylistActivity extends Activity
 	public void onClick(DialogInterface dialog, int which)
 	{
 		if (which == DialogInterface.BUTTON_POSITIVE) {
-			Playlist.deletePlaylist(getContentResolver(), mPlaylistId);
+			Playlist.deletePlaylist(this, mPlaylistId);
 			finish();
 		}
 		dialog.dismiss();

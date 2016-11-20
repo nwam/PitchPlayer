@@ -65,7 +65,7 @@ public class Song implements Comparable<Song> {
 	};
 
 	public static final String[] EMPTY_PLAYLIST_PROJECTION = {
-		MediaStore.Audio.Playlists.Members.AUDIO_ID,
+		MediaLibrary.PlaylistSongColumns.SONG_ID,
 	};
 
 	public static final String[] FILLED_PLAYLIST_PROJECTION = {
