@@ -71,6 +71,12 @@ public class MediaLibrary  {
 		return getBackend(context).query(false, table, projection, selection, selectionArgs, null, null, orderBy, null);
 	}
 
+	/**
+	 * Removes a single song from the database
+	 *
+	 * @param context the context to use
+	 * @param id the song id to delete
+	 */
 	public static void removeSong(Context context, long id) {
 		getBackend(context).delete(TABLE_SONGS, SongColumns._ID+"="+id, null);
 	}
