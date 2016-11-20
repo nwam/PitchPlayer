@@ -96,10 +96,6 @@ public class MediaAdapter
 	 */
 	private final int mType;
 	/**
-	 * The URI of the content provider backing this adapter.
-	 */
-	private Uri OBSOLETED_mStore;
-	/**
 	 * The table / view to use for this query
 	 */
 	private String mSource;
@@ -220,11 +216,11 @@ public class MediaAdapter
 			coverCacheKey = MediaStore.Audio.Albums.ALBUM_ID;
 			break;
 		case MediaUtils.TYPE_PLAYLIST:
-			OBSOLETED_mStore = MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI;
-			mFields = new String[] { MediaStore.Audio.Playlists.NAME };
+			mSource = MediaLibrary.TABLE_PLAYLISTS;
+			mFields = new String[] { MediaLibrary.PlaylistColumns.NAME };
 			mFieldKeys = null;
 			mSortEntries = new int[] { R.string.name, R.string.date_added };
-			mAdapterSortValues = new String[] { "name %1$s", "date_added %1$s" };
+			mAdapterSortValues = new String[] { MediaLibrary.PlaylistColumns.NAME+" %1$s", MediaLibrary.PlaylistColumns._ID+" %1$s" };
 			mExpandable = true;
 			break;
 		case MediaUtils.TYPE_GENRE:
@@ -334,7 +330,7 @@ public class MediaAdapter
 				needles = colKey.split(spaceColKey);
 				keySource = mFieldKeys;
 			} else {
-				// fixme: is this code still needed?
+				// only used for playlists, maybe we should just update the schema ?
 				needles = SPACE_SPLIT.split(constrain);
 				keySource = mFields;
 			}
@@ -380,102 +376,10 @@ public class MediaAdapter
 		return query;
 	}
 
-	private OBSOLETED_QueryTask OBSOLETED_buildQuery(String[] projection, boolean returnSongs)
-	{
-		String constraint = mConstraint;
-		Limiter limiter = mLimiter;
-
-		StringBuilder selection = new StringBuilder();
-		String[] selectionArgs = null;
-
-		int mode = mSortMode;
-		String sortDir;
-		if (mode < 0) {
-			mode = ~mode;
-			sortDir = "DESC";
-		} else {
-			sortDir = "ASC";
-		}
-
-		// Use the song-sort mapping if we are returning songs
-		String sortStringRaw = (returnSongs ? mAdapterSortValues[mode] : mAdapterSortValues[mode]);
-		String[] enrichedProjection = projection;
-
-		// Magic sort mode: sort by playcount
-		if (sortStringRaw == "OBSOLETED") {
-		} else if (returnSongs == false) {
-			// This is an 'adapter native' query: include the first sorting column
-			// in the projection to make it useable for the fast-scroller
-			enrichedProjection = Arrays.copyOf(projection, projection.length + 1);
-			enrichedProjection[projection.length] = getFirstSortColumn();
-		}
-
-		String sort = String.format(sortStringRaw, sortDir);
-
-		if (returnSongs || mType == MediaUtils.TYPE_SONG)
-			selection.append(MediaStore.Audio.Media.IS_MUSIC+" AND length(_data)");
-
-		if (constraint != null && constraint.length() != 0) {
-			String[] needles;
-			String[] keySource;
-
-			// If we are using sorting keys, we need to change our constraint
-			// into a list of collation keys. Otherwise, just split the
-			// constraint with no modification.
-			if (mFieldKeys != null) {
-				String colKey = MediaStore.Audio.keyFor(constraint);
-				String spaceColKey = DatabaseUtils.getCollationKey(" ");
-				needles = colKey.split(spaceColKey);
-				keySource = mFieldKeys;
-			} else {
-				needles = SPACE_SPLIT.split(constraint);
-				keySource = mFields;
-			}
-
-			int size = needles.length;
-			selectionArgs = new String[size];
-
-			StringBuilder keys = new StringBuilder(20);
-			keys.append(keySource[0]);
-			for (int j = 1; j != keySource.length; ++j) {
-				keys.append("||");
-				keys.append(keySource[j]);
-			}
-
-			for (int j = 0; j != needles.length; ++j) {
-				selectionArgs[j] = '%' + needles[j] + '%';
-
-				// If we have something in the selection args (i.e. j > 0), we
-				// must have something in the selection, so we can skip the more
-				// costly direct check of the selection length.
-				if (j != 0 || selection.length() != 0)
-					selection.append(" AND ");
-				selection.append(keys);
-				selection.append(" LIKE ?");
-			}
-		}
-
-		OBSOLETED_QueryTask query;
-			if (limiter != null) {
-				if (selection.length() != 0)
-					selection.append(" AND ");
-				selection.append(limiter.data);
-			}
-			query = new OBSOLETED_QueryTask(OBSOLETED_mStore, enrichedProjection, selection.toString(), selectionArgs, sort);
-			if (returnSongs) // force query on song provider as we are requested to return songs
-				query.uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-		return query;
-	}
-
 	@Override
 	public Cursor query()
 	{
-		if (mType == MediaUtils.TYPE_SONG || mType == MediaUtils.TYPE_ARTIST || mType == MediaUtils.TYPE_ALBUM || mType == MediaUtils.TYPE_GENRE) {
-			return buildQuery(mProjection, false).runQuery(mContext);
-		}
-		else {
-			return OBSOLETED_buildQuery(mProjection, false).runQuery(mContext.getContentResolver());
-		}
+		return buildQuery(mProjection, false).runQuery(mContext);
 	}
 
 	@Override

@@ -295,7 +295,7 @@ public class MediaLibrary  {
 		/**
 		 * The name of this playlist
 		 */
-		 public static final String PLAYLIST = "playlist";
+		 public static final String NAME = "name";
 	}
 
 	// Song <-> Playlist mapping

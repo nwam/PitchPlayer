@@ -103,8 +103,8 @@ public class MediaSchema {
 	 * SQL Schema for the playlists table
 	 */
 	private static final String DATABASE_CREATE_PLAYLISTS = "CREATE TABLE "+ MediaLibrary.TABLE_PLAYLISTS +" ("
-	  + MediaLibrary.PlaylistColumns._ID      +" INTEGER PRIMARY KEY, "
-	  + MediaLibrary.PlaylistColumns.PLAYLIST +" TEXT NOT NULL "
+	  + MediaLibrary.PlaylistColumns._ID   +" INTEGER PRIMARY KEY, "
+	  + MediaLibrary.PlaylistColumns.NAME  +" TEXT NOT NULL "
 	  + ");";
 
 	/**
