@@ -188,11 +188,9 @@ public class MediaUtils {
 	 * @param selection The selection to pass to the query, or null.
 	 * @return The initialized query.
 	 */
-	public static OBSOLETED_QueryTask buildPlaylistQuery(long id, String[] projection, String selection)
-	{
-		Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external", id);
-		String sort = MediaStore.Audio.Playlists.Members.PLAY_ORDER;
-		OBSOLETED_QueryTask result = new OBSOLETED_QueryTask(uri, projection, selection, null, sort);
+	public static QueryTask buildPlaylistQuery(long id, String[] projection, String selection) {
+		String sort = MediaLibrary.PlaylistSongColumns.POSITION;
+		QueryTask result = new QueryTask(MediaLibrary.VIEW_PLAYLIST_SONGS, projection, selection, null, sort);
 		result.type = TYPE_PLAYLIST;
 		return result;
 	}
@@ -216,8 +214,7 @@ public class MediaUtils {
 		case TYPE_GENRE:
 			return buildMediaQuery(type, id, projection, selection);
 		case TYPE_PLAYLIST:
-//			return buildPlaylistQuery(id, projection, selection);
-// FIXME OBSOLETED
+			return buildPlaylistQuery(id, projection, selection);
 		default:
 			throw new IllegalArgumentException("Specified type not valid: " + type);
 		}
@@ -363,28 +360,9 @@ public class MediaUtils {
 	}
 
 	/**
-	 * Runs a query on the passed content resolver.
-	 * Catches (and returns null on) SecurityException (= user revoked read permission)
-	 *
-	 * @param resolver The content resolver to use
-	 * @param uri the uri to query
-	 * @param projection the projection to use
-	 * @param selection the selection to use
-	 * @param selectionArgs arguments for the selection
-	 * @param sortOrder sort order of the returned result
-	 *
-	 * @return a cursor or null
+	 * Called if we detected a medium change
+	 * This flushes some cached data
 	 */
-	public static Cursor OBSOLETED_queryResolver(ContentResolver resolver, Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
-	{
-	Log.v("VanillaMusic", "FIXME: OBSOLETE FUNCTION USE!");
-	Log.v("VanillaMusic", ">>> OBSOLETED_queryResolver "+resolver+", uri="+uri);
-	for (String x : projection) { Log.v("VanillaMusic", " --> "+x); }
-	Log.v("VanillaMusic", "Selection = "+selection);
-		Cursor cursor = null;
-		return cursor;
-	}
-
 	public static void onMediaChange()
 	{
 		sSongCount = -1;

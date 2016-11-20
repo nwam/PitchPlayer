@@ -142,7 +142,7 @@ public class PlaylistAdapter extends CursorAdapter implements Handler.Callback {
 	{
 		switch (message.what) {
 		case MSG_RUN_QUERY: {
-			Cursor cursor = runQuery(mContext.getContentResolver());
+			Cursor cursor = runQuery();
 			mUiHandler.sendMessage(mUiHandler.obtainMessage(MSG_UPDATE_CURSOR, cursor));
 			break;
 		}
@@ -159,13 +159,12 @@ public class PlaylistAdapter extends CursorAdapter implements Handler.Callback {
 	/**
 	 * Query the playlist songs.
 	 *
-	 * @param resolver A ContentResolver to query with.
 	 * @return The resulting cursor.
 	 */
-	private Cursor runQuery(ContentResolver resolver)
+	private Cursor runQuery()
 	{
-		OBSOLETED_QueryTask query = MediaUtils.buildPlaylistQuery(mPlaylistId, PROJECTION, null);
-		return query.runQuery(resolver);
+		QueryTask query = MediaUtils.buildPlaylistQuery(mPlaylistId, PROJECTION, null);
+		return query.runQuery(mContext);
 	}
 
 	/**
@@ -223,7 +222,7 @@ public class PlaylistAdapter extends CursorAdapter implements Handler.Callback {
 		// insert the new rows
 		resolver.bulkInsert(uri, values);
 
-		changeCursor(runQuery(resolver));
+		changeCursor(runQuery());
 	}
 
 	public void removeItem(int position)

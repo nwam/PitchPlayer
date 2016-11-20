@@ -39,6 +39,7 @@ public class MediaLibrary  {
 	public static final String VIEW_ARTISTS               = "_artists";
 	public static final String VIEW_ALBUMS_ARTISTS        = "_albums_artists";
 	public static final String VIEW_SONGS_ALBUMS_ARTISTS  = "_songs_albums_artists";
+	public static final String VIEW_PLAYLIST_SONGS        = "_playlists_songs";
 
 	private static MediaLibraryBackend sBackend;
 
