@@ -1571,9 +1571,9 @@ public final class PlaybackService extends Service
 				ContentResolver resolver = getContentResolver();
 				// Add an invisible whitespace to adjust our sorting
 				String playlistName = "\u200B"+getString(R.string.autoplaylist_playcounts_name, mAutoPlPlaycounts);
-				long id = Playlist.createPlaylist(resolver, playlistName);
+				long id = Playlist.createPlaylist(getApplicationContext(), playlistName);
 				ArrayList<Long> items = PlayCountsHelper.getTopSongs(getApplicationContext(), mAutoPlPlaycounts);
-				Playlist.addToPlaylist(resolver, id, items);
+				Playlist.addToPlaylist(getApplicationContext(), id, items);
 			}
 
 
