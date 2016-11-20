@@ -50,7 +50,7 @@ public class PlaylistAdapter extends CursorAdapter implements Handler.Callback {
 		MediaLibrary.PlaylistSongColumns._ID,
 		MediaLibrary.SongColumns.TITLE,
 		MediaLibrary.ContributorColumns.ARTIST,
-		MediaLibrary.SongColumns._ID,
+		MediaLibrary.PlaylistSongColumns.SONG_ID,
 		MediaLibrary.SongColumns.ALBUM_ID,
 		MediaLibrary.PlaylistSongColumns.POSITION,
 	};
