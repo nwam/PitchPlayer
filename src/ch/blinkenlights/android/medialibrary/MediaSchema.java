@@ -92,12 +92,37 @@ public class MediaSchema {
 	/**
 	 * SQL Schema of 'genres<->songs' table
 	 */
-	private static final String DATABASE_CREATE_GENRES_SONGS = "CREATE TABLE "+ MediaLibrary.TABLE_GENRES_SONGS+ " ("
+	private static final String DATABASE_CREATE_GENRES_SONGS = "CREATE TABLE "+ MediaLibrary.TABLE_GENRES_SONGS + " ("
 	  + MediaLibrary.GenreSongColumns._GENRE_ID  +" INTEGER, "
 	  + MediaLibrary.GenreSongColumns.SONG_ID    +" INTEGER, "
 	  + "PRIMARY KEY("+MediaLibrary.GenreSongColumns._GENRE_ID+","
 	                  +MediaLibrary.GenreSongColumns.SONG_ID+") "
 	  + ");";
+
+	/**
+	 * SQL Schema for the playlists table
+	 */
+	private static final String DATABASE_CREATE_PLAYLISTS = "CREATE TABLE "+ MediaLibrary.TABLE_PLAYLISTS +" ("
+	  + MediaLibrary.PlaylistColumns._ID      +" INTEGER PRIMARY KEY, "
+	  + MediaLibrary.PlaylistColumns.PLAYLIST +" TEXT NOT NULL "
+	  + ");";
+
+	/**
+	 * SQL Schema of 'songs<->playlists' table
+	 */
+	private static final String DATABASE_CREATE_PLAYLISTS_SONGS = "CREATE TABLE "+ MediaLibrary.TABLE_PLAYLISTS_SONGS + " ("
+	  + MediaLibrary.PlaylistSongColumns._ID          +" INTEGER PRIMARY KEY, "
+	  + MediaLibrary.PlaylistSongColumns.PLAYLIST_ID  +" INTEGER NOT NULL, "
+	  + MediaLibrary.PlaylistSongColumns.SONG_ID      +" INTEGER NOT NULL, "
+	  + MediaLibrary.PlaylistSongColumns.POSITION     +" INTEGER NOT NULL "
+	  + ");";
+
+	/**
+	 * Index to select a playlist quickly
+	 */
+	private static final String INDEX_IDX_PLAYLIST_ID = "CREATE INDEX idx_playlist_id ON "+MediaLibrary.TABLE_PLAYLISTS_SONGS
+	 +" ("+MediaLibrary.PlaylistSongColumns.PLAYLIST_ID+")"
+	 +";";
 
 	/**
 	 * Additional columns to select for artist info
@@ -148,6 +173,9 @@ public class MediaSchema {
 		dbh.execSQL(INDEX_IDX_CONTRIBUTORS_SONGS);
 		dbh.execSQL(DATABASE_CREATE_GENRES);
 		dbh.execSQL(DATABASE_CREATE_GENRES_SONGS);
+		dbh.execSQL(DATABASE_CREATE_PLAYLISTS);
+		dbh.execSQL(DATABASE_CREATE_PLAYLISTS_SONGS);
+		dbh.execSQL(INDEX_IDX_PLAYLIST_ID);
 		dbh.execSQL(VIEW_CREATE_SONGS_ALBUMS_ARTISTS);
 		dbh.execSQL(VIEW_CREATE_ALBUMS_ARTISTS);
 		dbh.execSQL(VIEW_CREATE_ARTISTS);

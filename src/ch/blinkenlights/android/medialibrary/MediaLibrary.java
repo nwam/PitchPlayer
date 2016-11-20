@@ -33,6 +33,8 @@ public class MediaLibrary  {
 	public static final String TABLE_CONTRIBUTORS_SONGS   = "contributors_songs";
 	public static final String TABLE_GENRES               = "genres";
 	public static final String TABLE_GENRES_SONGS         = "genres_songs";
+	public static final String TABLE_PLAYLISTS            = "playlists";
+	public static final String TABLE_PLAYLISTS_SONGS      = "playlists_songs";
 	public static final String VIEW_ARTISTS               = "_artists";
 	public static final String VIEW_ALBUMS_ARTISTS        = "_albums_artists";
 	public static final String VIEW_SONGS_ALBUMS_ARTISTS  = "_songs_albums_artists";
@@ -283,4 +285,37 @@ public class MediaLibrary  {
 		 */
 		public static final String SONG_ID = "song_id";
 	}
+
+	// Playlists
+	public interface PlaylistColumns {
+		/**
+		 * The id of this playlist
+		 */
+		public static final String _ID = SongColumns._ID;
+		/**
+		 * The name of this playlist
+		 */
+		 public static final String PLAYLIST = "playlist";
+	}
+
+	// Song <-> Playlist mapping
+	public interface PlaylistSongColumns {
+		/**
+		 * The ID of this entry
+		 */
+		public static final String _ID = SongColumns._ID;
+		/**
+		 * The playlist this entry belongs to
+		 */
+		public static final String PLAYLIST_ID = "playlist_id";
+		/**
+		 * The song this entry references to
+		 */
+		public static final String SONG_ID = "song_id";
+		/**
+		 * The order attribute
+		 */
+		public static final String POSITION = "position";
+	}
+
 }
