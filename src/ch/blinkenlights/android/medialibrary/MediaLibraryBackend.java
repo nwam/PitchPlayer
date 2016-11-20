@@ -65,7 +65,7 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	*
 	* @param Context the context to use
 	*/
-	public MediaLibraryBackend(Context context) {
+	MediaLibraryBackend(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
 
@@ -181,6 +181,41 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 		if (result != -1)
 			notifyObserver();
 		return result;
+	}
+
+	/**
+	 * Wrapper for SQLiteDatabase.insert() function working in one transaction
+	 *
+	 * @param table the table to insert data to
+	 * @param nullColumnHack android hackery (see SQLiteDatabase documentation)
+	 * @param valuesList an array list of ContentValues to insert
+	 * @return the number of inserted rows
+	 */
+	public int bulkInsert (String table, String nullColumnHack, ArrayList<ContentValues> valuesList) {
+		SQLiteDatabase dbh = getWritableDatabase();
+
+		int count = 0;
+
+		dbh.beginTransactionNonExclusive();
+		try {
+			for(ContentValues values : valuesList) {
+				try {
+					long result = dbh.insertOrThrow(table, nullColumnHack, values);
+					if (result > 0)
+						count++;
+				} catch (Exception e) {
+					// avoid logspam
+				}
+			}
+			dbh.setTransactionSuccessful();
+		} finally {
+			dbh.endTransaction();
+		}
+
+		if (count > 0)
+			notifyObserver();
+
+		return count;
 	}
 
 	/**

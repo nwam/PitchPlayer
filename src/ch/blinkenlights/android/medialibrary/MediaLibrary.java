@@ -137,7 +137,6 @@ public class MediaLibrary  {
 	 */
 	public static int addToPlaylist(Context context, long playlistId, ArrayList<Long> ids) {
 		long pos = 0;
-		int added = 0;
 		// First we need to get the position of the last item
 		String[] projection = { MediaLibrary.PlaylistSongColumns.POSITION };
 		String selection = MediaLibrary.PlaylistSongColumns.PLAYLIST_ID+"="+playlistId;
@@ -147,21 +146,19 @@ public class MediaLibrary  {
 			pos = cursor.getLong(0) + 1;
 		cursor.close();
 
-		ContentValues v = new ContentValues();
+		ArrayList<ContentValues> bulk = new ArrayList<ContentValues>();
 		for (Long id : ids) {
-
 			if (getBackend(context).isSongExisting(id) == false)
 				continue;
 
-			v.clear();
+			ContentValues v = new ContentValues();
 			v.put(MediaLibrary.PlaylistSongColumns.PLAYLIST_ID, playlistId);
 			v.put(MediaLibrary.PlaylistSongColumns.SONG_ID, id);
 			v.put(MediaLibrary.PlaylistSongColumns.POSITION, pos);
-			getBackend(context).insert(MediaLibrary.TABLE_PLAYLISTS_SONGS, null, v);
+			bulk.add(v);
 			pos++;
-			added++;
 		}
-		return added;
+		return getBackend(context).bulkInsert(MediaLibrary.TABLE_PLAYLISTS_SONGS, null, bulk);
 	}
 
 	/**
