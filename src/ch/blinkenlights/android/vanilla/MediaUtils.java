@@ -185,11 +185,11 @@ public class MediaUtils {
 	 *
 	 * @param id The id of the playlist in MediaStore.Audio.Playlists.
 	 * @param projection The columns to query.
-	 * @param selection The selection to pass to the query, or null.
 	 * @return The initialized query.
 	 */
-	public static QueryTask buildPlaylistQuery(long id, String[] projection, String selection) {
+	public static QueryTask buildPlaylistQuery(long id, String[] projection) {
 		String sort = MediaLibrary.PlaylistSongColumns.POSITION;
+		String selection = MediaLibrary.PlaylistSongColumns.PLAYLIST_ID+"="+id;
 		QueryTask result = new QueryTask(MediaLibrary.VIEW_PLAYLIST_SONGS, projection, selection, null, sort);
 		result.type = TYPE_PLAYLIST;
 		return result;
@@ -214,7 +214,7 @@ public class MediaUtils {
 		case TYPE_GENRE:
 			return buildMediaQuery(type, id, projection, selection);
 		case TYPE_PLAYLIST:
-			return buildPlaylistQuery(id, projection, selection);
+			return buildPlaylistQuery(id, projection);
 		default:
 			throw new IllegalArgumentException("Specified type not valid: " + type);
 		}

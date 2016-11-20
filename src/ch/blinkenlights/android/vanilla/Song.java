@@ -68,17 +68,8 @@ public class Song implements Comparable<Song> {
 		MediaLibrary.PlaylistSongColumns.SONG_ID,
 	};
 
-	public static final String[] FILLED_PLAYLIST_PROJECTION = {
-		MediaStore.Audio.Playlists.Members.AUDIO_ID,
-		MediaStore.Audio.Playlists.Members.DATA,
-		MediaStore.Audio.Playlists.Members.TITLE,
-		MediaStore.Audio.Playlists.Members.ALBUM,
-		MediaStore.Audio.Playlists.Members.ARTIST,
-		MediaStore.Audio.Playlists.Members.ALBUM_ID,
-		MediaStore.Audio.Playlists.Members.ARTIST_ID,
-		MediaStore.Audio.Playlists.Members.DURATION,
-		MediaStore.Audio.Playlists.Members.TRACK,
-	};
+	public static final String[] FILLED_PLAYLIST_PROJECTION =
+		FILLED_PROJECTION; // Same, as playlists are just a view of the view
 
 
 	/**
