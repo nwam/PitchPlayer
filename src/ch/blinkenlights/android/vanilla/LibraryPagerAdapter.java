@@ -216,9 +216,6 @@ public class LibraryPagerAdapter
 		mUiHandler = new Handler(this);
 		mWorkerHandler = new Handler(workerLooper, this);
 		mCurrentPage = -1;
-		// FIXME OBSOLETED_* had this, we should do this again as soon as we have
-		// multiple observers supported in MediaLibrary!
-		// MediaLibrary.registerContentObserver(activity, mPlaylistObserver);
 	}
 
 	/**
