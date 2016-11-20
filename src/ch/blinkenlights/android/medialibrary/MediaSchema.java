@@ -160,6 +160,11 @@ public class MediaSchema {
 	  +" WHERE "+MediaLibrary.ContributorSongColumns.ROLE+"=0 GROUP BY "+MediaLibrary.ContributorSongColumns._CONTRIBUTOR_ID+")"
 	  +" ;";
 
+	private static final String VIEW_CREATE_PLAYLIST_SONGS = "CREATE VIEW "+ MediaLibrary.VIEW_PLAYLIST_SONGS+" AS "
+	  +" SELECT * FROM "+MediaLibrary.VIEW_SONGS_ALBUMS_ARTISTS+" INNER JOIN "+MediaLibrary.TABLE_PLAYLISTS_SONGS
+	  +" ON "+MediaLibrary.TABLE_PLAYLISTS_SONGS+"."+MediaLibrary.PlaylistSongColumns.SONG_ID+" = "+MediaLibrary.VIEW_SONGS_ALBUMS_ARTISTS+"."+MediaLibrary.SongColumns._ID
+	  +" ;";
+
 	/**
 	 * Creates a new database schema on dbh
 	 *
@@ -179,6 +184,7 @@ public class MediaSchema {
 		dbh.execSQL(VIEW_CREATE_SONGS_ALBUMS_ARTISTS);
 		dbh.execSQL(VIEW_CREATE_ALBUMS_ARTISTS);
 		dbh.execSQL(VIEW_CREATE_ARTISTS);
+		dbh.execSQL(VIEW_CREATE_PLAYLIST_SONGS);
 	}
 
 }
