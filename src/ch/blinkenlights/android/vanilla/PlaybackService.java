@@ -422,10 +422,6 @@ public final class PlaybackService extends Service
 	 * Reference to precreated BASTP Object
 	 */
 	private BastpUtil mBastpUtil;
-	/**
-	 * Reference to Playcounts helper class
-	 */
-	private PlayCountsHelper mPlayCounts;
 
 	@Override
 	public void onCreate()
@@ -436,8 +432,6 @@ public final class PlaybackService extends Service
 		mTimeline = new SongTimeline(this);
 		mTimeline.setCallback(this);
 		int state = loadState();
-
-		mPlayCounts = new PlayCountsHelper(this);
 
 		mMediaPlayer = getNewMediaPlayer();
 		mPreparedMediaPlayer = getNewMediaPlayer();
@@ -1571,14 +1565,14 @@ public final class PlaybackService extends Service
 		case MSG_UPDATE_PLAYCOUNTS:
 			Song song = (Song)message.obj;
 			boolean played = message.arg1 == 1;
-			mPlayCounts.countSong(song, played);
+			PlayCountsHelper.countSong(getApplicationContext(), song, played);
 			// Update the playcounts playlist in ~20% of all cases if enabled
 			if (mAutoPlPlaycounts > 0 && Math.random() > 0.8) {
 				ContentResolver resolver = getContentResolver();
 				// Add an invisible whitespace to adjust our sorting
 				String playlistName = "\u200B"+getString(R.string.autoplaylist_playcounts_name, mAutoPlPlaycounts);
 				long id = Playlist.createPlaylist(resolver, playlistName);
-				ArrayList<Long> items = mPlayCounts.getTopSongs(mAutoPlPlaycounts);
+				ArrayList<Long> items = PlayCountsHelper.getTopSongs(getApplicationContext(), mAutoPlPlaycounts);
 				Playlist.addToPlaylist(resolver, id, items);
 			}
 

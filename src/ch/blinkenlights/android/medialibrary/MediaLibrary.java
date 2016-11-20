@@ -18,6 +18,7 @@
 package ch.blinkenlights.android.medialibrary;
 
 import android.content.Context;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.ContentObserver;
 import android.provider.MediaStore;
@@ -79,6 +80,20 @@ public class MediaLibrary  {
 	 */
 	public static void removeSong(Context context, long id) {
 		getBackend(context).delete(TABLE_SONGS, SongColumns._ID+"="+id, null);
+	}
+
+	/**
+	 * Updates the play or skipcount of a song
+	 *
+	 * @param context the context to use
+	 * @param id the song id to update
+	 * @param boolean true if song was played, false if skipped
+	 */
+	public static void updateSongPlayCounts(Context context, long id, boolean played) {
+		final String column = played ? MediaLibrary.SongColumns.PLAYCOUNT : MediaLibrary.SongColumns.SKIPCOUNT;
+		ContentValues v = new ContentValues();
+		v.put(column, column+" + 1");
+		getBackend(context).update(MediaLibrary.TABLE_SONGS, v, MediaLibrary.SongColumns._ID+"="+id, null, false);
 	}
 
 	/**

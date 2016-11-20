@@ -143,6 +143,27 @@ public class MediaLibraryBackend extends SQLiteOpenHelper {
 	}
 
 	/**
+	 * Wrapper for SQLiteDatabase.update() function
+	 *
+	 * @param table the table to update
+	 * @param values the data to set / modify
+	 * @param whereClause the selection
+	 * @param whereArgs arguments to selection
+	 * @param userVisible controls if we shall call notifyObserver() to refresh the UI
+	 * @return the number of affected rows
+	 */
+	public int update (String table, ContentValues values, String whereClause, String[] whereArgs, boolean userVisible) {
+		SQLiteDatabase dbh = getWritableDatabase();
+		int res = dbh.update(table, values, whereClause, whereArgs);
+		if (res > 0 && userVisible == true) {
+			// Note: we are not running notifyObserver for performance reasons here
+			// Code which changes relations should just delete + re-insert data
+			notifyObserver();
+		}
+		return res;
+	}
+
+	/**
 	 * Wrapper for SQLiteDatabase.insert() function
 	 *
 	 * @param table the table to insert data to

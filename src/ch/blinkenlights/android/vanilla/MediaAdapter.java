@@ -403,16 +403,6 @@ public class MediaAdapter
 
 		// Magic sort mode: sort by playcount
 		if (sortStringRaw == "OBSOLETED") {
-			ArrayList<Long> topSongs = (new PlayCountsHelper(mContext)).getTopSongs(4096);
-			int sortWeight = -1 * topSongs.size(); // Sort mode is actually reversed (default: mostplayed -> leastplayed)
-
-			StringBuilder sb = new StringBuilder("CASE WHEN _id=0 THEN 0"); // include dummy statement in initial string -> topSongs may be empty
-			for (Long id : topSongs) {
-				sb.append(" WHEN _id="+id+" THEN "+sortWeight);
-				sortWeight++;
-			}
-			sb.append(" ELSE 0 END %1s");
-			sortStringRaw = sb.toString();
 		} else if (returnSongs == false) {
 			// This is an 'adapter native' query: include the first sorting column
 			// in the projection to make it useable for the fast-scroller
