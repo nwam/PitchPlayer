@@ -293,7 +293,7 @@ public class MediaAdapter
 
 
 		String source = mSource;
-		String constrain = mConstraint;
+		String constraint = mConstraint;
 		Limiter limiter = mLimiter;
 
 		StringBuilder selection = new StringBuilder();
@@ -319,19 +319,19 @@ public class MediaAdapter
 		// ...and assemble the SQL string we are really going to use
 		String sort = String.format(sortRaw, sortDir);
 
-		// include the constrain (aka: search string) if any
-		if (constrain != null && constrain.length() != 0) {
+		// include the constraint (aka: search string) if any
+		if (constraint != null && constraint.length() != 0) {
 			String[] needles;
 			String[] keySource;
 
 			if (mFieldKeys != null) {
-				String colKey = MediaLibrary.keyFor(constrain);
+				String colKey = MediaLibrary.keyFor(constraint);
 				String spaceColKey = DatabaseUtils.getCollationKey(" ");
 				needles = colKey.split(spaceColKey);
 				keySource = mFieldKeys;
 			} else {
 				// only used for playlists, maybe we should just update the schema ?
-				needles = SPACE_SPLIT.split(constrain);
+				needles = SPACE_SPLIT.split(constraint);
 				keySource = mFields;
 			}
 
