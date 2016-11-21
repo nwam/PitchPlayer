@@ -23,8 +23,6 @@
 
 package ch.blinkenlights.android.vanilla;
 
-import ch.blinkenlights.android.medialibrary.MediaLibrary;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.ContentObserver;
