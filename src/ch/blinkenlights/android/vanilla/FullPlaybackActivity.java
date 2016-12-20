@@ -25,6 +25,7 @@ package ch.blinkenlights.android.vanilla;
 
 import java.util.ArrayList;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -69,6 +70,8 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 	private TextView mTitle;
 	private TextView mAlbum;
 	private TextView mArtist;
+
+	private SeekBar mPitchBar;
 
 	/**
 	 * True if the controls are visible (play, next, seek bar, etc).
@@ -130,6 +133,7 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		case DISPLAY_INFO_WIDGETS:
 			coverStyle = CoverBitmap.STYLE_NO_INFO;
 			layout = R.layout.full_playback_alt;
+
 			break;
 		case DISPLAY_INFO_OVERLAP:
 			coverStyle = CoverBitmap.STYLE_OVERLAPPING_BOX;
@@ -170,6 +174,12 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		mReplayGainView = (TextView)findViewById(R.id.replaygain);
 
 		bindControlButtons();
+
+		// (yes, I'm hacking because this isn't my code)
+		if (layout == R.layout.full_playback_alt) {
+			mPitchBar = (SeekBar) findViewById(R.id.pitch_bar);
+			mPitchBar.setOnSeekBarChangeListener(new PitchBarChangeListener(this));
+		}
 
 		setControlsVisible(settings.getBoolean(PrefKeys.VISIBLE_CONTROLS, PrefDefaults.VISIBLE_CONTROLS));
 		setExtraInfoVisible(settings.getBoolean(PrefKeys.VISIBLE_EXTRA_INFO, PrefDefaults.VISIBLE_EXTRA_INFO));

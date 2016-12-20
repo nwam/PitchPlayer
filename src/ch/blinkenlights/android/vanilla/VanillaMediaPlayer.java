@@ -22,6 +22,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.media.PlaybackParams;
 import android.media.audiofx.AudioEffect;
 import android.os.Build;
 
@@ -164,6 +165,13 @@ public class VanillaMediaPlayer extends MediaPlayer {
 		}
 
 		setVolume(volume, volume);
+	}
+
+	/** Sets the pitch **/
+	public void updatePitch(float pitch) {
+		PlaybackParams playbackParams = new PlaybackParams();
+		playbackParams.setPitch(pitch);
+		setPlaybackParams(playbackParams);
 	}
 
 }

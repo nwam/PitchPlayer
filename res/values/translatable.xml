@@ -51,6 +51,7 @@ THE SOFTWARE.
 	<string name="_album">album</string>
 	<string name="_year">year</string>
 	<string name="_replaygain">rgain</string>
+	<string name="_pitch">pitch</string>
 	<!-- New Playlist Dialog -->
 	<string name="choose_playlist_name">Choose playlist name</string>
 	<string name="create">Create</string>
