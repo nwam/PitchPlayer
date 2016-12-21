@@ -4,22 +4,20 @@ import android.content.Context;
 import android.widget.SeekBar;
 
 /**
- * Created by nwam on 20/12/16.
+ * Created by nwam on 21/12/16.
  */
-public class PitchBarChangeListener implements SeekBar.OnSeekBarChangeListener {
-
+public class SpeedBarChangeListener implements SeekBar.OnSeekBarChangeListener{
     Context context;
 
 
-    public PitchBarChangeListener(Context c){
+    public SpeedBarChangeListener(Context c){
         context = c;
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         PlaybackService playbackService = PlaybackService.get(context);
-        playbackService.mMediaPlayer.updatePitch(progress);
-
+        playbackService.mMediaPlayer.updateSpeed(progress);
     }
 
     @Override

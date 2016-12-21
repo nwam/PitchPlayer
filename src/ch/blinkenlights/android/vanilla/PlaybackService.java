@@ -424,6 +424,11 @@ public final class PlaybackService extends Service
 	 * Reference to Playcounts helper class
 	 */
 	private PlayCountsHelper mPlayCounts;
+	/**
+	 * values for special playback controls
+	 */
+	private int mPitchProgress;
+	private int mSpeedProgress;
 
 	@Override
 	public void onCreate()
@@ -1917,7 +1922,7 @@ public final class PlaybackService extends Service
 	/**
 	 * Add an Activity to the registered PlaybackActivities.
 	 *
-	 * @param activity The Activity to be added
+	 * @param consumer The Activity to be added
 	 */
 	public static void addTimelineCallback(TimelineCallback consumer)
 	{
@@ -1927,7 +1932,7 @@ public final class PlaybackService extends Service
 	/**
 	 * Remove an Activity from the registered PlaybackActivities
 	 *
-	 * @param activity The Activity to be removed
+	 * @param consumer The Activity to be removed
 	 */
 	public static void removeTimelineCallback(TimelineCallback consumer)
 	{
@@ -2353,5 +2358,13 @@ public final class PlaybackService extends Service
 	public void removeSongPosition(int which) {
 		mTimeline.removeSongPosition(which);
 	}
+
+	/**
+	 * Returns the current pitch level
+     */
+	public int getPitchProgress(){ return mPitchProgress;}
+	public void setPitchProgress(int v){mPitchProgress=v;}
+	public int getSpeedProgress(){ return mSpeedProgress;}
+	public void setSpeedProgress(int v){mSpeedProgress=v;}
 
 }

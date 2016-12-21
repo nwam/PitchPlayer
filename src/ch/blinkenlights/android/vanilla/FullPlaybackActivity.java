@@ -41,6 +41,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -72,6 +73,9 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 	private TextView mArtist;
 
 	private SeekBar mPitchBar;
+	private Button mPitchButton;
+	private SeekBar mSpeedBar;
+	private Button mSpeedButton;
 
 	/**
 	 * True if the controls are visible (play, next, seek bar, etc).
@@ -173,13 +177,12 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		mFormatView = (TextView)findViewById(R.id.format);
 		mReplayGainView = (TextView)findViewById(R.id.replaygain);
 
-		bindControlButtons();
+		mPitchBar = (SeekBar) findViewById(R.id.pitch_bar);
+		mPitchButton = (Button) findViewById(R.id.pitch_button);
+		mSpeedBar = (SeekBar) findViewById(R.id.speed_bar);
+		mSpeedButton = (Button) findViewById(R.id.speed_button);
 
-		// (yes, I'm hacking because this isn't my code)
-		if (layout == R.layout.full_playback_alt) {
-			mPitchBar = (SeekBar) findViewById(R.id.pitch_bar);
-			mPitchBar.setOnSeekBarChangeListener(new PitchBarChangeListener(this));
-		}
+		bindControlButtons();
 
 		setControlsVisible(settings.getBoolean(PrefKeys.VISIBLE_CONTROLS, PrefDefaults.VISIBLE_CONTROLS));
 		setExtraInfoVisible(settings.getBoolean(PrefKeys.VISIBLE_EXTRA_INFO, PrefDefaults.VISIBLE_EXTRA_INFO));
@@ -610,7 +613,7 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		case MSG_LOAD_EXTRA_INFO:
 			loadExtraInfo();
 			break;
-		case MSG_COMMIT_INFO: {
+		case MSG_COMMIT_INFO: { // info now contains pitch controls
 			mGenreView.setText(mGenre);
 			mTrackView.setText(mTrack);
 			mYearView.setText(mYear);
@@ -618,6 +621,14 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 			mPathView.setText(mPath);
 			mFormatView.setText(mFormat);
 			mReplayGainView.setText(mReplayGain);
+
+			mPitchBar.setOnSeekBarChangeListener(new PitchBarChangeListener(this));
+			mPitchBar.setProgress(PlaybackService.get(this).getPitchProgress());
+			mPitchButton.setOnClickListener(this);
+			mSpeedBar.setOnSeekBarChangeListener(new SpeedBarChangeListener(this));
+			mSpeedBar.setProgress(PlaybackService.get(this).getSpeedProgress());
+			mSpeedButton.setOnClickListener(this);
+
 			break;
 		}
 		case MSG_UPDATE_POSITION:
@@ -668,6 +679,10 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 			performAction(mCoverPressAction);
 		} else if (view.getId() == R.id.info_table) {
 			openLibrary(mCurrentSong);
+		} else if (view.getId() == R.id.pitch_button){
+			mPitchBar.setProgress(1000);
+		} else if (view.getId() == R.id.speed_button){
+			mSpeedBar.setProgress(1000);
 		} else {
 			super.onClick(view);
 		}

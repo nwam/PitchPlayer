@@ -168,9 +168,19 @@ public class VanillaMediaPlayer extends MediaPlayer {
 	}
 
 	/** Sets the pitch **/
-	public void updatePitch(float pitch) {
+	public void updatePitch(int level) {
+		PlaybackService.get(mContext).setPitchProgress(level);
+		float pitchFactor = 1 - (1000f - level)/2000;
 		PlaybackParams playbackParams = new PlaybackParams();
-		playbackParams.setPitch(pitch);
+		playbackParams.setPitch(pitchFactor);
+		setPlaybackParams(playbackParams);
+	}
+
+	public void updateSpeed(int level) {
+		PlaybackService.get(mContext).setSpeedProgress(level);
+		float speedFactor = 1 - (1000f - level)/2000;
+		PlaybackParams playbackParams = new PlaybackParams();
+		playbackParams.setSpeed(speedFactor);
 		setPlaybackParams(playbackParams);
 	}
 

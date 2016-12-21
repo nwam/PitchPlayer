@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -->
 <resources>
-	<string name="app_name">Vanilla Music</string>
+	<string name="app_name">Pitch Player</string>
 
 	<!-- Playback Activity (main screen) -->
 	<string name="no_songs">No tracks found on your device.</string>
@@ -52,6 +52,7 @@ THE SOFTWARE.
 	<string name="_year">year</string>
 	<string name="_replaygain">rgain</string>
 	<string name="_pitch">pitch</string>
+	<string name="_speed">speed</string>
 	<!-- New Playlist Dialog -->
 	<string name="choose_playlist_name">Choose playlist name</string>
 	<string name="create">Create</string>
