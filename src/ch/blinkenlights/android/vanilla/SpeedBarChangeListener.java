@@ -1,32 +1,37 @@
 package ch.blinkenlights.android.vanilla;
 
 import android.content.Context;
+import android.drm.DrmStore;
 import android.widget.SeekBar;
 
 /**
  * Created by nwam on 21/12/16.
  */
 public class SpeedBarChangeListener implements SeekBar.OnSeekBarChangeListener{
-    Context context;
-
+    PlaybackService playbackService;
+    boolean playing;
 
     public SpeedBarChangeListener(Context c){
-        context = c;
+        playbackService = PlaybackService.get(c);
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        PlaybackService playbackService = PlaybackService.get(context);
-        playbackService.mMediaPlayer.updateSpeed(progress);
+        if (playing) {
+            playbackService.mMediaPlayer.updateSpeed(progress);
+        }
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-
+        playing = playbackService.isPlaying();
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-
+        if (!playing){
+            playbackService.mMediaPlayer.updateSpeed(seekBar.getProgress());
+            playbackService.mMediaPlayer.pause();
+        }
     }
 }

@@ -32,6 +32,7 @@ import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.content.ContentResolver;
@@ -42,8 +43,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -56,7 +60,9 @@ import android.content.DialogInterface;
  * The primary playback screen with playback controls and large cover display.
  */
 public class FullPlaybackActivity extends SlidingPlaybackActivity
-	implements View.OnLongClickListener
+	implements View.OnLongClickListener,
+		       CheckBox.OnCheckedChangeListener,
+			   NumberPicker.OnValueChangeListener
 {
 	public static final int DISPLAY_INFO_OVERLAP = 0;
 	public static final int DISPLAY_INFO_BELOW = 1;
@@ -76,6 +82,12 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 	private Button mPitchButton;
 	private SeekBar mSpeedBar;
 	private Button mSpeedButton;
+
+	private CheckBox mLooperCheckbox;
+	private Button mLooperStartButton;
+	private Button mLooperEndButton;
+	private NumberPicker mLooperStartPicker;
+	private NumberPicker mLooperEndPicker;
 
 	/**
 	 * True if the controls are visible (play, next, seek bar, etc).
@@ -181,6 +193,18 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		mPitchButton = (Button) findViewById(R.id.pitch_button);
 		mSpeedBar = (SeekBar) findViewById(R.id.speed_bar);
 		mSpeedButton = (Button) findViewById(R.id.speed_button);
+
+		mLooperCheckbox = (CheckBox) findViewById(R.id.looper_checkbox);
+		mLooperStartButton = (Button) findViewById(R.id.looper_start_button);
+		mLooperEndButton = (Button) findViewById(R.id.looper_end_button);
+		mLooperStartPicker = (NumberPicker) findViewById(R.id.looper_start);
+		mLooperStartPicker.setMinValue(0);
+		mLooperStartPicker.setMaxValue(1000000);
+		mLooperStartPicker.setOnValueChangedListener(this);
+		mLooperEndPicker = (NumberPicker) findViewById(R.id.looper_end);
+		mLooperEndPicker.setMinValue(0);
+		mLooperEndPicker.setMaxValue(1000000);
+		mLooperEndPicker.setOnValueChangedListener(this);
 
 		bindControlButtons();
 
@@ -622,12 +646,17 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 			mFormatView.setText(mFormat);
 			mReplayGainView.setText(mReplayGain);
 
+			// set functionalities of special playback controls
 			mPitchBar.setOnSeekBarChangeListener(new PitchBarChangeListener(this));
 			mPitchBar.setProgress(PlaybackService.get(this).getPitchProgress());
 			mPitchButton.setOnClickListener(this);
 			mSpeedBar.setOnSeekBarChangeListener(new SpeedBarChangeListener(this));
 			mSpeedBar.setProgress(PlaybackService.get(this).getSpeedProgress());
 			mSpeedButton.setOnClickListener(this);
+
+			mLooperCheckbox.setOnCheckedChangeListener(this);
+			mLooperStartButton.setOnClickListener(this);
+			mLooperEndButton.setOnClickListener(this);
 
 			break;
 		}
@@ -681,8 +710,16 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 			openLibrary(mCurrentSong);
 		} else if (view.getId() == R.id.pitch_button){
 			mPitchBar.setProgress(1000);
-		} else if (view.getId() == R.id.speed_button){
+		} else if (view.getId() == R.id.speed_button) {
 			mSpeedBar.setProgress(1000);
+		} else if (view.getId() == R.id.looper_start_button) {
+			int currentPosition = PlaybackService.get(this).mMediaPlayer.getCurrentPosition();
+			PlaybackService.get(this).mMediaPlayer.setLooperStart(currentPosition);
+			mLooperStartPicker.setValue(currentPosition);
+		} else if (view.getId() == R.id.looper_end_button) {
+			int currentPosition = PlaybackService.get(this).mMediaPlayer.getCurrentPosition();
+			PlaybackService.get(this).mMediaPlayer.setLooperEnd(currentPosition);
+			mLooperEndPicker.setValue(currentPosition);
 		} else {
 			super.onClick(view);
 		}
@@ -702,7 +739,6 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		default:
 			return false;
 		}
-
 		return true;
 	}
 
@@ -713,4 +749,22 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 			setExtraInfoVisible(false);
 	}
 
+	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		if (isChecked){
+			PlaybackService.get(this).mMediaPlayer.enableLooper();
+		} else {
+			PlaybackService.get(this).mMediaPlayer.disableLooper();
+		}
+	}
+
+	@Override
+	public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+		System.out.println("UPDATE");
+		if(picker == mLooperStartPicker){
+			PlaybackService.get(this).mMediaPlayer.setLooperStart(newVal);
+		}else if(picker == mLooperEndPicker){
+			PlaybackService.get(this).mMediaPlayer.setLooperEnd(newVal);
+		}
+	}
 }

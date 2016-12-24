@@ -25,11 +25,14 @@ import android.media.MediaPlayer;
 import android.media.PlaybackParams;
 import android.media.audiofx.AudioEffect;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public class VanillaMediaPlayer extends MediaPlayer {
+public class VanillaMediaPlayer extends MediaPlayer
+	implements 	Handler.Callback {
 
 	private Context mContext;
 	private String mDataSource;
@@ -38,7 +41,14 @@ public class VanillaMediaPlayer extends MediaPlayer {
 	private float mDuckingFactor = Float.NaN;
 	private boolean mIsDucking = false;
 
-	/**
+	private boolean mLooperEnabled;
+	private int mLooperStart;
+	private int mLooperEnd;
+
+	private final Handler handler = new Handler(this);
+	private static final int MSG_LOOP_BACK = 1;
+
+	/**handleMessage
 	 * Constructs a new VanillaMediaPlayer class
 	 */
 	public VanillaMediaPlayer(Context context) {
@@ -170,7 +180,7 @@ public class VanillaMediaPlayer extends MediaPlayer {
 	/** Sets the pitch **/
 	public void updatePitch(int level) {
 		PlaybackService.get(mContext).setPitchProgress(level);
-		float pitchFactor = 1 - (1000f - level)/2000;
+		float pitchFactor = 1 - (1000f - level)/8000;
 		PlaybackParams playbackParams = new PlaybackParams();
 		playbackParams.setPitch(pitchFactor);
 		setPlaybackParams(playbackParams);
@@ -182,6 +192,49 @@ public class VanillaMediaPlayer extends MediaPlayer {
 		PlaybackParams playbackParams = new PlaybackParams();
 		playbackParams.setSpeed(speedFactor);
 		setPlaybackParams(playbackParams);
+	}
+
+	/**
+	 * Loop if past mLooperEnd
+	 * Continue looping if mLooperEnabled
+	 */
+	public void loopAttempt(){
+		if (getCurrentPosition() > mLooperEnd){
+			seekTo(mLooperStart);
+		}
+
+		handler.removeMessages(MSG_LOOP_BACK);
+		if (mLooperEnabled){
+			handler.sendEmptyMessageDelayed(MSG_LOOP_BACK, 10);
+		}
+
+	}
+
+	public void enableLooper(){
+		mLooperEnabled = true;
+		handler.sendEmptyMessage(MSG_LOOP_BACK);
+	}
+
+	public void disableLooper(){
+		mLooperEnabled = false;
+	}
+
+	public void setLooperStart(int t){
+		mLooperStart = t;
+	}
+
+	public void setLooperEnd(int t){
+		mLooperEnd = t;
+	}
+
+	@Override
+	public boolean handleMessage(Message message){
+		switch(message.what){
+			case MSG_LOOP_BACK:
+				loopAttempt();
+				break;
+		}
+		return true;
 	}
 
 }

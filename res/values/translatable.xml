@@ -53,6 +53,9 @@ THE SOFTWARE.
 	<string name="_replaygain">rgain</string>
 	<string name="_pitch">pitch</string>
 	<string name="_speed">speed</string>
+	<string name="_loop">loop</string>
+	<string name="_start">start</string>
+	<string name="_end">end</string>
 	<!-- New Playlist Dialog -->
 	<string name="choose_playlist_name">Choose playlist name</string>
 	<string name="create">Create</string>
