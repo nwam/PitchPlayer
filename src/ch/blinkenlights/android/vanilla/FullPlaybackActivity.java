@@ -62,7 +62,8 @@ import android.content.DialogInterface;
 public class FullPlaybackActivity extends SlidingPlaybackActivity
 	implements View.OnLongClickListener,
 		       CheckBox.OnCheckedChangeListener,
-			   NumberPicker.OnValueChangeListener
+			   NumberPicker.OnValueChangeListener,
+		       NumberPicker.Formatter
 {
 	public static final int DISPLAY_INFO_OVERLAP = 0;
 	public static final int DISPLAY_INFO_BELOW = 1;
@@ -110,21 +111,6 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 	 * The currently playing song.
 	 */
 	private Song mCurrentSong;
-
-	private String mGenre;
-	private TextView mGenreView;
-	private String mTrack;
-	private TextView mTrackView;
-	private String mYear;
-	private TextView mYearView;
-	private String mComposer;
-	private TextView mComposerView;
-	private String mPath;
-	private TextView mPathView;
-	private String mFormat;
-	private TextView mFormatView;
-	private String mReplayGain;
-	private TextView mReplayGainView;
 	private MenuItem mFavorites;
 
 	@Override
@@ -178,16 +164,12 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		mAlbum = (TextView)findViewById(R.id.album);
 		mArtist = (TextView)findViewById(R.id.artist);
 
+		// to stop NumberPickers from gaining focus and opening the keyboard
+		mTitle.setFocusableInTouchMode(true);
+		mTitle.requestFocus();
+
 		mControlsTop = findViewById(R.id.controls_top);
 		mQueuePosView = (TextView)findViewById(R.id.queue_pos);
-
-		mGenreView = (TextView)findViewById(R.id.genre);
-		mTrackView = (TextView)findViewById(R.id.track);
-		mYearView = (TextView)findViewById(R.id.year);
-		mComposerView = (TextView)findViewById(R.id.composer);
-		mPathView = (TextView)findViewById(R.id.path);
-		mFormatView = (TextView)findViewById(R.id.format);
-		mReplayGainView = (TextView)findViewById(R.id.replaygain);
 
 		mPitchBar = (SeekBar) findViewById(R.id.pitch_bar);
 		mPitchButton = (Button) findViewById(R.id.pitch_button);
@@ -199,12 +181,16 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		mLooperEndButton = (Button) findViewById(R.id.looper_end_button);
 		mLooperStartPicker = (NumberPicker) findViewById(R.id.looper_start);
 		mLooperStartPicker.setMinValue(0);
-		mLooperStartPicker.setMaxValue(1000000);
+		mLooperStartPicker.setMaxValue(0);
+		mLooperStartPicker.setWrapSelectorWheel(false);
 		mLooperStartPicker.setOnValueChangedListener(this);
+		mLooperStartPicker.setFormatter(this);
 		mLooperEndPicker = (NumberPicker) findViewById(R.id.looper_end);
 		mLooperEndPicker.setMinValue(0);
-		mLooperEndPicker.setMaxValue(1000000);
+		mLooperEndPicker.setMaxValue(0);
+		mLooperEndPicker.setWrapSelectorWheel(false);
 		mLooperEndPicker.setOnValueChangedListener(this);
+		mLooperEndPicker.setFormatter(this);
 
 		bindControlButtons();
 
@@ -298,6 +284,9 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 			}
 			updateQueuePosition();
 		}
+
+		mLooperStartPicker.setMaxValue((int)song.duration/10);
+		mLooperEndPicker.setMaxValue((int)song.duration/10);
 
 		mCurrentSong = song;
 
@@ -483,7 +472,8 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		mControlsVisible = visible;
 
 		if (visible) {
-			mPlayPauseButton.requestFocus();
+			boolean ret = mPlayPauseButton.requestFocus();
+			ret = mLooperCheckbox.requestFocus();
 		}
 	}
 
@@ -524,14 +514,6 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 	{
 		Song song = mCurrentSong;
 
-		mGenre = null;
-		mTrack = null;
-		mYear = null;
-		mComposer = null;
-		mPath = null;
-		mFormat = null;
-		mReplayGain = null;
-
 		if(song != null) {
 
 			MediaMetadataRetriever data = new MediaMetadataRetriever();
@@ -542,12 +524,9 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 				Log.w("VanillaMusic", "Failed to extract metadata from " + song.path);
 			}
 
-			mGenre = data.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE);
-			mTrack = data.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER);
 			String composer = data.extractMetadata(MediaMetadataRetriever.METADATA_KEY_COMPOSER);
 			if (composer == null)
 				composer = data.extractMetadata(MediaMetadataRetriever.METADATA_KEY_WRITER);
-			mComposer = composer;
 
 			String year = data.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR);
 			if (year == null || "0".equals(year)) {
@@ -557,9 +536,7 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 				if (dash != -1)
 					year = year.substring(0, dash);
 			}
-			mYear = year;
 
-			mPath = song.path;
 			StringBuilder sb = new StringBuilder(12);
 			sb.append(decodeMimeType(data.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE)));
 			String bitrate = data.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE);
@@ -568,10 +545,8 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 				sb.append(bitrate.substring(0, bitrate.length() - 3));
 				sb.append("kbps");
 			}
-			mFormat = sb.toString();
 
 			BastpUtil.GainValues rg = PlaybackService.get(this).getReplayGainValues(song.path);
-			mReplayGain = String.format("base=%.2f, track=%.2f, album=%.2f", rg.base, rg.track, rg.album);
 
 			data.release();
 		}
@@ -638,25 +613,22 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 			loadExtraInfo();
 			break;
 		case MSG_COMMIT_INFO: { // info now contains pitch controls
-			mGenreView.setText(mGenre);
-			mTrackView.setText(mTrack);
-			mYearView.setText(mYear);
-			mComposerView.setText(mComposer);
-			mPathView.setText(mPath);
-			mFormatView.setText(mFormat);
-			mReplayGainView.setText(mReplayGain);
+			PlaybackService playbackService = PlaybackService.get(this);
 
 			// set functionalities of special playback controls
 			mPitchBar.setOnSeekBarChangeListener(new PitchBarChangeListener(this));
-			mPitchBar.setProgress(PlaybackService.get(this).getPitchProgress());
+			mPitchBar.setProgress(playbackService.getPitchProgress());
 			mPitchButton.setOnClickListener(this);
 			mSpeedBar.setOnSeekBarChangeListener(new SpeedBarChangeListener(this));
-			mSpeedBar.setProgress(PlaybackService.get(this).getSpeedProgress());
+			mSpeedBar.setProgress(playbackService.getSpeedProgress());
 			mSpeedButton.setOnClickListener(this);
 
 			mLooperCheckbox.setOnCheckedChangeListener(this);
+			mLooperCheckbox.setChecked(playbackService.mMediaPlayer.isLooperEnabled());
 			mLooperStartButton.setOnClickListener(this);
 			mLooperEndButton.setOnClickListener(this);
+			mLooperStartPicker.setValue(playbackService.mMediaPlayer == null? 0 : playbackService.mMediaPlayer.getLooperStart());
+			mLooperEndPicker.setValue(playbackService.mMediaPlayer == null? 0 : playbackService.mMediaPlayer.getLooperEnd());
 
 			break;
 		}
@@ -701,7 +673,7 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 
 	@Override
 	public void onClick(View view)
-	{
+	{System.out.println(mLooperCheckbox.requestFocus());
 		if (view == mOverlayText && (mState & PlaybackService.FLAG_EMPTY_QUEUE) != 0) {
 			setState(PlaybackService.get(this).setFinishAction(SongTimeline.FINISH_RANDOM));
 		} else if (view == mCoverView) {
@@ -713,13 +685,13 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		} else if (view.getId() == R.id.speed_button) {
 			mSpeedBar.setProgress(1000);
 		} else if (view.getId() == R.id.looper_start_button) {
-			int currentPosition = PlaybackService.get(this).mMediaPlayer.getCurrentPosition();
-			PlaybackService.get(this).mMediaPlayer.setLooperStart(currentPosition);
+			int currentPosition = PlaybackService.get(this).mMediaPlayer.getCurrentPosition()/10;
 			mLooperStartPicker.setValue(currentPosition);
+			onValueChange(mLooperStartPicker, mLooperStartPicker.getValue(), currentPosition);
 		} else if (view.getId() == R.id.looper_end_button) {
-			int currentPosition = PlaybackService.get(this).mMediaPlayer.getCurrentPosition();
-			PlaybackService.get(this).mMediaPlayer.setLooperEnd(currentPosition);
+			int currentPosition = PlaybackService.get(this).mMediaPlayer.getCurrentPosition()/10;
 			mLooperEndPicker.setValue(currentPosition);
+			onValueChange(mLooperEndPicker, mLooperEndPicker.getValue(), currentPosition);
 		} else {
 			super.onClick(view);
 		}
@@ -760,11 +732,21 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 
 	@Override
 	public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-		System.out.println("UPDATE");
 		if(picker == mLooperStartPicker){
-			PlaybackService.get(this).mMediaPlayer.setLooperStart(newVal);
+			PlaybackService.get(this).mMediaPlayer.setLooperStart(newVal*10);
+			mLooperEndPicker.setMinValue(newVal);
 		}else if(picker == mLooperEndPicker){
-			PlaybackService.get(this).mMediaPlayer.setLooperEnd(newVal);
+			PlaybackService.get(this).mMediaPlayer.setLooperEnd(newVal*10);
 		}
+	}
+
+	// NumberPicker.Formatter
+	@Override
+	public String format(int value) {
+		int minutes = value/100/60;
+		int seconds = value/100%60;
+		int fraction_of_a_second = value%100;
+		return String.format("%d:%02d.%d", minutes, seconds, fraction_of_a_second);
+
 	}
 }

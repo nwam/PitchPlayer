@@ -13,6 +13,7 @@ public class SpeedBarChangeListener implements SeekBar.OnSeekBarChangeListener{
 
     public SpeedBarChangeListener(Context c){
         playbackService = PlaybackService.get(c);
+        playing = playbackService.isPlaying();
     }
 
     @Override

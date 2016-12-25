@@ -183,6 +183,7 @@ public class VanillaMediaPlayer extends MediaPlayer
 		float pitchFactor = 1 - (1000f - level)/8000;
 		PlaybackParams playbackParams = new PlaybackParams();
 		playbackParams.setPitch(pitchFactor);
+		System.out.println(playbackParams);
 		setPlaybackParams(playbackParams);
 	}
 
@@ -210,6 +211,9 @@ public class VanillaMediaPlayer extends MediaPlayer
 
 	}
 
+	/**
+	 * Starts a stream of loop attempts
+	 */
 	public void enableLooper(){
 		mLooperEnabled = true;
 		handler.sendEmptyMessage(MSG_LOOP_BACK);
@@ -219,6 +223,8 @@ public class VanillaMediaPlayer extends MediaPlayer
 		mLooperEnabled = false;
 	}
 
+	public boolean isLooperEnabled(){return mLooperEnabled;}
+
 	public void setLooperStart(int t){
 		mLooperStart = t;
 	}
@@ -226,6 +232,10 @@ public class VanillaMediaPlayer extends MediaPlayer
 	public void setLooperEnd(int t){
 		mLooperEnd = t;
 	}
+
+	public int getLooperStart(){ return mLooperStart;}
+
+	public int getLooperEnd(){ return mLooperEnd;}
 
 	@Override
 	public boolean handleMessage(Message message){
