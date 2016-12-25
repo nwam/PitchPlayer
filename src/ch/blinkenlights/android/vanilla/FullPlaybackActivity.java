@@ -746,7 +746,7 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		int minutes = value/100/60;
 		int seconds = value/100%60;
 		int fraction_of_a_second = value%100;
-		return String.format("%d:%02d.%d", minutes, seconds, fraction_of_a_second);
+		return String.format("%d:%02d.%02d", minutes, seconds, fraction_of_a_second);
 
 	}
 }
