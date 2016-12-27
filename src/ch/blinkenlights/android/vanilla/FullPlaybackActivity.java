@@ -34,6 +34,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Message;
+import android.text.InputType;
 import android.util.Log;
 import android.content.ContentResolver;
 import android.view.Gravity;
@@ -45,6 +46,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
@@ -619,6 +621,8 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 			mPitchBar.setOnSeekBarChangeListener(new PitchBarChangeListener(this));
 			mPitchBar.setProgress(playbackService.getPitchProgress());
 			mPitchButton.setOnClickListener(this);
+			mPitchButton.setLongClickable(true);
+			mPitchButton.setOnLongClickListener(this);
 			mSpeedBar.setOnSeekBarChangeListener(new SpeedBarChangeListener(this));
 			mSpeedBar.setProgress(playbackService.getSpeedProgress());
 			mSpeedButton.setOnClickListener(this);
@@ -672,8 +676,7 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 	}
 
 	@Override
-	public void onClick(View view)
-	{System.out.println(mLooperCheckbox.requestFocus());
+	public void onClick(View view){
 		if (view == mOverlayText && (mState & PlaybackService.FLAG_EMPTY_QUEUE) != 0) {
 			setState(PlaybackService.get(this).setFinishAction(SongTimeline.FINISH_RANDOM));
 		} else if (view == mCoverView) {
@@ -707,6 +710,9 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		case R.id.info_table:
 			setExtraInfoVisible(!mExtraInfoVisible);
 			mHandler.sendEmptyMessage(MSG_SAVE_CONTROLS);
+			break;
+		case R.id.pitch_button:
+			showPitchOptionsDialog(this);
 			break;
 		default:
 			return false;
@@ -748,5 +754,34 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		int fraction_of_a_second = value%100;
 		return String.format("%d:%02d.%02d", minutes, seconds, fraction_of_a_second);
 
+	}
+
+	private void showPitchOptionsDialog(final Context context){
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Pitch Range");
+
+		// set up input
+		final EditText input = new EditText(this);
+		input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+		builder.setView(input);
+
+		// set up buttons
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which){
+				PlaybackService.get(context).setPitchRange(Float.parseFloat(input.getText().toString()));
+			}
+		});
+
+		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+			}
+		});
+
+		builder.show();
+		input.setHint(R.string._semitones);
+		input.requestFocus();
 	}
 }

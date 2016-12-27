@@ -429,6 +429,8 @@ public final class PlaybackService extends Service
 	 */
 	private int mPitchProgress;
 	private int mSpeedProgress;
+	private float mPitchRange;
+	private float mSpeedRange;
 
 	@Override
 	public void onCreate()
@@ -517,6 +519,7 @@ public final class PlaybackService extends Service
 
 		mPitchProgress = 1000;
 		mSpeedProgress = 1000;
+		mPitchRange = 2;
 	}
 
 	@Override
@@ -2369,5 +2372,11 @@ public final class PlaybackService extends Service
 	public void setPitchProgress(int v){mPitchProgress=v;}
 	public int getSpeedProgress(){ return mSpeedProgress;}
 	public void setSpeedProgress(int v){mSpeedProgress=v;}
+
+	/**
+	 * For range of slider pitch adjuster
+	 */
+	public void setPitchRange(float semitones){mPitchRange = semitones;}
+	public float getPitchRange(){return mPitchRange;}
 
 }

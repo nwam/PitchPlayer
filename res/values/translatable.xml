@@ -52,6 +52,7 @@ THE SOFTWARE.
 	<string name="_year">year</string>
 	<string name="_replaygain">rgain</string>
 	<string name="_pitch">pitch</string>
+	<string name="_semitones">semitones</string>
 	<string name="_speed">speed</string>
 	<string name="_loop">loop</string>
 	<string name="_start">start</string>

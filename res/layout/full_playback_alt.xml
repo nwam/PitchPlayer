@@ -69,6 +69,51 @@ THE SOFTWARE.
 				android:gravity="right" />
 			<TextView android:id="@+id/album" android:textColor="?overlay_foreground_color"/>
 		</TableRow>
+		<LinearLayout
+			android:orientation="horizontal"
+			android:gravity="center_vertical">
+			<TextView
+				android:text="@string/_loop"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:paddingLeft="10dip"
+				android:textColor="?overlay_foreground_color"/>
+
+			<CheckBox
+				android:id="@+id/looper_checkbox"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content" />
+			<Button
+				android:id="@+id/looper_start_button"
+				android:text="@string/_start"
+				android:paddingLeft="20dip"
+				android:paddingRight="10dip"
+				android:minWidth="1dp"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="?overlay_foreground_color"
+				android:background="?android:attr/selectableItemBackground"
+				android:gravity="center" />
+			<NumberPicker
+				android:id="@+id/looper_start"
+				android:layout_width="wrap_content"
+				android:layout_height="125dp"/>
+			<Button
+				android:id="@+id/looper_end_button"
+				android:text="@string/_end"
+				android:paddingLeft="20dip"
+				android:paddingRight="10dip"
+				android:minWidth="1dp"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="?overlay_foreground_color"
+				android:background="?android:attr/selectableItemBackground"
+				android:gravity="center" />
+			<NumberPicker
+				android:id="@+id/looper_end"
+				android:layout_width="wrap_content"
+				android:layout_height="125dp"/>
+		</LinearLayout>
 		<LinearLayout>
 			<Button
 				android:id="@+id/pitch_button"
@@ -118,51 +163,6 @@ THE SOFTWARE.
 				android:paddingRight="18dip"
 				android:max="2000"
 				android:progress="1000"/>
-		</LinearLayout>
-		<LinearLayout
-			android:orientation="horizontal"
-			android:gravity="center_vertical">
-			<TextView
-				android:text="@string/_loop"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:paddingLeft="10dip"
-				android:textColor="?overlay_foreground_color"/>
-
-			<CheckBox
-				android:id="@+id/looper_checkbox"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content" />
-			<Button
-				android:id="@+id/looper_start_button"
-				android:text="@string/_start"
-				android:paddingLeft="20dip"
-				android:paddingRight="10dip"
-				android:minWidth="1dp"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textColor="?overlay_foreground_color"
-				android:background="?android:attr/selectableItemBackground"
-				android:gravity="center" />
-			<NumberPicker
-				android:id="@+id/looper_start"
-				android:layout_width="wrap_content"
-				android:layout_height="125dp"/>
-			<Button
-				android:id="@+id/looper_end_button"
-				android:text="@string/_end"
-				android:paddingLeft="20dip"
-				android:paddingRight="10dip"
-				android:minWidth="1dp"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textColor="?overlay_foreground_color"
-				android:background="?android:attr/selectableItemBackground"
-				android:gravity="center" />
-			<NumberPicker
-				android:id="@+id/looper_end"
-				android:layout_width="wrap_content"
-				android:layout_height="125dp"/>
 		</LinearLayout>
 		<LinearLayout android:id="@+id/controls_top">
 			<TextView

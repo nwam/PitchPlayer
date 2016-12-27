@@ -18,7 +18,7 @@ public class PitchBarChangeListener implements SeekBar.OnSeekBarChangeListener {
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         PlaybackService playbackService = PlaybackService.get(context);
-        playbackService.mMediaPlayer.updatePitch(progress);
+        playbackService.mMediaPlayer.updatePitch(progress, playbackService.getPitchRange());
 
     }
 

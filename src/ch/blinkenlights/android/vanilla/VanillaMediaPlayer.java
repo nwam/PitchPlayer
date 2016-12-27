@@ -47,6 +47,7 @@ public class VanillaMediaPlayer extends MediaPlayer
 
 	private final Handler handler = new Handler(this);
 	private static final int MSG_LOOP_BACK = 1;
+	private static final float SEMITONE = 1.05946f;
 
 	/**handleMessage
 	 * Constructs a new VanillaMediaPlayer class
@@ -178,9 +179,10 @@ public class VanillaMediaPlayer extends MediaPlayer
 	}
 
 	/** Sets the pitch **/
-	public void updatePitch(int level) {
+	public void updatePitch(int level, float range) {
 		PlaybackService.get(mContext).setPitchProgress(level);
-		float pitchFactor = 1 - (1000f - level)/8000;
+		float pitchFactor = (float) Math.pow(SEMITONE, (level/1000f - 1f)*range);
+		// MAX 2 semitones = 90 - 110 |||
 		PlaybackParams playbackParams = new PlaybackParams();
 		playbackParams.setPitch(pitchFactor);
 		System.out.println(playbackParams);
