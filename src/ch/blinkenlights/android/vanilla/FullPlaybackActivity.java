@@ -25,18 +25,12 @@ package ch.blinkenlights.android.vanilla;
 
 import java.util.ArrayList;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
 import android.os.Message;
-import android.text.InputType;
 import android.util.Log;
-import android.content.ContentResolver;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -46,15 +40,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 
@@ -82,9 +73,12 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 	private TextView mArtist;
 
 	private SeekBar mPitchBar;
+	private NumberPicker mPitchPicker;
 	private Button mPitchButton;
 	private SeekBar mSpeedBar;
 	private Button mSpeedButton;
+	private static final int MIN_SEMITONES = -24;
+	private static final int MAX_SEMITONES = 24;
 
 	private CheckBox mLooperCheckbox;
 	private Button mLooperStartButton;
@@ -175,6 +169,9 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 
 		mPitchBar = (SeekBar) findViewById(R.id.pitch_bar);
 		mPitchButton = (Button) findViewById(R.id.pitch_button);
+		mPitchPicker = (NumberPicker) findViewById(R.id.pitch_picker);
+		mPitchPicker.setWrapSelectorWheel(false);
+
 		mSpeedBar = (SeekBar) findViewById(R.id.speed_bar);
 		mSpeedButton = (Button) findViewById(R.id.speed_button);
 
@@ -193,6 +190,15 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		mLooperEndPicker.setWrapSelectorWheel(false);
 		mLooperEndPicker.setOnValueChangedListener(this);
 		mLooperEndPicker.setFormatter(this);
+
+		mPitchPicker.setMinValue(0);
+		mPitchPicker.setMaxValue(MAX_SEMITONES - MIN_SEMITONES);
+		mPitchPicker.setFormatter(new NumberPicker.Formatter(){
+			@Override
+			public String format(int v){
+				return Integer.toString(v + MIN_SEMITONES);
+			}
+		});
 
 		bindControlButtons();
 
@@ -617,20 +623,19 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		case MSG_COMMIT_INFO: { // info now contains pitch controls
 			PlaybackService playbackService = PlaybackService.get(this);
 
-			// set functionalities of special playback controls
 			mPitchBar.setOnSeekBarChangeListener(new PitchBarChangeListener(this));
-			mPitchBar.setProgress(playbackService.getPitchProgress());
 			mPitchButton.setOnClickListener(this);
-			mPitchButton.setLongClickable(true);
-			mPitchButton.setOnLongClickListener(this);
+			mPitchPicker.setOnValueChangedListener(this);
 			mSpeedBar.setOnSeekBarChangeListener(new SpeedBarChangeListener(this));
-			mSpeedBar.setProgress(playbackService.getSpeedProgress());
 			mSpeedButton.setOnClickListener(this);
-
 			mLooperCheckbox.setOnCheckedChangeListener(this);
-			mLooperCheckbox.setChecked(playbackService.mMediaPlayer.isLooperEnabled());
 			mLooperStartButton.setOnClickListener(this);
 			mLooperEndButton.setOnClickListener(this);
+
+			mPitchBar.setProgress(playbackService.getPitchProgress());
+			mPitchPicker.setValue(playbackService.getPitchSemitones() - MIN_SEMITONES);
+			mSpeedBar.setProgress(playbackService.getSpeedProgress());
+			mLooperCheckbox.setChecked(playbackService.mMediaPlayer.isLooperEnabled());
 			mLooperStartPicker.setValue(playbackService.mMediaPlayer == null? 0 : playbackService.mMediaPlayer.getLooperStart());
 			mLooperEndPicker.setValue(playbackService.mMediaPlayer == null? 0 : playbackService.mMediaPlayer.getLooperEnd());
 
@@ -711,9 +716,6 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 			setExtraInfoVisible(!mExtraInfoVisible);
 			mHandler.sendEmptyMessage(MSG_SAVE_CONTROLS);
 			break;
-		case R.id.pitch_button:
-			showPitchOptionsDialog(this);
-			break;
 		default:
 			return false;
 		}
@@ -743,6 +745,8 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 			mLooperEndPicker.setMinValue(newVal);
 		}else if(picker == mLooperEndPicker){
 			PlaybackService.get(this).mMediaPlayer.setLooperEnd(newVal*10);
+		}else if(picker == mPitchPicker){
+			PlaybackService.get(this).setPitchSemitones(newVal + MIN_SEMITONES);
 		}
 	}
 
@@ -754,34 +758,5 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		int fraction_of_a_second = value%100;
 		return String.format("%d:%02d.%02d", minutes, seconds, fraction_of_a_second);
 
-	}
-
-	private void showPitchOptionsDialog(final Context context){
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Pitch Range");
-
-		// set up input
-		final EditText input = new EditText(this);
-		input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-		builder.setView(input);
-
-		// set up buttons
-		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which){
-				PlaybackService.get(context).setPitchRange(Float.parseFloat(input.getText().toString()));
-			}
-		});
-
-		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.cancel();
-			}
-		});
-
-		builder.show();
-		input.setHint(R.string._semitones);
-		input.requestFocus();
 	}
 }

@@ -126,6 +126,10 @@ THE SOFTWARE.
 				android:minWidth="1dp"
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"/>
+			<NumberPicker
+				android:id="@+id/pitch_picker"
+				android:layout_width="wrap_content"
+				android:layout_height="50dp"/>
 			<SeekBar
 				android:id="@+id/pitch_bar"
 				android:layout_height="wrap_content"

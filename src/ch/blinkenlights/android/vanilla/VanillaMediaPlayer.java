@@ -179,10 +179,8 @@ public class VanillaMediaPlayer extends MediaPlayer
 	}
 
 	/** Sets the pitch **/
-	public void updatePitch(int level, float range) {
-		PlaybackService.get(mContext).setPitchProgress(level);
-		float pitchFactor = (float) Math.pow(SEMITONE, (level/1000f - 1f)*range);
-		// MAX 2 semitones = 90 - 110 |||
+	public void updatePitch(int semitones, int cents) {
+		float pitchFactor = (float) Math.pow(SEMITONE, (cents/1000f - 1f) + semitones);
 		PlaybackParams playbackParams = new PlaybackParams();
 		playbackParams.setPitch(pitchFactor);
 		System.out.println(playbackParams);
