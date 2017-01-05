@@ -184,7 +184,11 @@ public class VanillaMediaPlayer extends MediaPlayer
 		PlaybackParams playbackParams = new PlaybackParams();
 		playbackParams.setPitch(pitchFactor);
 		System.out.println(playbackParams);
-		setPlaybackParams(playbackParams);
+		try{
+			setPlaybackParams(playbackParams);
+		}catch(IllegalStateException e){
+			System.out.print(e);
+		}
 	}
 
 	public void updateSpeed(int level) {
@@ -192,7 +196,11 @@ public class VanillaMediaPlayer extends MediaPlayer
 		float speedFactor = 1 - (1000f - level)/2000;
 		PlaybackParams playbackParams = new PlaybackParams();
 		playbackParams.setSpeed(speedFactor);
-		setPlaybackParams(playbackParams);
+		try{
+			setPlaybackParams(playbackParams);
+		} catch (IllegalStateException e){
+			System.out.print(e);
+		}
 	}
 
 	/**
