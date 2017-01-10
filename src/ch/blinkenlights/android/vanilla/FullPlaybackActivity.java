@@ -49,6 +49,8 @@ import android.widget.TextView;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 
+import org.w3c.dom.Text;
+
 /**
  * The primary playback screen with playback controls and large cover display.
  */
@@ -74,8 +76,10 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 
 	private SeekBar mPitchBar;
 	private NumberPicker mPitchPicker;
+	private TextView mPitchText;
 	private Button mPitchButton;
 	private SeekBar mSpeedBar;
+	private TextView mSpeedText;
 	private Button mSpeedButton;
 	private static final int MIN_SEMITONES = -24;
 	private static final int MAX_SEMITONES = 24;
@@ -170,9 +174,11 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		mPitchBar = (SeekBar) findViewById(R.id.pitch_bar);
 		mPitchButton = (Button) findViewById(R.id.pitch_button);
 		mPitchPicker = (NumberPicker) findViewById(R.id.pitch_picker);
+		mPitchText = (TextView) findViewById(R.id.pitch_text);
 		mPitchPicker.setWrapSelectorWheel(false);
 
 		mSpeedBar = (SeekBar) findViewById(R.id.speed_bar);
+		mSpeedText = (TextView) findViewById(R.id.speed_text);
 		mSpeedButton = (Button) findViewById(R.id.speed_button);
 
 		mLooperCheckbox = (CheckBox) findViewById(R.id.looper_checkbox);
@@ -623,7 +629,7 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		case MSG_COMMIT_INFO: { // info now contains pitch controls
 			PlaybackService playbackService = PlaybackService.get(this);
 
-			mPitchBar.setOnSeekBarChangeListener(new PitchBarChangeListener(this));
+			mPitchBar.setOnSeekBarChangeListener(this);
 			mPitchButton.setOnClickListener(this);
 			mPitchPicker.setOnValueChangedListener(this);
 			mSpeedBar.setOnSeekBarChangeListener(new SpeedBarChangeListener(this));
@@ -634,6 +640,8 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 
 			mPitchBar.setProgress(playbackService.getPitchProgress());
 			mPitchPicker.setValue(playbackService.getPitchSemitones() - MIN_SEMITONES);
+			mPitchPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+			mPitchText.setText(getPitchText());
 			mSpeedBar.setProgress(playbackService.getSpeedProgress());
 			mLooperCheckbox.setChecked(playbackService.mMediaPlayer.isLooperEnabled());
 			mLooperStartPicker.setValue(playbackService.mMediaPlayer == null? 0 : playbackService.mMediaPlayer.getLooperStart());
@@ -739,6 +747,20 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 	}
 
 	@Override
+	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+		switch (seekBar.getId()) {
+			case R.id.pitch_bar:
+				PlaybackService.get(this).setPitchProgress(progress);
+				mPitchText.setText(getPitchText());
+				break;
+			case R.id.speed_bar:
+				break;
+			default:
+				super.onProgressChanged(seekBar, progress, fromUser);
+		}
+	}
+
+	@Override
 	public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
 		if(picker == mLooperStartPicker){
 			PlaybackService.get(this).mMediaPlayer.setLooperStart(newVal*10);
@@ -758,5 +780,10 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		int fraction_of_a_second = value%100;
 		return String.format("%d:%02d.%02d", minutes, seconds, fraction_of_a_second);
 
+	}
+
+	private String getPitchText(){
+		float pitchChange = (PlaybackService.get(this).getPitchProgress()-1000.0f)/1000.0f;
+		return String.format("%s%1.2f", pitchChange < 0 ? "" : "+", pitchChange);
 	}
 }

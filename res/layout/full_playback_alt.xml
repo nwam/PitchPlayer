@@ -128,8 +128,14 @@ THE SOFTWARE.
 				android:layout_width="wrap_content"/>
 			<NumberPicker
 				android:id="@+id/pitch_picker"
+				android:layout_width="35dip"
+				android:layout_height="50dip"/>
+			<TextView
+				android:id="@+id/pitch_text"
 				android:layout_width="wrap_content"
-				android:layout_height="50dp"/>
+				android:layout_height="wrap_content"
+				android:gravity="left|center_vertical"
+				android:minWidth="30dip"/>
 			<SeekBar
 				android:id="@+id/pitch_bar"
 				android:layout_height="wrap_content"
@@ -155,6 +161,11 @@ THE SOFTWARE.
 				android:minWidth="1dp"
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"/>
+			<TextView
+				android:id="@+id/speed_text"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:minWidth="40dip"/>
 			<SeekBar
 				android:id="@+id/speed_bar"
 				android:layout_height="wrap_content"
