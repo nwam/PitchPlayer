@@ -430,6 +430,8 @@ public final class PlaybackService extends Service
     private int mPitchProgress;
     private int mSpeedProgress;
     private int mPitchSemitones;
+    private float mSpeed;
+    private float mPitch;
 
     @Override
     public void onCreate()
@@ -518,6 +520,8 @@ public final class PlaybackService extends Service
 
         mPitchProgress = 1000;
         mSpeedProgress = 1000;
+        mPitch = 0;
+        mSpeed = 1;
     }
 
     @Override
@@ -2369,8 +2373,9 @@ public final class PlaybackService extends Service
     public int getPitchProgress(){ return mPitchProgress;}
     public int getPitchSemitones(){return mPitchSemitones;}
     public int getSpeedProgress(){ return mSpeedProgress;}
+    public float getSpeed(){return mSpeed;}
 
-    public void setPitchProgress(int v){
+    public void setPitchCents(int v){
         mPitchProgress=v;
         mMediaPlayer.updatePitch(mPitchSemitones, mPitchProgress);
     }
@@ -2380,7 +2385,13 @@ public final class PlaybackService extends Service
         mMediaPlayer.updatePitch(mPitchSemitones, mPitchProgress);
     }
 
-    public void setSpeedProgress(int v){mSpeedProgress=v;}
+    public void setSpeed(int v){
+        mSpeedProgress=v;
+        mSpeed =  1 - (1000f - v)/2000;
+        if(isPlaying()){
+            mMediaPlayer.updateSpeed(mSpeed);
+        }
+    }
 
 
 

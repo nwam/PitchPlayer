@@ -167,13 +167,17 @@ function show(n) {
 	<li>Rosario Antoci (Italian translation)</li>
 	<li>Xiao Bao Clark (various contributions)</li>
 	<!-- TODO: add more translators
-		 TODO: pitch amount indicator
-		 TODO: speed amount indicator
+		 TODO: factor out pitch "progress" from PlaybackService into pitch/speed adjustments (float values)
+		 TODO: factor pitch adjustment from VanillaMediaPlayer to PlaybackService
+		 TODO: apply pitch/speed to next song in PlaybackService
+		 TODO: fix bug where changing pitch before playing anything causes no possible playback
+		 TODO: OR^ fix bug where changing speed while paused does not apply speed once resumed
 		 TODO: help
 		 TODO: tutorial
 		 TODO: button to open controls
 		 TODO: maybe remove title/artist/album from controls
-		 TODO: fix format of time wheel -->
+		 TODO: fix format of time wheel
+		 TODO: laggy speed adjustments (after changing pitch?)-->
 
 </ul>
 <h2>Licenses</h2>

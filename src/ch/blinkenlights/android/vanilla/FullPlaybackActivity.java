@@ -49,8 +49,6 @@ import android.widget.TextView;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 
-import org.w3c.dom.Text;
-
 /**
  * The primary playback screen with playback controls and large cover display.
  */
@@ -632,7 +630,7 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 			mPitchBar.setOnSeekBarChangeListener(this);
 			mPitchButton.setOnClickListener(this);
 			mPitchPicker.setOnValueChangedListener(this);
-			mSpeedBar.setOnSeekBarChangeListener(new SpeedBarChangeListener(this));
+			mSpeedBar.setOnSeekBarChangeListener(this);
 			mSpeedButton.setOnClickListener(this);
 			mLooperCheckbox.setOnCheckedChangeListener(this);
 			mLooperStartButton.setOnClickListener(this);
@@ -643,6 +641,7 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 			mPitchPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 			mPitchText.setText(getPitchText());
 			mSpeedBar.setProgress(playbackService.getSpeedProgress());
+			mSpeedText.setText(getSpeedText());
 			mLooperCheckbox.setChecked(playbackService.mMediaPlayer.isLooperEnabled());
 			mLooperStartPicker.setValue(playbackService.mMediaPlayer == null? 0 : playbackService.mMediaPlayer.getLooperStart());
 			mLooperEndPicker.setValue(playbackService.mMediaPlayer == null? 0 : playbackService.mMediaPlayer.getLooperEnd());
@@ -748,15 +747,46 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+		PlaybackService playbackService = PlaybackService.get(this);
 		switch (seekBar.getId()) {
 			case R.id.pitch_bar:
-				PlaybackService.get(this).setPitchProgress(progress);
+				playbackService.setPitchCents(progress);
 				mPitchText.setText(getPitchText());
 				break;
 			case R.id.speed_bar:
+				playbackService.setSpeed(progress);
+				mSpeedText.setText(getSpeedText());
 				break;
 			default:
 				super.onProgressChanged(seekBar, progress, fromUser);
+		}
+	}
+
+	@Override
+	public void onStartTrackingTouch(SeekBar seekBar) {
+		switch (seekBar.getId()) {
+			case R.id.pitch_bar:
+			case R.id.speed_bar:
+				break;
+			default:
+				super.onStartTrackingTouch(seekBar);
+		}
+	}
+
+	@Override
+	public void onStopTrackingTouch(SeekBar seekBar) {
+		switch (seekBar.getId()) {
+			case R.id.pitch_bar:
+				break;
+			case R.id.speed_bar:
+				PlaybackService playbackService = PlaybackService.get(this);
+				if (!playbackService.isPlaying()) {
+					playbackService.setSpeed(seekBar.getProgress());
+					//playbackService.mMediaPlayer.pause();
+				}
+				break;
+			default:
+				super.onStopTrackingTouch(seekBar);
 		}
 	}
 
@@ -785,5 +815,10 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 	private String getPitchText(){
 		float pitchChange = (PlaybackService.get(this).getPitchProgress()-1000.0f)/1000.0f;
 		return String.format("%s%1.2f", pitchChange < 0 ? "" : "+", pitchChange);
+	}
+
+	private String getSpeedText(){
+		float speedChange = (PlaybackService.get(this).getSpeed());
+		return String.format("%1.2f", speedChange);
 	}
 }

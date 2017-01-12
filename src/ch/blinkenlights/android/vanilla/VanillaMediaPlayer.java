@@ -191,9 +191,8 @@ public class VanillaMediaPlayer extends MediaPlayer
 		}
 	}
 
-	public void updateSpeed(int level) {
-		PlaybackService.get(mContext).setSpeedProgress(level);
-		float speedFactor = 1 - (1000f - level)/2000;
+	/** Sets the speed **/
+	public void updateSpeed(float speedFactor) {
 		PlaybackParams playbackParams = new PlaybackParams();
 		playbackParams.setSpeed(speedFactor);
 		try{
