@@ -26,6 +26,7 @@ THE SOFTWARE.
 		android:id="@+id/cover_view"
 		android:layout_height="fill_parent"
 		android:layout_width="fill_parent" />
+
 	<TableLayout
 		android:id="@+id/info_table"
 		android:layout_width="fill_parent"

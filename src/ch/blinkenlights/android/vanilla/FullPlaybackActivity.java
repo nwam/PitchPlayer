@@ -133,7 +133,6 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		case DISPLAY_INFO_WIDGETS:
 			coverStyle = CoverBitmap.STYLE_NO_INFO;
 			layout = R.layout.full_playback_alt;
-
 			break;
 		case DISPLAY_INFO_OVERLAP:
 			coverStyle = CoverBitmap.STYLE_OVERLAPPING_BOX;
@@ -692,11 +691,14 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		if (view == mOverlayText && (mState & PlaybackService.FLAG_EMPTY_QUEUE) != 0) {
 			setState(PlaybackService.get(this).setFinishAction(SongTimeline.FINISH_RANDOM));
 		} else if (view == mCoverView) {
-			performAction(mCoverPressAction);
+			//performAction(mCoverPressAction);
+			setExtraInfoVisible(!mExtraInfoVisible);
+			mHandler.sendEmptyMessage(MSG_SAVE_CONTROLS);
 		} else if (view.getId() == R.id.info_table) {
 			openLibrary(mCurrentSong);
 		} else if (view.getId() == R.id.pitch_button){
 			mPitchBar.setProgress(1000);
+			mPitchPicker.setValue(24);
 		} else if (view.getId() == R.id.speed_button) {
 			mSpeedBar.setProgress(1000);
 		} else if (view.getId() == R.id.looper_start_button) {
