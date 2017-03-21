@@ -1,9 +1,11 @@
 Pitch Player
 =====================
-##Install
+Install
+-------
 Pitch Player can be downloaded on the [Google Play store](https://play.google.com/store/apps/details?id=ca.nwam.android.pitchplayer).
 
-##About
+About
+-----
 Pitch Player is an Android music player, forked from the [Vanilla Music](https://github.com/vanilla-music/vanilla) project. Pitch Player adds functionality to adjust the pitch and speed of your music, during playback, as well as loop a section of a song. Pitch Player is designed for musicians, but can be used by anyone who wants to listen to their music differently.
 
 Vanilla Music
